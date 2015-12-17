@@ -21,7 +21,7 @@ var
 		cache: false
 	};
 
-gulp.task('default', ['jshint']);
+gulp.task('default', ['jshint', 'test']);
 gulp.task('jshint', lint);
 gulp.task('build-lib', buildLib);
 gulp.task('build-tests', buildTests);

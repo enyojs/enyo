@@ -13,11 +13,11 @@ var
 	MultipleDispatchSupport = require('./MultipleDispatchSupport');
 
 /**
-* {@link module:enyo/MultipleDispatchComponent~MultipleDispatchComponent} is a purely abstract [kind]
+* {@link module:enyo/MultipleDispatchComponent~MultipleDispatchComponent} is a purely abstract
 * {@glossary kind} that simply provides a common ancestor for
 * {@link module:enyo/Component~Component} [objects]{@glossary Object} that need 
 * the [MultipleDispatchSupport]{@link module:enyo/MultipleDispatchSupport~MultipleDispatchSupport}
-* [mixin]{@glossary mixin}.
+* {@glossary mixin}.
 *
 * @class MultipleDispatchComponent
 * @extends module:enyo/Component~Component

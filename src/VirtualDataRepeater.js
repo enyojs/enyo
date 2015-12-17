@@ -25,15 +25,31 @@ module.exports = kind({
 	// reorderNodes: false,
 
 	reset: function () {
-		this.init();
-		this.destroyClientControls();
-		this.setExtent();
+		// If we are showing, go ahead and reset...
+		if (this.getAbsoluteShowing()) {
+			this.init();
+			this.destroyClientControls();
+			this.setExtent();
+			if (this._needsReset) {
+				// Now that we've done our deferred reset, we
+				// can become visible again
+				this.applyStyle('visibility', 'visible');
+				this._needsReset = false;
+			}
+		}
+		// If we aren't showing, defer the reset until we are shown again
+		else {
+			// Because our state will be stale by the time we reset, become invisible
+			// to avoid briefly "flashing" the stale state when we are shown
+			this.applyStyle('visibility', 'hidden');
+			this._needsReset = true;
+		}
 	},
 
 	init: function () {
 		this.orderedChildren = [],
 		this.orderedChildren_alt = [],
-		this.childrenByIndex = {},
+		this.childrenByIndex = [],
 		this.orderedModels = [],
 		this.orderedModels_alt = [],
 		this.needed = [],
@@ -64,14 +80,78 @@ module.exports = kind({
 			this.notify('numItems', pn, this.numItems);
 		}
 	},
-	
+
 	refresh: function (immediate) {
+		// If we haven't initialized, we need to reset instead
 		if (!this.hasInitialized) return this.reset();
 
-		this.stabilizeExtent();
+		// If we're being called as the handler for a collection reset,
+		// note that so we can do extra stuff as needed
+		if (arguments[1] === 'reset' && typeof this.collectionResetHandler === 'function') {
+			this._needsToHandleCollectionReset = true;
+		}
 
-		this.doIt();
+		// For performance reasons, it's better to refresh asynchronously most
+		// of the time, so we put the refresh logic in a function we can async
+		var refresh = this.bindSafely(function () {
+			// If we are showing, go ahead and refresh...
+			if (this.getAbsoluteShowing()) {
+				this.stabilizeExtent();
+				this.doIt();
+				// If we need to do anything to respond to the collection
+				// resetting, now's the time
+				if (this._needsToHandleCollectionReset) {
+					this.collectionResetHandler();
+					this._needsToHandleCollectionReset = false;
+				}
+				if (this._needsRefresh) {
+					// Now that we've done our deferred refresh, we
+					// can become visible again
+					this.applyStyle('visibility', 'visible');
+					this._needsRefresh = false;
+				}
+			}
+			// If we aren't showing, defer the refresh until we are shown again
+			else {
+				// Because our state will be stale by the time we refresh, become invisible
+				// to avoid briefly "flashing" the stale state when we are shown
+				this.applyStyle('visibility', 'hidden');
+				this._needsRefresh = true;
+			}
+		});
+
+		// refresh is used as the event handler for
+		// collection resets so checking for truthy isn't
+		// enough. it must be true.
+		if (immediate === true) {
+			refresh();
+		}
+		else {
+			// TODO: Consider the use cases and the reasons why
+			// we're making this async, and decide whether it makes
+			// sense to delay more than 16ms. In particular, in cases
+			// where the benefit of async'ing comes from debouncing, it
+			// may be that 16ms is not enough on slower hardware.
+			this.startJob('refreshing', refresh, 16);
+		}
 	},
+
+	/**
+	* @private
+	*/
+	showingChangedHandler: kind.inherit(function (sup) {
+		return function () {
+			// If we have deferred a reset or a refresh,
+			// take care of it now that we're showing again
+			if (this._needsReset) {
+				this.reset();
+			}
+			else if (this._needsRefresh) {
+				this.refresh();
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
 
 	childForIndex: function(idx) {
 		return this.childrenByIndex[idx];
@@ -86,6 +166,7 @@ module.exports = kind({
 		var pMod = child.model,
 			pIdx = child.index,
 			sc = child.selectedClass || 'selected',
+			cbi = this.childrenByIndex,
 			s;
 
 		if (pMod !== model) {
@@ -97,11 +178,9 @@ module.exports = kind({
 
 		if (pIdx !== index) {
 			child.set('index', index);
-			this.childrenByIndex[index] = child;
-			if (this.childrenByIndex[pIdx] === child) {
-				this.childrenByIndex[pIdx] = null;
-			}
 		}
+
+		cbi[index] = child;
 
 		child.removeClass('enyo-vdr-first');
 		child.removeClass('enyo-vdr-last');
@@ -114,17 +193,27 @@ module.exports = kind({
 			o = this.orderedChildren,
 			o2 = this.orderedChildren_alt,
 			om = this.orderedModels,
-			omL = om.length,
 			om2 = this.orderedModels_alt,
+			len = om.length,
 			n = this.numItems,
 			needed = this.needed,
 			b = this.bullpen,
-			i, idx, m, ci, c, nNeeded, j, ln;
+			i, idx, m, ci, c, nNeeded, j, len2;
+
+		// Clear our index, which we'll rebuild as we assign children
+		this.childrenByIndex.length = 0;
+
+		// Walk up from the first index through the
+		// last and make sure that a child is assigned
+		// for each
 		for (i = 0; i < n; ++i) {
 			idx = f + i;
+			// Get our model
 			m = dd.at(idx);
 			if (m) {
-				ci = omL ? om.indexOf(m) : -1;
+				// If we already have a child with the model
+				// we need, reuse it
+				ci = len ? om.indexOf(m) : -1;
 				if (ci >= 0) {
 					c = o[ci];
 					o.splice(ci, 1);
@@ -133,6 +222,8 @@ module.exports = kind({
 					this.assignChild(m, idx, c);
 				}
 				else {
+					// Otherwise, remember that we need to grab
+					// or create a child for this model
 					needed.push(i);
 				}
 				om2.push(m);
@@ -142,38 +233,53 @@ module.exports = kind({
 			}
 		}
 		nNeeded = needed.length;
+		// If we have any models that we need to produce children
+		// for, do it now
 		for (j = 0; j < nNeeded; ++j) {
 			i = needed[j];
 			idx = f + i;
 			m = om2[i];
+			// Reuse an existing child if we have one, checking
+			// just-decommissioned children first and then children
+			// previously placed in the bullpen
 			c = om.pop() && o.pop() || b.pop();
 			if (c) {
 				this.assignChild(m, idx, c);
 			}
 			else {
+				// If we don't have a child on hand, we create a new one
 				c = this.createComponent({model: m});
 				this.assignChild(m, idx, c);
 				// TODO: Rethink child lifecycle hooks (currently deploy / update / retire)
 				if (typeof this.deployChild === 'function') this.deployChild(c);
 				c.render();
 			}
+			// Put the newly assigned child in the right place in
+			// the new orderedChildren array
 			o2.splice(i, 0, c);
 		}
-		needed.length = 0;
+		// If we have unused children hanging around, make
+		// them wait in the bullpen
 		while (o.length) {
 			c = om.pop() && o.pop();
 			c.set('model', null);
 			c.hide();
 			b.push(c);
 		}
+		// And now some cleanup...
+		len2 = o2.length;
+		// Reset our "needed" array, so it's ready for next time
+		needed.length = 0;
+		// Swap in our new ordered arrays for the old ones
 		this.orderedChildren = o2;
 		this.orderedChildren_alt = o;
 		this.orderedModels = om2;
 		this.orderedModels_alt = om;
-		ln = o2.length;
-		if (ln) {
+		// If we have any children, tag the first and last ones,
+		// and then apply positioning if applicable
+		if (len2) {
 			o2[0].addClass('enyo-vdr-first');
-			o2[ln - 1].addClass('enyo-vdr-last');
+			o2[len2 - 1].addClass('enyo-vdr-last');
 			if (typeof this.positionChildren === 'function') this.positionChildren();
 		}
 	},
@@ -181,7 +287,7 @@ module.exports = kind({
 	fwd: function() {
 		this.set('first', this.first + 1);
 	},
-	
+
 	bak: function() {
 		this.set('first', this.first - 1);
 	},

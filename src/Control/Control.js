@@ -89,7 +89,7 @@ function getNodePurgatory () {
 * [Controls]{@linkplain $dev-guide/key-concepts/controls.html} in the
 * Enyo Developer Guide.
 *
-* **If you make changes to `enyo.Control`, be sure to add or update the
+* **If you make changes to `enyo/Control`, be sure to add or update the
 * appropriate unit tests.**
 *
 * @class Control
@@ -410,7 +410,7 @@ var Control = module.exports = kind(
 	* yet to be cached, from the [node]{@glossary Node} itself.
 	*
 	* @param {String} name - The attribute name to get.
-	* @returns {(String|Null)} The value of the requested attribute, or `null`
+	* @returns {(String|null)} The value of the requested attribute, or `null`
 	* if there isn't a [DOM node]{@glossary Node} yet.
 	* @public
 	*/
@@ -531,7 +531,7 @@ var Control = module.exports = kind(
 		// NOTE: Because this method accepts a string and for efficiency does not wish to
 		// parse it to determine if it is actually multiple classes we later pull a trick
 		// to keep it normalized and synchronized with our attributes hash and the node's
-		if (!this.hasClass(name)) {
+		if (name && !this.hasClass(name)) {
 
 			// this is hooked
 			this.set('classes', classes + (classes ? (' ' + name) : name));
@@ -1132,6 +1132,16 @@ var Control = module.exports = kind(
 	},
 
 	/**
+	* If a Control needs to do something before it and its children's DOM nodes
+	* are torn down, it can implement this lifecycle method, which is called automatically
+	* by the framework and takes no arguments.
+	*
+	* @type {Function}
+	* @protected
+	*/
+	beforeTeardown: null,
+
+	/**
 	* @param {Boolean} [cache] - Whether or not we are tearing down as part of a destroy
 	*	operation, or if we are just caching. If `true`, the `showing` and `canGenerate`
 	*	properties of the control will not be reset.
@@ -1199,8 +1209,7 @@ var Control = module.exports = kind(
 	removeNodeFromDom: function() {
 		var node = this.hasNode();
 		if (node) {
-			if (node.remove) node.remove();
-			else if (node.parentNode) node.parentNode.removeChild(node);
+			Dom.removeNode(node);
 		}
 	},
 

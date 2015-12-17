@@ -58,11 +58,8 @@ module.exports = kind(
 
 
 	/**
-	* @name enyo.FluxStore.id
-	*
-	* How a store is identitified to the Flux Dispatcher
-	* This ID is used for subscribing to a store's
-	* state notification change
+	* How a store is identitified to the Flux Dispatcher. This ID is used for
+	* subscribing to a store's state notification change.
 	*
 	* @public
 	* @type {Number}
@@ -73,10 +70,7 @@ module.exports = kind(
 	mixins: [EventEmitter, StateSupport],
 
 	/**
-	* @name enyo.FluxStore.source
-	*
-	* The source that this FluxStore should use to fetch new
-	* data sets.
+	* The source that this FluxStore should use to fetch new data sets.
 	*
 	* @public
 	* @type {String}
@@ -87,11 +81,8 @@ module.exports = kind(
 	published: {
 
 		/**
-		* @name enyo.FluxStore.MergeRoot
-		*
-		* When a source sends data to the store,
-		* should the data root have the new data
-		* merged, otherwise it will replace.
+		* When a source sends data to the store, determines whether the data root
+		* has the new data merged. If `false`, data will be replaced instead.
 		*
 		* @public
 		* @type {Boolean}
@@ -116,9 +107,7 @@ module.exports = kind(
 	}),
 
 	/**
-	* @name enyo.FluxStore.add
-	*
-	* Adds data to the store, is called from the store's fetch
+	* Adds data to the store; called from the store's fetch.
 	*
 	* @param [data] - Object that has the data to be added to store.
 	* @param {module:enyo/FluxStore~FluxStore~ActionOptions} [opts] - Optional configuration options.
@@ -133,9 +122,7 @@ module.exports = kind(
 	},
 
 	/**
-	* @name enyo.FluxStore.reset
-	*
-	* Clears the store's data
+	* Clears the store's data.
 	*
 	* @public
 	*/
@@ -144,8 +131,6 @@ module.exports = kind(
 	},
 
 	/**
-	* @name enyo.FluxStore.fetch
-	*
 	* Fetches the data from a [Source]{@link module:enyo/Source~Source}
 	*
 	* @param {module:enyo/FluxStore~FluxStore~ActionOptions} [opts] - Optional configuration options.
@@ -164,11 +149,9 @@ module.exports = kind(
 	},
 
 	/**
-	* @name enyo.FluxStore.success
+	* Success callback called when the [Source]{@link module:enyo/Source~Source} is successful.
 	*
-	* Success callback is called when the [Source]{@link module:enyo/Source~Source} is successful
-	*
-	* @param {module:enyo/Source~Source} [source] - The source that iniated the fetch.
+	* @param {module:enyo/Source~Source} [source] - The source that initiated the fetch.
 	* @param {module:enyo/Source~Source~Results} [res] - The result of the fetch.
 	* @private
 	*/
@@ -184,9 +167,7 @@ module.exports = kind(
 	},
 
 	/**
-	* @name enyo.FluxStore.error
-	*
-	* Error callback is called when the [Source]{@link module:enyo/Source~Source} has failed
+	* Error callback called when the [Source]{@link module:enyo/Source~Source} has failed.
 	*
 	* @param {module:enyo/Source~Source~Results} [res] - The result of the fetch.
 	* @private

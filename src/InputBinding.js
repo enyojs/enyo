@@ -14,7 +14,7 @@ var
 /**
 * An {@link module:enyo/Binding~Binding} designed to have its [source]{@link module:enyo/Binding~Binding#source}
 * or its [target]{@link module:enyo/Binding~Binding#target} be an {@link module:enyo/Input~Input}. If the
-* `enyo.Input` has a [placeholder]{@link module:enyo/Input~Input#placeholder}, it will be
+* `enyo/Input` has a [placeholder]{@link module:enyo/Input~Input#placeholder}, it will be
 * used when there is no value. This is a [two-way]{@link module:enyo/Binding~Binding#oneWay} binding.
 *
 * @class InputBinding

@@ -19,19 +19,23 @@ var
 * {@link module:enyo/Select~Select} implements an HTML [selection]{@glossary select} widget, using
 * {@link module:enyo/Option~Option} instances by default.
 *
-* ```
-* {kind: 'Select', onchange: 'selectChanged', components: [
-*	{content: 'Descending', value: 'd'},
-*	{content: 'Ascending', value: 'a'}
+* ```javascript
+* var
+* 	kind = require('enyo/kind'),
+* 	Select = require('enyo/Select');
+*
+* {kind: Select, onchange: 'selectChanged', components: [
+* 	{content: 'Descending', value: 'd'},
+* 	{content: 'Ascending', value: 'a'}
 * ]}
-* 
+*
 * selectChanged: function (inSender, inEvent) {
-*	var s = inSender.getValue();
-*	if (s == 'd') {
-*		this.sortListDescending();
-*	} else {
-*		this.sortListAscending();
-*	}
+* 	var s = inSender.getValue();
+* 	if (s == 'd') {
+* 		this.sortListDescending();
+* 	} else {
+* 		this.sortListAscending();
+* 	}
 * }
 * ```
 * 

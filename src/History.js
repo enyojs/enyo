@@ -59,6 +59,10 @@ var
 	// Track if we're in the midst of handling a pop
 	_processing = false,
 
+	// If history were disabled or clear called during processing, we can't continue to process the
+	// queue which will need to resume after the clear processes.
+	_abortQueueProcessing = false,
+
 	// `true` if the platform support the HTML5 History API
 	_supports = !!global.history.pushState;
 
@@ -102,12 +106,7 @@ var EnyoHistory = module.exports = kind.singleton(
 	*/
 	enabledChanged: function () {
 		// reset private members
-		_history = [];
-		_queue = [];
-		_popQueueCount = 0;
-		_pushQueued = false;
-		_processing = false;
-		this.stopJob('history.go');
+		if (!this.enabled) this.clear();
 	},
 
 	/**
@@ -175,17 +174,22 @@ var EnyoHistory = module.exports = kind.singleton(
 	},
 
 	/**
-	* Asynchronously drops all history entries without calling their respective handlers. When the
+	* Clears all history entries without calling their respective handlers. When the
 	* entries are popped, the internal history will be empty and the browser history will be
 	* reset to the state when this module started tracking the history.
 	*
 	* @public
 	*/
 	clear: function () {
-		var len = _history.length;
-		if (len) {
-			this.drop(len);
-		}
+		var ql = _queue.length,
+			hl = _history.length;
+
+		_popQueueCount = 0;
+		_pushQueued = false;
+		_abortQueueProcessing = _processing;
+		_processing = false;
+		if (ql) _queue.splice(0, ql);
+		if (hl) this.drop(hl);
 	},
 
 	/**
@@ -235,14 +239,13 @@ var EnyoHistory = module.exports = kind.singleton(
 	* @private
 	*/
 	processQueue: function () {
-		var i, l = _queue.length, next,
-			i2, entries;
+		var next, i, entries;
 
 		this.silencePushEntries();
 
-		for (i = 0; i < l; i++) {
+		while (_queue.length && !_abortQueueProcessing) {
 			next = _queue.shift();
-			
+
 			if (next.type === 'push') {
 				this.pushEntry(next.entry, next.silenced);
 			} else {
@@ -251,16 +254,20 @@ var EnyoHistory = module.exports = kind.singleton(
 				// if a 'pop' was requested
 				if (next.type == 'pop') {
 					// iterate the requested number of history entries
-					for (i2 = entries.length - 1; i2 >= 0; --i2) {
+					for (i = entries.length - 1; i >= 0; --i) {
 						// and call each handler if it exists
-						this.processPopEntry(entries[i2]);
+						this.processPopEntry(entries[i]);
 					}
 				}
 				// otherwise we just drop the entries and do nothing
 			}
 		}
-		_popQueueCount = 0;
-		_pushQueued = false;
+		if (_abortQueueProcessing) {
+			_abortQueueProcessing = false;
+		} else {
+			_popQueueCount = 0;
+			_pushQueued = false;
+		}
 	},
 
 	/**
@@ -279,6 +286,8 @@ var EnyoHistory = module.exports = kind.singleton(
 				if (silence) {
 					silence -= 1;
 					next.silenced = true;
+				} else {
+					next.silenced = false;
 				}
 			} else {
 				silence += next.count;
@@ -309,7 +318,7 @@ var EnyoHistory = module.exports = kind.singleton(
 	*/
 	enqueuePop: function (type, count) {
 		count = count || 1;
-		_queue.push({type: type, count: count});
+		this.addToQueue({type: type, count: count});
 		// if we've only queued pop/drop events, we need to increment the number of entries to go
 		// back. once a push is queued, the history must be managed in processState.
 		if (!_pushQueued) {
@@ -342,7 +351,24 @@ var EnyoHistory = module.exports = kind.singleton(
 	*/
 	enqueuePush: function (entry) {
 		_pushQueued = true;
-		_queue.push({type: 'push', entry: entry});
+		this.addToQueue({type: 'push', entry: entry});
+	},
+
+	/**
+	* When entries are added while processing the queue, the new entries should be added at the top
+	* of the queue rather than the end because the queue is processed FIFO and the assumption of
+	* adding them mid-process is that they are being added at the point in the queue processing in
+	* which they are called.
+	*
+	* @private
+	*/
+	addToQueue: function (entry) {
+		if (_processing) {
+			_queue.unshift(entry);
+			this.silencePushEntries();
+		} else {
+			_queue.push(entry);
+		}
 	},
 
 	/**

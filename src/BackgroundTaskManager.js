@@ -75,7 +75,7 @@ module.exports = kind.singleton(
 	},
 
 	/**
-	* Add a customer to the queue.
+	* Adds a customer to the queue.
 	*
 	* @param {Object} customer - The item (customer) to add to the queue.
 	* @param {String} nom - The name of the customer for later reference.
@@ -91,7 +91,7 @@ module.exports = kind.singleton(
 	},
 
 	/**
-	* Remove a specific customer.
+	* Removes a specific customer.
 	*
 	* @param {String} nom - The name of the customer to remove from the queue.
 	* @public
@@ -121,7 +121,7 @@ module.exports = kind.singleton(
 	},
 
 	/**
-	* Clear the queue of customers.
+	* Clears the queue of customers.
 	*
 	* @public
 	*/
@@ -136,7 +136,7 @@ module.exports = kind.singleton(
 	},
 
 	/**
-	* Iterate through customer queue and pause each customer.
+	* Iterates through customer queue and pauses each customer.
 	*
 	* @public
 	*/
@@ -149,7 +149,7 @@ module.exports = kind.singleton(
 	},
 
 	/**
-	* Iterate through customer queue and resume each customer.
+	* Iterates through customer queue and resumes each customer.
 	*
 	* @public
 	*/
@@ -173,9 +173,9 @@ module.exports = kind.singleton(
 	},
 
 	/**
-	* Determines whether any of our customers has a task.
+	* Determines whether any customers have a task.
 	*
-	* @returns {Boolean} If `true`, we have at least one customer with a task; `false` otherwise.
+	* @returns {Boolean} `true` if at least one customer has a task; otherwise, `false`.
 	* @private
 	*/
 	hasActiveTasks: function () {
@@ -188,7 +188,7 @@ module.exports = kind.singleton(
 	* Determines whether the priority of the last task added to a given customer is urgent
 	* enough to move the customer to the front of the queue.
 	*
-	* @param {Object} customer - The customer which has had a change in priority for one of its
+	* @param {Object} customer - The customer that has had a change in priority for one of its
 	*	tasks.
 	* @param {Number} priority - The priority that will be checked for urgency.
 	* @private
@@ -218,7 +218,7 @@ module.exports = kind.singleton(
 	},
 
 	/**
-	* Give the next customer a chance to execute a single task.
+	* Gives the next customer a chance to execute a single task.
 	*
 	* @private
 	*/

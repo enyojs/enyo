@@ -411,6 +411,17 @@ var dom = module.exports = {
 	},
 
 	/**
+	* Removes a node from the DOM.
+	*
+	* @param {Node} node - The [node]{@glossary Node} to remove.
+	* @public
+	*/
+	removeNode: function (node) {
+		if (node.remove) node.remove();
+		else if (node.parentNode) node.parentNode.removeChild(node);
+	},
+
+	/**
 	* Sets the `innerHTML` property of the specified `node` to `html`.
 	*
 	* @param {Node} node - The [node]{@glossary Node} to set.
@@ -431,7 +442,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	hasClass: function(node, s) {
-		if (!node || !node.className) { return; }
+		if (!node || !s || !node.className) { return; }
 		return (' ' + node.className + ' ').indexOf(' ' + s + ' ') >= 0;
 	},
 
@@ -443,7 +454,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	addClass: function(node, s) {
-		if (node && !this.hasClass(node, s)) {
+		if (node && s && !this.hasClass(node, s)) {
 			var ss = node.className;
 			node.className = (ss + (ss ? ' ' : '') + s);
 		}
@@ -457,7 +468,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	removeClass: function(node, s) {
-		if (node && this.hasClass(node, s)) {
+		if (node && s && this.hasClass(node, s)) {
 			var ss = node.className;
 			node.className = (' ' + ss + ' ').replace(' ' + s + ' ', ' ').slice(1, -1);
 		}

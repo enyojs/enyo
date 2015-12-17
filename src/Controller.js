@@ -14,7 +14,7 @@ var
 
 /**
 * {@link module:enyo/Controller~Controller} is the base [kind]{@glossary kind} for all
-* controllers in Enyo. An abstract kind, `enyo.Controller` is a
+* controllers in Enyo. An abstract kind, `enyo/Controller` is a
 * [delegate]{@glossary delegate}/[component]{@link module:enyo/Component~Component} that
 * is designed to be a proxy for information.
 *

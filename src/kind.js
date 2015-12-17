@@ -7,18 +7,18 @@ var
 var defaultCtor = null;
 
 /**
-* Creates a JavaScript [constructor]{@glossary constructor} function with
+* Creates a JavaScript {@glossary constructor} function with
 * a prototype defined by `props`. **All constructors must have a unique name.**
 *
-* `enyo.kind()` makes it easy to build a constructor-with-prototype (like a
+* `kind()` makes it easy to build a constructor-with-prototype (like a
 * class) that has advanced features like prototype-chaining
-* ([inheritance]{@glossary inheritance}).
+* ({@glossary inheritance}).
 *
 * A plug-in system is included for extending the abilities of the
-* [kind]{@glossary kind} generator, and constructors are allowed to
+* {@glossary kind} generator, and constructors are allowed to
 * perform custom operations when subclassed.
 *
-* If you make changes to `enyo.kind()`, be sure to add or update the appropriate
+* If you make changes to `enyo/kind`, be sure to add or update the appropriate
 * [unit tests](@link https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
 *
 * For more information, see the documentation on
@@ -26,7 +26,7 @@ var defaultCtor = null;
 *
 * @module enyo/kind
 * @param {Object} props - A [hash]{@glossary Object} of properties used to define and create
-*	the [kind]{@glossary kind}
+*	the {@glossary kind}
 * @public
 */
 /*jshint -W120*/
@@ -101,24 +101,28 @@ var getDefaultCtor = exports.getDefaultCtor = function () {
 var concatenated = exports.concatenated = [];
 
 /**
-* Creates a singleton of a given [kind]{@glossary kind} with a given
+* Creates a singleton of a given {@glossary kind} with a given
 * definition. **The `name` property will be the instance name of the singleton
 * and must be unique.**
 *
 * ```javascript
-*	enyo.singleton({
-*		kind: 'enyo.Control',
-*		name: 'app.MySingleton',
-*		published: {
-*			value: 'foo'
-*		},
-*		makeSomething: function() {
-*			//...
-*		}
-*	});
+* var
+* 	kind = require('enyo/kind'),
+* 	Control = require('enyo/Control');
 *
-*	app.MySingleton.makeSomething();
-*	app.MySingleton.setValue('bar');
+* module.exports = singleton({
+* 	kind: Control,
+* 	name: 'app.MySingleton',
+* 	published: {
+* 		value: 'foo'
+* 	},
+* 	makeSomething: function() {
+* 		//...
+* 	}
+* });
+*
+* app.MySingleton.makeSomething();
+* app.MySingleton.setValue('bar');
 *```
 *
 * @public
