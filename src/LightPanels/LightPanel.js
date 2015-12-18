@@ -1,5 +1,6 @@
 /**
 * Contains the declaration for the {@link module:enyo/LightPanels~LightPanel} kind.
+* @wip
 * @module enyo/LightPanels
 */
 
@@ -30,6 +31,7 @@ var States = {
 * @class LightPanel
 * @extends module:enyo/Control~Control
 * @ui
+* @wip
 * @public
 */
 module.exports = kind(
