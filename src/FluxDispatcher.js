@@ -1,5 +1,6 @@
 /**
 * Returns the FluxDispatcher singleton.
+* @wip
 * @module enyo/FluxDispatcher
 */
 

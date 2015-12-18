@@ -2,6 +2,7 @@ require('enyo');
 
 /**
 * Contains the declaration for the {@link module:enyo/NewThumb~NewThumb} kind.
+* @wip
 * @module enyo/NewThumb
 */
 
@@ -22,6 +23,8 @@ var
 * `enyo/NewThumb` is not typically created in application code.
 *
 * @class NewThumb
+* @extends module:enyo/Control~Control
+* @wip
 * @protected
 */
 module.exports = kind(

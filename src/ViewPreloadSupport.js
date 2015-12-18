@@ -1,5 +1,6 @@
 /**
 * Exports the {@link module:enyo/ViewPreloadSupport~ViewPreloadSupport} mixin
+* @wip
 * @module enyo/ViewPreloadSupport
 */
 var
@@ -14,6 +15,7 @@ var
 * A {@glossary mixin} used for preloading views.
 *
 * @mixin
+* @wip
 * @private
 */
 var ViewPreloadSupport = {

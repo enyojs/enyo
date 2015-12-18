@@ -2,6 +2,7 @@ require('enyo');
 
 /**
 * Returns the BackgroundTaskManager singleton.
+* @wip
 * @module enyo/BackgroundTaskManager
 */
 

@@ -1,3 +1,9 @@
+/**
+* Contains the declaration for the {@link module:enyo/NewDataList~NewDataList} kind.
+* @wip
+* @module enyo/NewDataList
+*/
+
 require('enyo');
 
 var
@@ -8,7 +14,16 @@ var
 	Scrollable = require('./Scrollable'),
 	VirtualDataRepeater = require('./VirtualDataRepeater');
 
-module.exports = kind({
+/**
+* {@link module:enyo/NewDataList~NewDataList} is a work-in-progress
+*
+* @class NewDataList
+* @extends module:enyo/VirtualDataRepeater~VirtualDataRepeater
+* @wip
+* @ui
+*/
+module.exports = kind(
+	/** @lends module:enyo/NewDataList~NewDataList.prototype */ {
 	name: 'enyo.NewDataList',
 	kind: VirtualDataRepeater,
 	direction: 'vertical',

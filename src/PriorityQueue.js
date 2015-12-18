@@ -2,6 +2,7 @@ require('enyo');
 
 /**
 * Exports Priority options used by {@link module:enyo/BackgroundTaskManager}.
+* @wip
 * @module enyo/PriorityQueue
 */
 
@@ -48,6 +49,7 @@ var Priorities = {
 
 /**
 * @class PriorityQueue
+* @wip
 * @public
 */
 module.exports = exports = kind(

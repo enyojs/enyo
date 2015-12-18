@@ -1,5 +1,6 @@
 /**
 * Contains the declaration for the {@link module:enyo/FluxStore~FluxStore} kind.
+* @wip
 * @module enyo/FluxStore
 */
 

@@ -1,5 +1,6 @@
 /**
 * Exports the {@link module:enyo/TaskManagerSupport~TaskManagerSupport} mixin
+* @wip
 * @module enyo/TaskManagerSupport
 */
 
@@ -14,7 +15,10 @@ var
 	Priorities = PriorityQueue.Priorities,
 	BackgroundTaskManager = require('./BackgroundTaskManager');
 
-/** @mixin */
+/**
+* @mixin
+* @wip
+*/
 var TaskManagerSupport = {
 
 	/**
