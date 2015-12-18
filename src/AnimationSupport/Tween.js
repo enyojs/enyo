@@ -26,7 +26,7 @@ module.exports = {
 
         node = charc.node;
         newState = pose._endAnim;
-        ease = pose.animate ? pose.animate.ease: this.ease;
+        ease = pose.animate && pose.animate.ease ? pose.animate.ease: this.ease;
         oldState = pose._startAnim;
         charc.currentState = charc.currentState || {};
         if(pose.props){      
