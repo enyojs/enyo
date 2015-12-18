@@ -133,9 +133,13 @@ var AnimationSupport = {
 	* @public
 	*/
 	addAnimation: function (newProp, duration) {
-		this.prevDur = duration || this.prevDur;
-		this.totalDuration += this.prevDur;
-		this._animPose.push({animate: newProp, duration: this.totalDuration});
+		if (this.prevDur === 0 && duration === 0) {
+			this._animPose[0] = {animate: newProp, duration: 0};
+		} else {
+			this.prevDur = duration || this.prevDur;
+			this.totalDuration += this.prevDur;
+			this._animPose.push({animate: newProp, duration: this.totalDuration});
+		}
 	},
 
 	/**

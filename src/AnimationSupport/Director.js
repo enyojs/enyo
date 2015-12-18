@@ -58,6 +58,7 @@ module.exports = {
             prevDur = actor._animPose[(index - 1) < 0 ? 0 : (index - 1)].duration,
             currentAnimSince = since - prevDur,
             runningDur = props.duration - prevDur;
+
         if (!props._startAnim) {
             pose = frame.getComputedProperty(actor.hasNode(), props.animate, actor.currentState);
             utils.mixin(props, pose);
@@ -65,7 +66,8 @@ module.exports = {
 
         if (currentAnimSince < 0) return;
         if (currentAnimSince <= runningDur) {
-            t = currentAnimSince / runningDur;
+            if (currentAnimSince === 0 || runningDur === 0) t = 1;
+            else t = currentAnimSince / runningDur;
             tween.step(actor, props, t, runningDur);
         } else {
             tween.step(actor, props, 1, runningDur);
@@ -76,6 +78,10 @@ module.exports = {
         var startIndex = 0,
             stopIndex = arr.length - 1,
             middle = Math.floor((stopIndex + startIndex) / 2);
+
+        if(duration === 0) {
+            return startIndex;
+        }
 
         while (arr[middle].duration != duration && startIndex < stopIndex) {
             if (duration < arr[middle].duration) {

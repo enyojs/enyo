@@ -174,15 +174,15 @@ module.exports = kind.singleton({
 			this.running = false;
 			return;
 		}
-
-		ts = utils.perfNow();
+		
 		for (i = 0; i < len; i++) {
 			curr = this.chracs[i];
 			if (curr && curr.ready()) {
-				director.update(curr, ts - (wasTs || ts));
+				ts = utils.perfNow();
+				director.update(curr, ts - (curr.wasTs || ts));
+				curr.wasTs = ts;
 			}
 		}
-		wasTs = ts;
 		this.start();
 	},
 
