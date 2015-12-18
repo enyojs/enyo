@@ -2,6 +2,7 @@ require('enyo');
 
 /**
 * Returns the SystemMonitor singleton
+* @wip
 * @module enyo/SystemMonitor
 */
 

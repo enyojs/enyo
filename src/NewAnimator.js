@@ -1,3 +1,10 @@
+/**
+* Contains the declaration for the {@link module:enyo/NewAnimator~NewAnimator} kind.
+* @wip
+* @private
+* @module enyo/NewAnimator
+*/
+
 require('enyo');
 
 var
@@ -8,7 +15,16 @@ var
 	CoreObject = require('./CoreObject'),
 	Loop = require('./Loop');
 
-module.exports = kind.singleton({
+/**
+* {@link module:enyo/NewAnimator~NewAnimator} is a work-in-progress
+*
+* @class NewAnimator
+* @extends module:enyo/CoreObject~Object
+* @wip
+* @private
+*/
+module.exports = kind.singleton(
+	/** @lends module:enyo/NewAnimator~NewAnimator.prototype */ {
 	name: 'enyo.NewAnimator',
 	kind: CoreObject,
 	animate: function(fn, duration) {

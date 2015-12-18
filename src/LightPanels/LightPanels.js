@@ -2,6 +2,7 @@ require('enyo');
 
 /**
 * Contains the declaration for the {@link module:enyo/LightPanels~LightPanels} kind.
+* @wip
 * @module enyo/LightPanels
 */
 
@@ -68,6 +69,7 @@ var Orientation = {
 * @extends module:enyo/Control~Control
 * @mixes module:enyo/TaskManagerSupport~TaskManagerSupport
 * @mixes module:enyo/ViewPreloadSupport~ViewPreloadSupport
+* @wip
 * @ui
 * @public
 */
