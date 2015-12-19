@@ -29,7 +29,7 @@ module.exports = {
      * @public
      */
     
-    update: function(actor, ts) {
+    take: function(actor, ts) {
         var dur = actor.totalDuration,
             tm = actor.rolePlay(ts);
         
@@ -58,7 +58,6 @@ module.exports = {
             prevDur = actor._animPose[(index - 1) < 0 ? 0 : (index - 1)].duration,
             currentAnimSince = since - prevDur,
             runningDur = props.duration - prevDur;
-
         if (!props._startAnim) {
             pose = frame.getComputedProperty(actor.hasNode(), props.animate, actor.currentState);
             utils.mixin(props, pose);
@@ -94,5 +93,42 @@ module.exports = {
         }
 
         return (arr[middle].duration != duration) ? startIndex : middle;
+    },
+
+    shot: function(chrac, ts) {
+        var v1, s, a, v,
+            t = ts,
+            dt = chrac._eventCache,
+            dir = this.angle(chrac.direction),
+            v0 = dt.velocity || 0;
+        
+        v1 = dt[dir] / t;
+        if (v1 === 0) {
+            dt[dir] = 0;
+            dt.velocity = 0;
+        } else {
+            a = (v1 - v0) / t;
+            s = 0.5 * a * t * t;
+            v = (a < 0 ? -s : s);
+            dt[dir] = dt[dir] - v;
+            if (a > -0.001 && a < 0.001) {
+                dt[dir] = 0;
+            }
+            dt.velocity = v1;
+            this.take(chrac, dt[dir] > 0 ? v : -v);
+        }   
+    },
+
+    angle: function (direction) {
+        switch(direction) {
+        case "X" :
+            return "dX";
+        case "Y" :
+            return "dY";
+        case "Z" :
+            return "dZ";
+        default: 
+            return "dX";
+        }
     }
 };

@@ -1,8 +1,20 @@
 require('enyo');
 
 var
-	dispatcher = require('../dispatcher');
+	dispatcher = require('../dispatcher'),
+	emitter = require('../EventEmitter');
 
+
+var eventsMap = {
+	vdrag: "drag",
+	vscroll: "scroll",
+	vmousewheel: "mousewheel",
+	vtouch: "touchmove",
+	drag: "vdrag",
+	scroll: "vscroll",
+	mousewheel: "vmousewheel",
+	touchmove: "vtouch"
+};
 /**
 * This module handles the animation events for the character.
 * If the character has opted to have animations handled by animation framework,
@@ -41,7 +53,7 @@ var EventDelegator = {
 		"touchmove",
 		"touchend"
 	],
-	
+
 	/**
 	* Attaches the evnet handlers to the character either its own events or
 	* else default events with the framework. As of now only these events are 
@@ -52,9 +64,9 @@ var EventDelegator = {
 	* @public
 	*/
 	register: function (charc) {
-		var events = charc.animationEvents || this.eventArray;
-		for (var i = 0, l = events.length; i < l; i++) {
-			this.addRemoveListener(charc, events[i]);
+		var events = charc.handleAnimationEvents || {};
+		for (var key in events) {
+			this.addRemoveListener(charc, key, events[key]);
 		}
 	},
 
@@ -68,41 +80,71 @@ var EventDelegator = {
 	* @public
 	*/
 	deRegister: function (charc) {
-		var events = charc.animationEvents || this.eventArray;
-		for (var i = 0, l = events.length; i < l; i++) {
-			this.addRemoveListener(charc, events[i], true);
+		var events = charc.handleAnimationEvents || {};
+		for (var key in events) {
+			this.addRemoveListener(charc, key, events[key], true);
 		}
 	},
 
 	/**
 	* @private
 	*/
-	addRemoveListener: function(charc, name, remove) {
-		var d = remove ? dispatcher.stopListening : dispatcher.listen;
-		d(charc.hasNode(), name, charc.bindSafely(this[name + 'Event'], charc));
+	addRemoveListener: function(charc, name, callback, remove) {
+		var d = remove ? dispatcher.stopListening : dispatcher.listen,
+			e = eventsMap[name];
+		d(charc.hasNode(), e, charc.bindSafely(this[e + 'Event'], charc));
+
+		var fn = remove ? emitter.off : emitter.on;
+		fn.apply(emitter, [name, charc[callback], charc]);
 	},
 
 	/**
 	* @private
 	*/
-	touchstartEvent: function (sender, ev) {
-		sender.touchX = ev.targetTouches[0].pageX;
-		sender.touchY = ev.targetTouches[0].pageY;
+	emitEvent: function(charc, data) {
+		return emitter.vemit.call(emitter, data);
 	},
 
 	/**
 	* @private
 	*/
-	touchmoveEvent: function (sender, ev) {
-		var x = ev.targetTouches[0].pageX,
-			y = ev.targetTouches[0].pageY;
+	touchstartEvent: function (sender, inEvent) {
+		sender.touchX = inEvent.targetTouches[0].pageX;
+		sender.touchY = inEvent.targetTouches[0].pageY;
+	},
+
+	/**
+	* @private
+	*/
+	touchmoveEvent: function (sender, inEvent) {
+		var x = inEvent.targetTouches[0].pageX,
+			y = inEvent.targetTouches[0].pageY;
 			
 		if(x !== 0 || y !== 0) {
-			sender.vScrollX = sender.touchX - x;
-			sender.vScrollY = sender.touchY - y;
-			sender.vScrollZ = 0;
-			sender.touchX = x;
-			sender.touchY = y;
+			/*sender.animDelta[0] = sender.touchX - x;
+			sender.animDelta[1] = sender.touchY - y;
+			sender.animDelta[2] = 0;*/
+
+			// var o = {
+			// 	dX: (sender.touchX - x),
+			// 	dY: (sender.touchY - y),
+			// 	dZ: 0
+			// };
+			// sender.setAnimationDelta(o);
+			// sender.touchX = x;
+			// sender.touchY = y;
+
+			// this.eventName = eventsMap[inEvent.type];
+
+			console.log(inEvent.targetTouches[0]);
+
+			inEvent.dX = inEvent.deltaX;
+			inEvent.dY = inEvent.deltaY;
+			inEvent.dZ = 0;
+			inEvent.vtype = eventsMap[inEvent.type];
+
+			inSender.setAnimationDelta(inEvent);
+			inSender._virtualEvent = eventsMap[inEvent.type];
 		}
 	},
 
@@ -118,27 +160,13 @@ var EventDelegator = {
 	* @private
 	*/
 	scrollEvent: function (inSender, inEvent) {
-		var delta = inSender.deltaY,
-			scrollTop = inSender.target.scrollTop,
-			scrollLeft = inSender.target.scrollLeft;
+		inEvent.dX = inEvent.deltaX;
+		inEvent.dY = inEvent.deltaY;
+		inEvent.dZ = 0;
+		inEvent.vtype = eventsMap[inEvent.type];
 
-		if (this.scrollValue === 0) {
-			this.scrollValue = inSender.target.scrollTop;
-		}
-
-		delta = inSender.target.scrollTop - this.scrollValue;
-
-		this.deltaX = scrollLeft - this.deltaX;
-		this.deltaY = scrollTop - this.deltaY;
-		this.scrollValue = scrollTop;
-
-		this.deltaX = scrollLeft;
-		this.deltaY = scrollTop;
-
-
-		this.vScrollX = delta;
-		this.vScrollY = 0;
-		this.vScrollZ = 0;	
+		inSender.setAnimationDelta(inEvent);
+		inSender._virtualEvent = eventsMap[inEvent.type];
 	},
 
 	/**
@@ -162,19 +190,32 @@ var EventDelegator = {
 			this.dragLeft = dragLeft,
 			this.dragTop = dragTop;
 
-			this.vScrollX = this.deltaX;
-			this.vScrollY = this.deltaY;
-			this.vScrollZ = 0;
+			/*this.animDelta[0] = this.deltaX;
+			this.animDelta[1] = this.deltaY;
+			this.animDelta[2] = 0;*/
+
+			var o = {
+				dX: this.deltaX,
+				dY: this.deltaY,
+				dZ: 0
+			};
+			this.setAnimationDelta(o);
+
+			this.eventName = eventsMap[inEvent.type];
 		}
 	},
 
 	/**
 	* @private
 	*/
-	mousewheelEvent: function (sender, ev) {
-		sender.vScrollX = ev.deltaY;
-		sender.vScrollY = ev.deltaX;
-		sender.vScrollZ = 0;
+	mousewheelEvent: function (sender, inEvent) {
+		inEvent.dX = inEvent.deltaX;
+		inEvent.dY = inEvent.deltaY;
+		inEvent.dZ = 0;
+		inEvent.vtype = eventsMap[inEvent.type];
+
+		sender.setAnimationDelta(inEvent);
+		sender._virtualEvent = eventsMap[inEvent.type];
 	}
 };
 

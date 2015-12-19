@@ -265,7 +265,7 @@ var AnimationInterfaceSupport = {
         this.setAnimateOne = delta;
         this.setAnimateTwo = (-1 * (this.translateX));
         this.setAnimateThree = (-1 * (this.translateY));
-        if (patterns[0].name === "Slideable" || patterns[0].name === "Parallax") {
+        if (this.patterns[0].name === "Slideable" || this.patterns[0].name === "Parallax") {
             this.setAnimateTwo = this.setAnimateThree;
         }
     },
@@ -274,29 +274,29 @@ var AnimationInterfaceSupport = {
      * @public
      */
     commonTasks: function(delta, deltax, deltay) {
-        var patternsLength = patterns.length;
+        var patternsLength = this.patterns.length;
         if (delta !== 0) {
             delta = delta / Math.abs(delta);
         }
         //Call specific interface
         for (var i = 0; i < patternsLength; i++) {
-            if (patterns[i].name === "Fadeable") {
-                patterns[i].fadeByDelta.call(this, delta);
-            } else if (patterns[i].name === "Flippable") {
-                patterns[i].doFlip.call(this, delta);
-            } else if (patterns[i].name === "Slideable") {
+            if (this.patterns[i].name === "Fadeable") {
+                this.patterns[i].fadeByDelta.call(this, delta);
+            } else if (this.patterns[i].name === "Flippable") {
+                this.patterns[i].doFlip.call(this, delta);
+            } else if (this.patterns[i].name === "Slideable") {
                 if (this.parallax === true) {
                     for (var j = 0; j < this.children.length; j++) {
                         var current = this.children[j];
                         animator.trigger(current);
-                        patterns[i].slide.call(current, (-1 * deltax / current.speed), (-1 * deltay / current.speed), 0);
+                        this.patterns[i].slide.call(current, (-1 * deltax / current.speed), (-1 * deltay / current.speed), 0);
                         current.start(true);
                     }
                 } else {
-                    patterns[i].slide.call(this, (-1 * deltax), (-1 * deltay), 0);
+                    this.patterns[i].slide.call(this, (-1 * deltax), (-1 * deltay), 0);
                 }
             }
-            if (patterns[i].name !== "Slideable") {
+            if (this.patterns[i].name !== "Slideable") {
                 this.setAnimateOne = 0;
                 this.setAnimateTwo = 0;
                 this.setAnimateThree = 0;
@@ -318,15 +318,12 @@ var AnimationInterfaceSupport = {
     commitAnimation: function(x, y, z) {
         var i, len;
 
-        if (patterns && Object.prototype.toString.call(patterns) === "[object Array]") {
-            len = patterns.length;
+        if (this.patterns && Object.prototype.toString.call(this.patterns) === "[object Array]" && (len = this.patterns.length)) {
             for (i = 0; i < len; i++) {
-                if (typeof patterns[i].triggerEvent === 'function') {
-                    //patterns[i].triggerEvent();
-
-                }
+                /*if (typeof this.patterns[i].triggerEvent === 'function') {
+                    patterns[i].triggerEvent();
+                }*/
                 this.commonTasks(this.setAnimateOne, this.setAnimateTwo, this.setAnimateThree);
-
             }
         }
     },
@@ -359,10 +356,10 @@ kind.concatHandler = function(ctor, props, instance) {
         var proto = ctor.prototype || ctor;
         extend(AnimationInterfaceSupport, proto);
 
-        patterns = aPattern;
-        var len = patterns.length;
+        this.patterns = aPattern;
+        var len = this.patterns.length;
         for (var i = 0; i < len; i++) {
-            extend(patterns[i], proto);
+            extend(this.patterns[i], proto);
         }
         animator.register(proto);
     }

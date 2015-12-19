@@ -104,7 +104,8 @@ module.exports = kind.singleton({
 	* @public
 	*/
 	remove: function (curr) {
-		this.chracs.splice(this.chracs.indexOf(curr), 1);
+		var i = this.chracs.indexOf(curr);
+		if (i >= 0) this.chracs.splice(i, 1);
 	},
 
 	/**
@@ -179,7 +180,7 @@ module.exports = kind.singleton({
 			curr = this.chracs[i];
 			if (curr && curr.ready()) {
 				ts = utils.perfNow();
-				director.update(curr, ts - (curr.wasTs || ts));
+				director.take(curr, ts - (curr.wasTs || ts));
 				curr.wasTs = ts;
 			}
 		}
@@ -190,19 +191,22 @@ module.exports = kind.singleton({
 	* @private
 	*/
 	eventLoop: function () {
-		var i, curr, evlen = this.evnts.length;
+		var i, curr, status, evlen = this.evnts.length;
 		for (i = 0; i < evlen; i++) {
 			curr = this.evnts[i];
 			if (this.evnts[i].patterns  && typeof this.evnts[i].patterns.length > 0) {
 				this.evnts[i].commitAnimation();
 			}
+			ts = utils.perfNow();
 			if (curr && curr.ready()) {
-				director.updateDelta(curr);
-				if (!curr.animating) {
-					director.complete(curr);
-					curr.completed(curr);
+				if (curr.deltaChanged) {
+					status = curr.triggerEvent();
+				}
+				if (!status && curr.eventCacheUpdated) {
+					director.shot(curr, ts - (wasTs || ts));
 				}
 			}
+			wasTs = ts;
 		}
 		this.dummy();
 	},

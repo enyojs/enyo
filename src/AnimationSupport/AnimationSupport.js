@@ -43,6 +43,18 @@ var AnimationSupport = {
 	animationState: "",
 
 	/**
+	* To check if the event delta value is changed
+	* @private
+	*/
+	deltaChanged: false,
+
+	/**
+	* To hold the name of the animation event which occured on the character
+	* @private
+	*/
+	eventName: "",
+
+	/**
 	* Holds delta value in the order [x, y, z, rad]
 	* @private
 	*/
@@ -71,6 +83,9 @@ var AnimationSupport = {
 	_pose: [],
 
 	mixins: [EventEmitter, FrameEditor],
+
+	_eventCache: {},
+
 
 	/**
 	* Check if the character is suitable for animation
@@ -150,6 +165,30 @@ var AnimationSupport = {
 		this._prop = newProp;
 	},
 
+
+	/**
+	* Sets the delta values of x, y and z for events
+	* @param {Object} obj - Object contains dX, dY and dZ as keys
+	* @public
+	*/
+	setAnimationDelta: function (ev) {
+		this._eventCache.dX = ev.dX + this._eventCache.dX || 0;
+		this._eventCache.dY = ev.dY + this._eventCache.dY || 0;
+		this._eventCache.dZ = ev.dZ + this._eventCache.dZ || 0;
+		this._eventCache[ev.vtype] = ev;
+
+		this.deltaChanged =  true;
+		this.eventCacheUpdated = true;
+		
+	},
+
+	/**
+	* Gets the delta values of x, y and z for events
+	* @public
+	*/
+	getAnimationDelta: function () {
+		return this._eventCache[this._virtualEvent];
+	},
 	/**
 	* Gets how long animation is active on this character
 	* @public
@@ -187,6 +226,15 @@ var AnimationSupport = {
 	},
 
 	/**
+	* Trigger the registered event to all the listeners
+	* @public
+	*/
+	triggerEvent: function () {
+		this.deltaChanged = false;
+		return delegator.emitEvent(this, this.getAnimationDelta());
+	},
+
+	/**
 	* @private
 	*/
 	rendered: kind.inherit(function (sup) {
@@ -197,7 +245,7 @@ var AnimationSupport = {
 				delegator.register(this);
 			}
 		};
-    }),
+	}),
     
     /**
      * @private
@@ -205,6 +253,10 @@ var AnimationSupport = {
     destroy: kind.inherit(function(sup) {
         return function() {
             animation.remove(this);
+            animation.deRegister(this);
+            if (this.handleAnimationEvents) {
+				delegator.deRegister(this);
+			}
             sup.apply(this, arguments);
         };
     })

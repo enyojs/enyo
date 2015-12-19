@@ -80,7 +80,7 @@ module.exports = {
      * @public
      * Bubble the fadeable event
      */
-    triggerEvent: function(e) {
-        //this.doFadeStart();
-    }
+    /*triggerEvent: function(e) {
+        this.doFadeStart();
+    }*/
 };
