@@ -2,6 +2,7 @@
 * ViewManager module
 *
 * @module enyo/ViewManager
+* @wip
 */
 
 /**
@@ -196,6 +197,7 @@ var viewCount = 0;
 * @extends module:enyo/Control~Control
 * @ui
 * @public
+* @wip
 */
 var ViewMgr = kind(
 	/** @lends module:enyo/ViewManager~ViewManager.prototype */ {

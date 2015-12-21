@@ -1,3 +1,9 @@
+
+/**
+* @module enyo/ViewLayout
+* @wip
+*/
+
 var
 	animation = require('../animation'),
 	kind = require('../kind'),
@@ -33,6 +39,8 @@ var ViewLayoutSupport = {
 *    Removes the `transitioning` class and deactivates the now inactive view.
 *
 * @class enyo.ViewLayout
+* @public
+* @wip
 */
 module.exports = kind(
 	/** @lends enyo.ViewLayout.prototype */ {
