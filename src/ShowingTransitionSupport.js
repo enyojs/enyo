@@ -1,11 +1,9 @@
-require('moonstone');
-
 var kind = require('enyo/kind');
 
 /**
-* @module moonstone/ShowingTransitionSupport
+* @module enyo/ShowingTransitionSupport
 *
-* The {@link module:moonstone/ShowingTransitionSupport} [mixin]{@glossary mixin} is applicable to
+* The {@link module:enyo/ShowingTransitionSupport} [mixin]{@glossary mixin} is applicable to
 * and control that should use a transition or animation when it is shown or hidden. This mixin adds
 * optional state-classes to the component at its resting or transitioning states. The states are as
 * follows:
