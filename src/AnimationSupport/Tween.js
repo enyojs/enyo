@@ -2,7 +2,7 @@ require('enyo');
 
 var
     frame = require('./Frame'),
-     easings = require('./Easings'),
+    easings = require('./Easings'),
     matrixUtil = require('./Matrix'),
     Vector = require('./Vector'),
     utils = require('../utils');
@@ -22,7 +22,7 @@ module.exports = {
      * @private
      */
     step: function(charc, pose, t, d) {
-        var k, c, pts, tState, oState, ease;
+        var k, c, pts, tState, oState, ease, points;
 
         node = charc.node;
         newState = pose._endAnim;
@@ -36,7 +36,6 @@ module.exports = {
                     if (ease && (typeof ease !== 'function')) {
 		              var checkEaseChange = easings.easeChanged(ease);
                         var propChange = easings.propChange(k);
-
                         if (!charc.controlPoints || (propChange === true || checkEaseChange === true)) {
                             // for the first time or either of Ease/Propery changed
                             charc.controlPoints = easings.calculateEase(ease, frame.copy(oldState[k]), frame.copy(newState[k]));
@@ -74,7 +73,10 @@ module.exports = {
         else{
             utils.mixin(charc.currentState,oldState);
         }
-
+        if(charc.path){
+            points = this.getBezier(t, charc.path, charc.currentState.translate, true);
+            charc.currentState.translate = points;
+        }
         matrix = frame.recomposeMatrix(
             charc.currentState.translate,
             charc.currentState.rotate,
@@ -84,7 +86,7 @@ module.exports = {
         );
         frame.accelerate(node, matrix);
 
-        charc.animationStep && charc.animationStep(t);
+        charc.animationStep && charc.animationStep(t,matrix);
     },
 
 
@@ -230,7 +232,7 @@ module.exports = {
      * @public
      * @params t: time, points: knot and control points, vR: resulting point
      */
-    getBezier: function(t, points, vR) {
+    getBezier: function(t, points, vR, isPath) {
 
         if (!vR) vR = [];
 
@@ -241,18 +243,23 @@ module.exports = {
             startPoint = points[0],
             endPoint = points[lastIndex],
             values = easings.getBezierValues(t, lastIndex);
-
         for (i = 0; i < l; i++) {
             vR[i] = 0;
             for (j = 0; j < c; j++) {
-                if ((j > 0) && (j < (c - 1))) {
-                    vR[i] = vR[i] + ((startPoint[i] + (points[j][i] * (endPoint[i] - startPoint[i]))) * values[j]);
-                } else {
+                if(isPath){
                     vR[i] = vR[i] + (points[j][i] * values[j]);
                 }
+                else {  
+                    if((j > 0) && (j < (c - 1))){
+                        vR[i] = vR[i] + ((startPoint[i] + (points[j][i] * (endPoint[i] - startPoint[i]))) * values[j]);
+                    } else {
+                        vR[i] = vR[i] + (points[j][i] * values[j]);
+                    }
+                } 
             }
         }
         return vR;
     }
+
 
 };

@@ -206,6 +206,7 @@ var easings = {
 
         var c,
             values = [],
+            
             x = (1 - t),
             y = t;
         //
