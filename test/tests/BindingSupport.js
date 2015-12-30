@@ -1,13 +1,13 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	BindingSupport = require('../../lib/BindingSupport'),
-	Binding = require('../../lib/Binding'),
-	CoreObject = require('../../lib/CoreObject'),
-	Component = require('../../lib/Component'),
-	Control = require('../../lib/Control'),
-	Model = require('../../lib/Model');
+	BindingSupport = require('enyo/BindingSupport'),
+	Binding = require('enyo/Binding'),
+	CoreObject = require('enyo/CoreObject'),
+	Component = require('enyo/Component'),
+	Control = require('enyo/Control'),
+	Model = require('enyo/Model');
 
 describe ("BindingSupport Mixin", function () {
 	describe ("Methods", function () {
@@ -202,10 +202,10 @@ describe ("BindingSupport Mixin", function () {
 						{name: "one", kind: childCtor, testprop: "one-testprop"}
 					],
 					bindings: [
-						{from: ".$.one.testprop", to: ".testprop1"},
-						{from: ".$.one.$.two.testprop", to: ".testprop2"},
-						{from: ".$.one.deep1.deep2.deep3.testprop", to: ".testprop3"},
-						{from: ".$.late.testprop", to: ".testprop4"}
+						{from: "$.one.testprop", to: "testprop1"},
+						{from: "$.one.$.two.testprop", to: "testprop2"},
+						{from: "$.one.deep1.deep2.deep3.testprop", to: "testprop3"},
+						{from: "$.late.testprop", to: "testprop4"}
 					]
 				});
 				
@@ -239,7 +239,7 @@ describe ("BindingSupport Mixin", function () {
 						{name: "one", testprop: true}
 					],
 					bindings: [
-						{from: ".$.one.testprop", to: ".testprop", oneWay: false}
+						{from: "$.one.testprop", to: "testprop", oneWay: false}
 					]
 				});
 				
@@ -264,15 +264,15 @@ describe ("BindingSupport Mixin", function () {
 							{name: "two", components: [
 								{name: "three", value: "three"}
 							], bindings: [
-								{from: ".owner.$.three.value", to: ".value"}
+								{from: "owner.$.three.value", to: "value"}
 							]}
 						], bindings: [
-							{from: ".owner.$.two.value", to: ".value"}
+							{from: "owner.$.two.value", to: "value"}
 						]}
 					],
 					bindings: [
-						{from: ".$.one.value", to: ".linkedValue"},
-						{from: ".$.three.value", to: ".value"}
+						{from: "$.one.value", to: "linkedValue"},
+						{from: "$.three.value", to: "value"}
 					]
 				});
 				
@@ -292,7 +292,7 @@ describe ("BindingSupport Mixin", function () {
 						{name: "one", model: null}
 					],
 					bindings: [
-						{from: ".model", to: ".$.one.model"}
+						{from: "model", to: "$.one.model"}
 					]
 				});
 				

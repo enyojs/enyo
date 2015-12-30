@@ -1,8 +1,8 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 var
-	ProgressiveFilter = require('../../lib/ProgressiveFilter'),
-	Collection = require('../../lib/Collection');
+	ProgressiveFilter = require('enyo/ProgressiveFilter'),
+	Collection = require('enyo/Collection');
 
 describe('ProgressiveFilter', function () {
 	

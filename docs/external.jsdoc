@@ -2,7 +2,7 @@
 * A kind is an object constructor created using the enyo.kind factory method.
 *
 * @glossary kind
-* @see enyo.kind
+* @see module:enyo/kind
 */
 
 /**
@@ -147,11 +147,33 @@
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
 */
 
+/**
+* A property whose value is bound to that of one or more dependent properties. When the value of a dependent property changes, the value of the computed property is automatically recalculated.
+*
+* @glossary computed_property
+*/
+
+/**
+* Methods and properties marked as private should not be used by developers.  They may be changed or
+* removed without notice and their particular implementations should not be relied upon. Kinds and
+* modules marked as private are inteded for use only by the framework.
+*
+* @glossary private
+*/
+
+/**
+* Methods and properties marked as protected should only be used when subclassing a kind. They
+* represent the internal workings of a kind and should not be used by outside kinds. Protected kinds
+* and modules are not intended to be instantiated directly by developers.
+*
+* @glossary protected
+*/
+
 ///// Internally Documented Links (Glossary) /////
 
 /**
 * Binary (bitwise) operations.
-* 
+*
 * @glossary bitwise
 * @see http://www.experts-exchange.com/Programming/Misc/A_1842-Binary-Bit-Flags-Tutorial-and-Usage-Tips.html
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
@@ -160,7 +182,7 @@
 /**
 * Strict Equality. This comparison logic ensures not only that the value of the things being
 * compared is the same, but also their types.
-* 
+*
 * @glossary ===
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Using_the_Equality_Operators
 */
@@ -170,24 +192,25 @@
 * that don't support a native version of said method, in an effort to bring the
 * browser up to the standards of modern browsers. This allows code that expects
 * a modern browser to work properly in an older one.
-* 
+*
 * @glossary polyfill
 * @see http://en.wikipedia.org/wiki/Polyfill
 */
 
 /**
 * The Document Object Model (DOM) is a programming interface for HTML and XML documents.
+*
 * @glossary DOM
 * @see https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
 */
+
+///// Externally Documented Links /////
 
 /**
 * Inheritance
 * @glossary inheritance
 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain
 */
-
-///// Externally Documented Links /////
 
 /**
 * Universally Unique Identifier

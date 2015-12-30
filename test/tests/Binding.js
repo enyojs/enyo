@@ -1,16 +1,230 @@
 var
-	kind = require('../../lib/kind'),
-	utils = require('../../lib/utils');
+	kind = require('enyo/kind'),
+	utils = require('enyo/utils');
 
 var
-	Binding = require('../../lib/Binding'),
-	CoreObject = require('../../lib/CoreObject'),
-	Component = require('../../lib/Component');
+	Binding = require('enyo/Binding'),
+	PassiveBinding = Binding.PassiveBinding,
+	CoreObject = require('enyo/CoreObject'),
+	Component = require('enyo/Component');
 
 var
-	proto = Binding.prototype;
+	proto;
+
+describe('PassiveBinding', function () {
+
+	proto = PassiveBinding.prototype;
+
+	describe('methods', function () {
+
+		var
+			binding,
+			source,
+			target,
+			owner;
+
+		before(function () {
+			source = {prop: 0};
+			target = {};
+			owner = new CoreObject();
+			binding = owner.binding({
+				kind: PassiveBinding,
+				source: source,
+				from: 'prop',
+				target: target,
+				to: 'prop'
+			});
+		});
+
+		after(function () {
+			owner.destroy();
+			source = null;
+			target = null;
+		});
+
+		describe('#isReady', function () {
+			
+			it ('should respond to the method isReady', function () {
+				expect(proto).to.itself.respondTo('isReady');
+			});
+			
+			it ('should return true if the binding has been resolved (only happens once)',
+				function () {
+				
+				expect(binding.isReady()).to.be.true;
+			});
+			
+			it ('should return false if any of the required parts could not be resolved',
+				function () {
+				
+				// create a temporary binding with no information so it cannot be resolved
+				var bnd = new PassiveBinding();
+				
+				// there is no way this should be true
+				expect(bnd.isReady()).to.be.false;
+				bnd.destroy();
+			});
+			
+		});
+
+		describe('#sync', function () {
+			
+			it ('should respond to the method sync', function () {
+				expect(proto).to.itself.respondTo('sync');
+			});
+			
+			it ('should force a value synchronization from the source to the target', function () {
+				binding.sync();
+				expect(source.prop).to.exist.and.to.equal(target.prop);
+			});
+			
+		});
+		
+		describe('#destroy', function () {
+			
+			before(function () {
+				binding.destroy();
+			});
+			
+			it ('should remove itself from its owner if it is not destroyed itself', function () {
+				expect(owner.bindings.indexOf(binding)).to.equal(-1);
+			});
+			
+			it ('should permanently unready the binding by clearing all references', function () {
+				expect(binding.ready).to.be.null;
+				expect(binding.isReady()).to.be.false;
+				expect(binding.owner).to.be.null;
+				expect(binding.source).to.be.null;
+				expect(binding.target).to.be.null;
+			});
+			
+			it ('should remove itself from the global bindings array', function () {
+				expect(Binding.find(binding.euid)).to.be.undefined;
+			});
+			
+		});
+
+	});
+
+	describe('usage', function () {
+		var
+			dog,
+			cat,
+			otherDog,
+			animal1,
+			animal2,
+			binding1,
+			binding2,
+			veggies,
+			veggie,
+			binding3,
+			person;
+
+		before(function () {
+			dog = {name: 'Rover'};
+			cat = {name: 'Fluffy'};
+			otherDog = {name: 'Fido'};
+			animal1 = {};
+			animal2 = {};
+			binding1 = new PassiveBinding({
+				source: dog,
+				from: 'name',
+				target: animal1,
+				to: 'name'
+			});
+			binding2 = new PassiveBinding({
+				from: 'name',
+				target: animal2,
+				to: 'name'
+			});
+			veggies = {
+				carrot: {color: 'orange'},
+				celery: {color: 'green'},
+				tomato: {color: 'red'}
+			};
+			veggie = {};
+			binding3 = new PassiveBinding({
+				source: veggies,
+				from: 'carrot.color',
+				target: veggie,
+				to: 'color'
+			});
+			person = new Component({
+				defaultBindingKind: PassiveBinding
+			});
+			binding4 = person.binding({
+				from: 'model.age',
+				to: 'displayAge',
+				transform: function(val) {
+					return val ? val + ' years old' : 'unknown';
+				}
+			});
+		});
+
+		after(function () {
+			dog = null;
+			cat = null;
+			animal = null;
+			binding1.destroy();
+			binding1 = null;
+		});
+
+		it ('should initially set the target value correctly', function () {
+			expect(animal1.name).to.equal('Rover');
+		});
+		
+		it ('should update the target value properly when sync\'d', function () {
+			dog.name = 'Rex';
+			binding1.sync();
+			expect(animal1.name).to.equal('Rex');
+		});
+
+		it ('should update properly after rebuilding', function () {
+			binding1.source = otherDog;
+			binding1.rebuild();
+			expect(animal1.name).to.equal('Fido');
+		});
+
+		it ('should init and sync properly when source specified later', function () {
+			expect(binding2.isReady()).to.be.false;
+			binding2.source = cat;
+			binding2.sync();
+			expect(animal2.name).to.equal('Fluffy');
+		});
+
+		it ('should update properly when from changes', function () {
+			expect(veggie.color).to.equal('orange');
+			binding3.from = 'celery.color';
+			binding3.rebuild();
+			expect(veggie.color).to.equal('green');
+		});
+		
+		it ('should update properly when value of source.from changes', function () {
+			expect(veggie.color).to.equal('green');
+			veggies.celery.color = 'purple';
+			binding3.sync();
+			expect(veggie.color).to.equal('purple');
+		});
+
+		it ('should set value to undefined if source.from does not exist', function () {
+			binding3.from = 'onion.color';
+			binding3.rebuild();
+			expect(veggie.color).to.equal(undefined);
+		});
+		
+		it ('should support transforms', function () {
+			expect(person.displayAge).to.equal('unknown');
+			person.set('model', {age: 21});
+			binding4.sync();
+			expect(person.displayAge).to.equal('21 years old');
+		});
+		
+	});
+		
+});
 
 describe('Binding', function () {
+	proto = Binding.prototype;
 	
 	describe('methods', function () {
 		
