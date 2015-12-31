@@ -44,7 +44,7 @@ module.exports = {
 
     cut: function (actor) {
         actor.animating = false;
-        actor._timeline = undefined;
+        actor.timeline = 0;
         actor.completed(actor);
         actor.set('animationState', 'completed');
         if (!actor.active) {

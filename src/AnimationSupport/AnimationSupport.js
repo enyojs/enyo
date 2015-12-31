@@ -133,6 +133,7 @@ var AnimationSupport = {
 		var dom = this.hasNode(), dur,
 			pose = frame.getComputedProperty(dom, undefined, current);
 		pose.duration = 0;
+		this._animPose = [];
 		this._animPose.push(pose);
 		this.currentState = pose.currentState;
 		frame.accelerate(dom, pose.matrix);
