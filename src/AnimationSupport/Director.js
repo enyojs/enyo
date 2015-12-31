@@ -34,9 +34,10 @@ module.exports = {
             tm = actor.rolePlay(ts);
         
         if (tm < 0) return;
-        if (tm <= dur) {
+        if (tm < dur) {
             this.action(actor, tm);
         } else {
+            this.action(actor, tm);
             this.cut(actor);
         }
     },
@@ -64,10 +65,9 @@ module.exports = {
         }
 
         if (currentAnimSince < 0) return;
-        if (currentAnimSince <= runningDur) {
-            if (currentAnimSince === 0 || runningDur === 0) t = 1;
-            else t = currentAnimSince / runningDur;
-            tween.step(actor, props, t, runningDur);
+        if (currentAnimSince <= runningDur && runningDur !== 0) {
+            t = currentAnimSince / runningDur;
+            tween.step(actor, props, ( t > 0.98) ?  t = 1 : t, runningDur);
         } else {
             tween.step(actor, props, 1, runningDur);
         }
