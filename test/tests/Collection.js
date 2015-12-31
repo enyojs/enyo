@@ -1,9 +1,9 @@
 var
-	Collection = require('../../lib/Collection'),
-	Model = require('../../lib/Model'),
-	States = require('../../lib/States'),
-	Source = require('../../lib/Source'),
-	Store = require('../../lib/Store');
+	Collection = require('enyo/Collection'),
+	Model = require('enyo/Model'),
+	States = require('enyo/States'),
+	Source = require('enyo/Source'),
+	Store = require('enyo/Store');
 
 describe('Collection', function () {
 	

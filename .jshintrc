@@ -4,7 +4,8 @@
     "require": false,
     "exports": true,
     "module": true,
-    "module.exports": true
+    "module.exports": true,
+    "JSON": false
   },
   "es3": true,
   "evil": false,

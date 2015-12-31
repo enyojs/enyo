@@ -1,12 +1,12 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 var
-	RelationalModel = require('../../lib/RelationalModel'),
-	Collection = require('../../lib/Collection'),
-	CoreObject = require('../../lib/CoreObject'),
-	toOne = require('../../lib/toOne'),
-	toMany = require('../../lib/toMany'),
-	manyToMany = require('../../lib/manyToMany');
+	RelationalModel = require('enyo/RelationalModel'),
+	Collection = require('enyo/Collection'),
+	CoreObject = require('enyo/CoreObject'),
+	toOne = RelationalModel.toOne,
+	toMany = RelationalModel.toMany,
+	manyToMany = RelationalModel.manyToMany;
 
 describe('RelationalModel', function () {
 	
@@ -707,15 +707,7 @@ describe('RelationalModel', function () {
 				// readability and understanding and dereference the constructors when we're done
 				Teacher = kind({
 					name: 'Teacher',
-					kind: RelationalModel,
-					relations: [
-						{
-							type: manyToMany,
-							model: 'Student',
-							key: 'students',
-							inverseKey: 'teachers'
-						}
-					]
+					kind: RelationalModel
 				});
 			
 				Student = kind({
@@ -724,13 +716,22 @@ describe('RelationalModel', function () {
 					relations: [
 						{
 							type: manyToMany,
-							model: 'Teacher',
+							model: Teacher,
 							key: 'teachers',
 							inverseKey: 'students',
 							includeInJSON: false
 						}
 					]
 				});
+
+				Teacher.prototype.relations = [
+					{
+						type: manyToMany,
+						model: Student,
+						key: 'students',
+						inverseKey: 'teachers'
+					}
+				];
 				
 				// we will instantiate 3 teachers and then multiple students assigned
 				// to the various teachers
@@ -746,7 +747,7 @@ describe('RelationalModel', function () {
 					
 					// this is an example of mix-match from both directions
 					{id: 2, students: [3]}
-				], {model: 'Teacher'});
+				], {model: Teacher});
 				
 				students = new Collection([
 					{id: 0, teachers: [0, 2]},
@@ -755,7 +756,7 @@ describe('RelationalModel', function () {
 					{id: 3},
 					{id: 4, teachers: [0, 1, 2]},
 					{id: 5, teachers: [2]}
-				], {model: 'Student'});
+				], {model: Student});
 			});
 			
 			after(function () {
