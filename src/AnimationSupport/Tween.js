@@ -22,22 +22,20 @@ module.exports = {
      * @private
      */
     step: function(charc, pose, t, d) {
-        var k, c, pts, tState, oState, ease, points;
+        var k, c, tState, oState, ease, points;
 
         node = charc.node;
         newState = pose._endAnim;
         ease = pose.animate && pose.animate.ease ? pose.animate.ease: this.ease;
         oldState = pose._startAnim;
         charc.currentState = charc.currentState || {};
-
-        if (pose.props) {      
+        if(pose.props){      
             for (k in pose.props) {
                 cState = frame.copy(charc.currentState[k] || []);
                 if (newState[k]) {
                     if (ease && (typeof ease !== 'function')) {
-		              var checkEaseChange = easings.easeChanged(ease);
+                        var checkEaseChange = easings.easeChanged(ease);
                         var propChange = easings.propChange(k);
-
                         if (!charc.controlPoints || (propChange === true || checkEaseChange === true)) {
                             // for the first time or either of Ease/Propery changed
                             charc.controlPoints = easings.calculateEase(ease, frame.copy(oldState[k]), frame.copy(newState[k]));
@@ -55,7 +53,7 @@ module.exports = {
                     } else {
                         if (k == 'rotate') {
                             tState = Vector.toQuant(newState[k]);
-                            oState = oldState[k];
+                            oState = Vector.toQuant(oldState[k]);
                             c = this.slerp;
                         } else {
                             tState = newState[k];
@@ -71,10 +69,11 @@ module.exports = {
                 }
                 charc.currentState[k] = cState;
             }
-        } else {
+        }
+        else{
             utils.mixin(charc.currentState,oldState);
         }
-        if (charc.path) {
+        if(charc.path){
             points = this.getBezier(t, charc.path, charc.currentState.translate, true);
             charc.currentState.translate = points;
         }
@@ -89,6 +88,7 @@ module.exports = {
 
         charc.animationStep && charc.animationStep(t,matrix);
     },
+
 
     /**
      * @private
@@ -194,6 +194,8 @@ module.exports = {
         return vR;
     },
 
+
+
     lerp: function(vA, vB, t, vR) {
         if (!vR) vR = [];
         var i, l = vA.length;
@@ -211,21 +213,18 @@ module.exports = {
             theta,
             dot = Vector.quantDot(qA, qB),
             l = qA.length;
-        
+
         dot = Math.min(Math.max(dot, -1.0), 1.0);
-        
         if (dot == 1.0) {
             qR = frame.copy(qA);
             return qR;
         }
-
         theta = Math.acos(dot);
         for (var i = 0; i < l; i++) {
             a = (Math.sin((1 - t) * theta) / Math.sin(theta)) * qA[i];
             b = (Math.sin(t * theta) / Math.sin(theta)) * qB[i];
             qR[i] = a + b;
         }
-
         return qR;
     },
 
@@ -244,7 +243,6 @@ module.exports = {
             startPoint = points[0],
             endPoint = points[lastIndex],
             values = easings.getBezierValues(t, lastIndex);
-
         for (i = 0; i < l; i++) {
             vR[i] = 0;
             for (j = 0; j < c; j++) {
@@ -262,5 +260,6 @@ module.exports = {
         }
         return vR;
     }
+
 
 };

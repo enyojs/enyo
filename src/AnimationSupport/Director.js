@@ -4,6 +4,8 @@ var frame = require('./Frame'),
 	tween = require('./Tween'),
     utils =  require('../utils');
 
+var rolePlays = {};
+
 /**
 * This module returns the Loop singleton
 * Core module is responsible for handling all animations happening in Enyo.
@@ -29,36 +31,43 @@ module.exports = {
      * @public
      */
     
-    take: function(actor, ts) {
-        var dur = actor.totalDuration,
-            tm = actor.rolePlay(ts);
+    take: function(scene, ts) {
+        var dur = scene.totalDuration,
+            tm = scene.rolePlay(ts),
+            actors = rolePlays[scene];
         
         if (tm < 0) return;
-        if (tm < dur) {
-            this.action(actor, tm);
+        if (tm <= dur) {
+            for (var i = 0; i < actors.length; i++) {
+                if(actors[i].generated)
+                    this.action(actors[i], scene, tm);
+            }
         } else {
-            this.action(actor, tm);
-            this.cut(actor);
+            this.cut(scene);
         }
     },
 
-    cut: function (actor) {
-        actor.animating = false;
-        actor.timeline = 0;
-        actor.completed(actor);
-        actor.set('animationState', 'completed');
-        if (!actor.active) {
-            // this.remove(actor);
-        }
+    cut: function (scene) {
+        scene.animating = false;
+        scene.timeline = 0;
+        scene.completed(scene);
     },
 
-    action: function(actor, since) {
-        var pose, t,
-            index = this.poseByTime(actor._animPose, since),
-            props = actor._animPose[index],
-            prevDur = actor._animPose[(index - 1) < 0 ? 0 : (index - 1)].duration,
-            currentAnimSince = since - prevDur,
-            runningDur = props.duration - prevDur;
+    action: function(actor, scene, since) {
+        var pose, t, prevDur, currentAnimSince, runningDur,
+            index = scene.animateAtTime(since),
+            props = scene.getAnimation(index);
+
+        if(index) {
+            prevDur = scene.getAnimation(index - 1).duration;
+        } else {
+            if (!actor._initialPose) this.firstShot(actor);
+            prevDur = actor._initialPose.duration;
+        }
+        
+        currentAnimSince = since - prevDur,
+        runningDur = props.duration - prevDur;
+
         if (!props._startAnim) {
             pose = frame.getComputedProperty(actor.hasNode(), props.animate, actor.currentState);
             utils.mixin(props, pose);
@@ -71,6 +80,23 @@ module.exports = {
         } else {
             tween.step(actor, props, 1, runningDur);
         }
+    },
+
+    rolePlay: function (actors, scene) {
+        rolePlays[scene] = utils.isArray(actors) ? actors : [actors];
+    },
+
+    /**
+    * Gets current state of animation for this character
+    * @public
+    */
+    firstShot: function (actor) {
+        var dom = actor.hasNode(),
+            pose = frame.getComputedProperty(dom, undefined);
+        pose.duration = 0;
+        actor._initialPose = pose;
+        actor.currentState = pose.currentState;
+        frame.accelerate(dom, pose.matrix);
     },
 
     poseByTime: function(arr, duration) {

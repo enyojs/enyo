@@ -10,15 +10,18 @@ module.exports = {
 	timeline: 0,
 	_cachedValue: 0,
 	_frameSpeed: 1,
-
+	_startTime: 0,
 
 	cache: function(){
 		if(this._frameSpeed === 0){
 			this._frameSpeed = this._cachedValue;			
 		}
 	},
-	play : function (){		
+	
+	play : function (delay){		
 		this._frameSpeed = 1;
+		this.animating = true;
+		this._startTime +=  (delay || 0);
 	},
 
 	resume: function() {
