@@ -1,15 +1,18 @@
 {
   "name": "enyo",
+  "assets": [],
+  "devAssets": [],
+  "styles": [
+    "css/enyo.css",
+    "css/mixins.less"
+  ],
+  "main": "index.js",
+  "moduleDir": "src",
   "filename": "enyo.js",
   "version": "2.6.0-pre",
   "description": "Enyo is an open source object-oriented JavaScript framework emphasizing encapsulation and modularity. Enyo contains everything you need to create a fast, scalable mobile or web application.",
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
-  "main": "index.js",
-  "styles": [
-    "css/enyo.css",
-    "css/mixins.less"
-  ],
   "keywords": [
     "framework",
     "toolkit",
@@ -37,21 +40,17 @@
     "url": "http://github.com/enyojs/enyo"
   },
   "devDependencies": {
-    "browserify": "^9.0.3",
-    "chai": "~1.9.2",
-    "gulp": "^3.8.11",
-    "gulp-jshint": "^1.10.0",
-    "gulp-mocha-phantomjs": "^0.6.1",
-    "gulp-sourcemaps": "^1.5.0",
-    "jshint": "~2.5.1",
-    "jshint-stylish": "^1.0.1",
-    "mocha": "~1.20.0",
-    "mocha-phantomjs": "~3.4.1",
-    "sinon": "~1.8.1",
-    "sinon-chai": "~2.5.0",
-    "through2": "^0.6.3",
-    "vinyl": "^0.4.6",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.0.0"
+    "chai": "^3.2.0",
+    "enyo-dev": "^0.5.1",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-mocha-phantomjs": "^0.9.0",
+    "jshint": "^2.8.0",
+    "jshint-stylish": "^2.0.1",
+    "mocha": "^2.3.0",
+    "sinon": "^1.16.1",
+    "sinon-chai": "^2.8.0",
+    "through2": "^0.6.5"
   }
 }

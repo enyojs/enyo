@@ -1,9 +1,9 @@
-var kind = require('../../lib/kind'),
-	jobs = require('../../lib/jobs'),
-	Component = require('../../lib/Component'),
-	Control = require('../../lib/Control'),
-	Anchor = require('../../lib/Anchor'),
-	Button = require('../../lib/Button');
+var kind = require('enyo/kind'),
+	jobs = require('enyo/jobs'),
+	Component = require('enyo/Component'),
+	Control = require('enyo/Control'),
+	Anchor = require('enyo/Anchor'),
+	Button = require('enyo/Button');
 
 describe('Component', function () {
 

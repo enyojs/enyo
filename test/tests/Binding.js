@@ -1,12 +1,12 @@
 var
-	kind = require('../../lib/kind'),
-	utils = require('../../lib/utils');
+	kind = require('enyo/kind'),
+	utils = require('enyo/utils');
 
 var
-	Binding = require('../../lib/Binding'),
+	Binding = require('enyo/Binding'),
 	PassiveBinding = Binding.PassiveBinding,
-	CoreObject = require('../../lib/CoreObject'),
-	Component = require('../../lib/Component');
+	CoreObject = require('enyo/CoreObject'),
+	Component = require('enyo/Component');
 
 var
 	proto;

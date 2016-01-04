@@ -1,7 +1,7 @@
 var 
-	kind = require('../../lib/kind'),
-	Component = require('../../lib/Component'),
-	Control = require('../../lib/Control');
+	kind = require('enyo/kind'),
+	Component = require('enyo/Component'),
+	Control = require('enyo/Control');
 
 describe('Component dispatch', function () {
 

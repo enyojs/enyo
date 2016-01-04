@@ -1,11 +1,11 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	DataList = require('../../lib/DataList'),
-	Collection = require('../../lib/Collection'),
-	CoreObject = require('../../lib/CoreObject'),
-	Model = require('../../lib/Model');
+	DataList = require('enyo/DataList'),
+	Collection = require('enyo/Collection'),
+	CoreObject = require('enyo/CoreObject'),
+	Model = require('enyo/Model');
 
 var
 	proto = DataList.prototype;

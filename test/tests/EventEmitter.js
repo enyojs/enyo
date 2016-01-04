@@ -1,6 +1,6 @@
 var
-	EventEmitter = require('../../lib/EventEmitter'),
-	CoreObject = require('../../lib/CoreObject');
+	EventEmitter = require('enyo/EventEmitter'),
+	CoreObject = require('enyo/CoreObject');
 
 // TODO: Someday add tests that test with default context and emit with a specified object to emit to
 describe('EventEmitter', function () {

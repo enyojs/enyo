@@ -1,11 +1,11 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	Collection = require('../../lib/Collection'),
-	Model = require('../../lib/Model'),
-	DataGridList = require('../../lib/DataGridList'),
-	CoreObject = require('../../lib/CoreObject');
+	Collection = require('enyo/Collection'),
+	Model = require('enyo/Model'),
+	DataGridList = require('enyo/DataGridList'),
+	CoreObject = require('enyo/CoreObject');
 
 describe('DataGridList', function () {
 	

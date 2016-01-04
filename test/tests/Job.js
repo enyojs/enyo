@@ -1,5 +1,5 @@
 var
-	job = require('../../lib/job');
+	job = require('enyo/job');
 
 describe('Job', function () {
 

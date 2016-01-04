@@ -1,5 +1,5 @@
-var kind = require('../../lib/kind'),
-	Controller = require('../../lib/Controller');
+var kind = require('enyo/kind'),
+	Controller = require('enyo/Controller');
 
 describe('Controller', function () {
 
@@ -9,11 +9,10 @@ describe('Controller', function () {
 			var c;
 
 			before(function () {
-				c = kind.singleton({
-					name: 'test.global.controller',
+				c = new (kind({
 					kind: Controller,
 					global: true
-				});
+				}))({name: 'test.global.controller'});
 			});
 
 			after(function () {
