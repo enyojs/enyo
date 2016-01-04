@@ -3,7 +3,6 @@ require('enyo');
 var
     frame = require('./Frame'),
     easings = require('./Easings'),
-    matrixUtil = require('./Matrix'),
     Vector = require('./Vector'),
     utils = require('../utils');
 
@@ -17,19 +16,20 @@ var oldState, newState, node, matrix, cState = [];
  * @module enyo/AnimationSupport/Tween
  */
 module.exports = {
-    
+
     /**
      * @private
      */
     step: function(charc, pose, t, d) {
-        var k, c, tState, oState, ease, points;
+        var k, c, tState, oState, ease, points, path;
 
         node = charc.node;
         newState = pose._endAnim;
-        ease = pose.animate && pose.animate.ease ? pose.animate.ease: this.ease;
+        ease = pose.animate && pose.animate.ease ? pose.animate.ease : this.ease;
+        path = pose.animate && pose.animate.path;
         oldState = pose._startAnim;
         charc.currentState = charc.currentState || {};
-        if(pose.props){      
+        if (pose.props) {
             for (k in pose.props) {
                 cState = frame.copy(charc.currentState[k] || []);
                 if (newState[k]) {
@@ -48,7 +48,7 @@ module.exports = {
                             }
                         }
                         cState = this.getBezier(t, charc.controlPoints, cState);
-                        if (k == 'rotate') 
+                        if (k == 'rotate')
                             cState = Vector.toQuant(cState);
                     } else {
                         if (k == 'rotate') {
@@ -69,14 +69,15 @@ module.exports = {
                 }
                 charc.currentState[k] = cState;
             }
+        } else {
+            utils.mixin(charc.currentState, oldState);
         }
-        else{
-            utils.mixin(charc.currentState,oldState);
-        }
-        if(charc.path){
-            points = this.getBezier(t, charc.path, charc.currentState.translate, true);
+
+        if (path) {
+            points = this.getBezier(t, path, charc.currentState.translate, true);
             charc.currentState.translate = points;
         }
+
         matrix = frame.recomposeMatrix(
             charc.currentState.translate,
             charc.currentState.rotate,
@@ -85,8 +86,7 @@ module.exports = {
             charc.currentState.perspective
         );
         frame.accelerate(node, matrix);
-
-        charc.animationStep && charc.animationStep(t,matrix);
+        charc.currentState.matrix = matrix;
     },
 
 
@@ -246,20 +246,17 @@ module.exports = {
         for (i = 0; i < l; i++) {
             vR[i] = 0;
             for (j = 0; j < c; j++) {
-                if(isPath){
+                if (isPath) {
                     vR[i] = vR[i] + (points[j][i] * values[j]);
-                }
-                else {  
-                    if((j > 0) && (j < (c - 1))){
+                } else {
+                    if ((j > 0) && (j < (c - 1))) {
                         vR[i] = vR[i] + ((startPoint[i] + (points[j][i] * (endPoint[i] - startPoint[i]))) * values[j]);
                     } else {
                         vR[i] = vR[i] + (points[j][i] * values[j]);
                     }
-                } 
+                }
             }
         }
         return vR;
     }
-
-
 };

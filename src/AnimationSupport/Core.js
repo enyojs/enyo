@@ -4,10 +4,10 @@ var
 	kind = require('../kind'),
 	animation = require('../animation'),
 	utils = require('../utils'),
+	CoreObject = require('../CoreObject'),
 	director = require('./Director');
 
-var ts, wasTs,
-	CoreObject = require('../CoreObject');
+var ts, wasTs;
 
 /**
 * This module returns the Loop singleton
@@ -176,46 +176,21 @@ module.exports = kind.singleton({
 			return;
 		}
 		
+		ts = utils.perfNow();
 		for (i = 0; i < len; i++) {
 			curr = this.chracs[i];
 			if (curr && curr.ready()) {
-				ts = utils.perfNow();
-				director.take(curr, ts - (curr.wasTs || ts));
-				curr.wasTs = ts;
+				//TODO: have a check to handle event based and time based together
+				if (curr._isTriggered && this.getAnimationDelta()) {
+					if (!curr.triggerEvent()) {
+						director.shot(curr, ts - (wasTs || ts));
+					}
+				} else {
+					director.take(curr, ts - (wasTs || ts));
+				}
 			}
 		}
+		wasTs = ts;
 		this.start();
-	},
-
-	/**
-	* @private
-	*/
-	eventLoop: function () {
-		var i, curr, status, evlen = this.evnts.length;
-		for (i = 0; i < evlen; i++) {
-			curr = this.evnts[i];
-			if (this.evnts[i].patterns  && typeof this.evnts[i].patterns.length > 0) {
-				this.evnts[i].commitAnimation();
-			}
-			ts = utils.perfNow();
-			if (curr && curr.ready()) {
-				if (curr.deltaChanged) {
-					status = curr.triggerEvent();
-				}
-				if (!status && curr.eventCacheUpdated) {
-					director.shot(curr, ts - (wasTs || ts));
-				}
-			}
-			wasTs = ts;
-		}
-		this.dummy();
-	},
-
-	/**
-	* TODO: Merge this implementation with actual start
-	* @private
-	*/
-	dummy: function () {
-		animation.requestAnimationFrame(this.eventLoop.bind(this));
 	}
 });

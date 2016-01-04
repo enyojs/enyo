@@ -1,78 +1,182 @@
-var 
-	SceneEditor =  require('./SceneEditor'),
-	animation = require('./Core'),
-	delegator = require('./EventDelegator'),
-	director = require('./Director'),
-	utils = require('../utils');
+var
+    editor = require('./SceneEditor'),
+    core = require('./Core'),
+    delegator = require('./EventDelegator'),
+    director = require('./Director'),
+    utils = require('../utils');
 
-var Scene = module.exports = function (props){
-	var scene = Scene.create();
-	utils.mixin(scene, SceneEditor);
+/**
+ * Scene is used to generate animation structure.
+ * 
+ * @module enyo/AnimationSupport/Scene
+ */
+var Scene = module.exports = function(props) {
+    var scene = Scene.create(),
+        dur = props.duration || 0;
 
-	if(props.animation) {
-		scene.addAnimation(props.animation, props.duration  || 0);
-	}
-	animation.trigger(scene);
-	return scene;
+    utils.mixin(scene, editor);
+
+    if (props.animation) {
+        var anims = utils.isArray(props.animation) ? props.animation : [props.animation];
+        for (var i = 0; i < anims.length; i++) {
+            scene.addAnimation(anims[i], anims[i].duration || dur);
+            delete anims[i].duration;
+        }
+        delete props.animation;
+    }
+
+    utils.mixin(scene, props);
+    core.trigger(scene);
+    return scene;
 };
 
-Scene.create = function () {
-	return new sceneConstructor();
+
+/**
+ * Creates a empty instance of scene.
+ * (To used for runtime creation of animations)
+ */
+Scene.create = function() {
+    return new sceneConstructor();
 };
 
+
+/**
+ * Connects an actor/s to a scene.
+ * (All the actors should be added before initiating animation
+ * otherwise actors will animate for remaining time span)
+ */
 Scene.link = function(actors, scene) {
-	director.rolePlay(actors, scene);
+    director.casting(actors, scene);
     scene.hasActors = true;
 };
 
-var sceneConstructor = function () {
-	var _poses = [],
 
-		_eventCache = {},
-
-		_prevDur = 0,
-
-		//_isActive = true,
-
-		//_state,
-
-		_isTriggered = false,
-
-		_triggerer;
+/**
+ * Disconnects an actor/s from a scene.
+ * (Actors could be delinked during the animation
+ * however they will current their state when delinked)
+ */
+Scene.delink = function(actors, scene) {
+    director.reject(scene, actors);
+    scene.hasActors = true;
+};
 
 
-	this.totalDuration = 0;
-	this.animating = false;
-	this.hasActors = false;
+var sceneConstructor = function() {
+    var
+    /**
+     * Holds refereneces of the all animations added to this scene.
+     * @private
+     */
+        _poses = [],
 
-	this.ready = function() {
-		var ret = this.animating && this.hasActors !== undefined;
-		if (ret && this._startTime)
-			ret = this._startTime <= utils.perfNow();
-		return ret;
-	};
+        /**
+         * Holds references for DOM event updates to be used for 
+         * virtual events.
+         * @private
+         */
+        _eventCache = {},
+
+        /**
+         * Holds old animation time span, useful for scenarios where same
+         * time span is expected to be added for the latest added animation.
+         * This provides the felxibility to add animation without duration.
+         * 
+         * Like: scene.addAnimation({translate: '50,0,0'});
+         * 
+         * As no duration is mentioned the old animations duration is taken.
+         * @private
+         */
+        _prevDur = 0,
+
+        /**
+         * Checks if registered DOM event is been triggered for the actors
+         * added to this scene.
+         * @private
+         */
+        _isTriggered = false,
+
+        /**
+         * Holds refereneces of the activator who has initiated a virtual
+         * event for the actor/s in this scene.
+         * @private
+         */
+        _triggerer = '',
+
+        /**
+         * Holds refereneces of complete time span for this scene.
+         * @private
+         */
+        _totalDuration = 0;
 
 
-	/**
-	* Adds new animation on already existing animation for this character.
-	* @public
-	*/
-	this.addAnimation = function (newProp, duration) {
-		if (_prevDur === 0 && duration === 0) {
-			_poses[0] = {animate: newProp, duration: 0};
-		} else {
-			_prevDur = duration || _prevDur;
-			this.totalDuration += _prevDur;
-			_poses.push({animate: newProp, duration: this.totalDuration});
-		}
-	};
+    /**
+     * An exposed property to know if know the animating state of this scene.
+     * 'true' - the scene is asked for animation(doesn't mean animation is happening)
+     * 'false' - the scene is not active(has completed or its actors are not visible)
+     * @public
+     */
+    this.animating = false;
 
-	this.animateAtTime = function(duration) {
+    /**
+     * An exposed property to know if there are actors existing in this scene.
+     * 'true' - the scene has some actors
+     * 'false' - the scene without any actors
+     * @public
+     */
+    this.hasActors = false;
+
+    /**
+     * Checks if the sceen is/should be animating or not.
+     * @public
+     */
+    this.ready = function() {
+        var ret = this.animating && this.hasActors !== undefined;
+        if (ret && this._startTime)
+            ret = this._startTime <= utils.perfNow();
+        return ret;
+    };
+
+    /**
+     * Returns the life span/duration of this sceen.
+     * @public
+     */
+    this.totalSpan = function() {
+        return _totalDuration;
+    };
+
+    /**
+     * Adds new animation on already existing animation for this character.
+     * @public
+     */
+    this.addAnimation = function(newProp, duration) {
+        if (_prevDur === 0 && duration === 0) {
+            _poses[0] = {
+                animate: newProp,
+                duration: 0
+            };
+        } else {
+            _prevDur = duration || _prevDur;
+            _totalDuration += _prevDur;
+            _poses.push({
+                animate: newProp,
+                duration: _totalDuration
+            });
+        }
+    };
+
+    /**
+     * Returns animation pose index from the list of 
+     * animations added to this scene for a particular 
+     * instance of time.
+     * @private
+     */
+    this.animateAtTime = function(duration) {
         var startIndex = 0,
             stopIndex = _poses.length - 1,
             middle = Math.floor((stopIndex + startIndex) / 2);
 
-        if(duration === 0) {
+        if (duration === 0) {
             return startIndex;
         }
 
@@ -87,75 +191,69 @@ var sceneConstructor = function () {
         }
 
         return (_poses[middle].duration != duration) ? startIndex : middle;
-    },
+    };
 
+    /**
+     * Returns animation pose based on index from the list of 
+     * animations added to this scene.
+     * @public
+     */
     this.getAnimation = function(index) {
-		return index < 0 || _poses[index];
-    },
+        return index < 0 || _poses[index];
+    };
 
-	/**
-	* Sets new animation for this character.
-	* @public
-	*/
-	this.setAnimation = function (newProp) {
-		this._prop = newProp;
-	};
-
-
-	/**
-	* Sets the delta values of x, y and z for events
-	* @param {Object} obj - Object contains dX, dY and dZ as keys
-	* @public
-	*/
-	this.setAnimationDelta = function (ev) {
-		_eventCache.dX = ev.dX + _eventCache.dX || 0;
-		_eventCache.dY = ev.dY + _eventCache.dY || 0;
-		_eventCache.dZ = ev.dZ + _eventCache.dZ || 0;
-		_eventCache[ev.vtype] = ev;
-
-		_isTriggered =  true;
-		_triggerer = ev.vtype;
-		this.eventCacheUpdated = true;
-	};
-
-	/**
-	* Gets the delta values of x, y and z for events
-	* @public
-	*/
-	this.getAnimationDelta = function () {
-		return _eventCache[_triggerer];
-	};
-
-	/**
-	* Idnetify when the character has done animating.
-	* This triggers "onAnimated" event on this character
-	* @public
-	*/
-	this.completed = function() {
-		return this.onAnimated && this.onAnimated(this);
-	};
+    /**
+     * Sets new animation for this character.
+     * @public
+     */
+    this.setAnimation = function(newProp) {
+        this._prop = newProp;
+    };
 
 
-	/**
-	* Trigger the registered event to all the listeners
-	* @public
-	*/
-	this.triggerEvent = function () {
-		_isTriggered = false;
-		return delegator.emitEvent(this, this.getAnimationDelta());
-	};
+    /**
+     * Sets the delta values of x, y and z for events
+     * @param {Object} obj - Object contains dX, dY and dZ as keys
+     * @public
+     */
+    this.setAnimationDelta = function(ev) {
+        _eventCache.dX = ev.dX + _eventCache.dX || 0;
+        _eventCache.dY = ev.dY + _eventCache.dY || 0;
+        _eventCache.dZ = ev.dZ + _eventCache.dZ || 0;
+        _eventCache[ev.vtype] = ev;
 
+        _isTriggered = true;
+        _triggerer = ev.vtype;
+    };
+
+    /**
+     * Gets the delta values of x, y and z for events
+     * @public
+     */
+    this.getAnimationDelta = function() {
+        return _eventCache[_triggerer];
+    };
+
+    /**
+     * Trigger the registered event to all the listeners
+     * @public
+     */
+    this.triggerEvent = function() {
+        _isTriggered = false;
+        return delegator.emitEvent(this, this.getAnimationDelta());
+    };
+
+
+    //TODO: Move these events to Event Delegator
+    /**
+     * Event to identify when the scene has done animating.
+     * @public
+     */
+    this.completed = function() {};
+
+    /**
+     * Event to identify when the scene has done animating.
+     * @public
+     */
+    this.step = function() {};
 };
-
-
-
-
-
-	
-	
-
-
-
-	
-
-	

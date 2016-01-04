@@ -1,11 +1,10 @@
 require('enyo');
 
-module.exports = {
 /**
-	* 
-	*
-	* @public
-	*/
+* This modules exposes API's for controlling animations.
+* @private
+*/
+module.exports = {
 
 	timeline: 0,
 	_cachedValue: 0,
@@ -21,7 +20,6 @@ module.exports = {
 	play : function (delay){		
 		this._frameSpeed = 1;
 		this.animating = true;
-		this._startTime +=  (delay || 0);
 	},
 
 	resume: function() {

@@ -7,8 +7,8 @@
 var matrixUtil = require('./Matrix');
 
 var b = 0,
-    c = 1;
-var temp = null,
+    c = 1,
+    temp = null,
     tempProp = null,
     tempOldState = [],
     tempNewState = [];

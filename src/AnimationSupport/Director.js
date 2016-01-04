@@ -7,35 +7,16 @@ var frame = require('./Frame'),
 var rolePlays = {};
 
 /**
-* This module returns the Loop singleton
-* Core module is responsible for handling all animations happening in Enyo.
-* The responsibilities of this module is to;
-* - Trigger vendor specific rAF.
-* - Knowing all elements which have requested for animation.
-* - Tween animation frames for each characters.
-* 
-* @module enyo/Core
+* This modules exposes the features to support 'Director' approach.
+* @module enyo/AnimationSupport/Scene
 */
 module.exports = {
-/**
-     * Tweens public API which notifies to change current state of 
-     * a character. This method is normally trigger by the Animation Core to
-     * update the animating characters state based on the current timestamp.
-     *
-     * As of now this method is provided as an interface for application 
-     * to directly trigger an animation. However, this will be later made private
-     * and will be accessible only by the interfaces exposed by framework.
-     * @parameter chrac-        Animating character
-     *          ts-         DOMHighResTimeStamp
-     *
-     * @public
-     */
     
     take: function(scene, ts) {
-        var dur = scene.totalDuration,
+        var dur = scene.totalSpan(),
             tm = scene.rolePlay(ts),
             actors = rolePlays[scene];
-        
+
         if (tm < 0) return;
         if (tm <= dur) {
             for (var i = 0; i < actors.length; i++) {
@@ -50,7 +31,9 @@ module.exports = {
     cut: function (scene) {
         scene.animating = false;
         scene.timeline = 0;
-        scene.completed(scene);
+
+        //TODO: Use Event Delegator to emit this event.
+        scene.completed && scene.completed(scene);
     },
 
     action: function(actor, scene, since) {
@@ -77,19 +60,38 @@ module.exports = {
         if (currentAnimSince <= runningDur && runningDur !== 0) {
             t = currentAnimSince / runningDur;
             tween.step(actor, props, ( t > 0.98) ?  t = 1 : t, runningDur);
+
+            //TODO: Use Event Delegator to emit this event.
+            scene.step && scene.step(actor, t);
         } else {
             tween.step(actor, props, 1, runningDur);
         }
     },
 
-    rolePlay: function (actors, scene) {
-        rolePlays[scene] = utils.isArray(actors) ? actors : [actors];
+    casting: function (actors, scene) {
+        var acts = utils.isArray(actors) ? actors : [actors];
+        if (!rolePlays[scene]) {
+            rolePlays[scene] = acts;
+        } else {
+            rolePlays[scene] = acts.reduce(function(actors, actor) {
+                actors.push( actor );
+                return actors;
+            }, rolePlays[scene]);
+        }
     },
 
-    /**
-    * Gets current state of animation for this character
-    * @public
-    */
+    reject: function (scene, actors) {
+        actors = actors || rolePlays[scene];
+        var acts = utils.isArray(actors) ? actors : [actors];
+        if (rolePlays[scene]) {
+            rolePlays[scene] = acts.reduce(function(actors, actor) {
+                var i = actors.indexOf(actor);
+                if (i >= 0) actors.splice(i, 1);
+                return actors;
+            }, rolePlays[scene]);
+        }
+    },
+
     firstShot: function (actor) {
         var dom = actor.hasNode(),
             pose = frame.getComputedProperty(dom, undefined);
@@ -97,28 +99,6 @@ module.exports = {
         actor._initialPose = pose;
         actor.currentState = pose.currentState;
         frame.accelerate(dom, pose.matrix);
-    },
-
-    poseByTime: function(arr, duration) {
-        var startIndex = 0,
-            stopIndex = arr.length - 1,
-            middle = Math.floor((stopIndex + startIndex) / 2);
-
-        if(duration === 0) {
-            return startIndex;
-        }
-
-        while (arr[middle].duration != duration && startIndex < stopIndex) {
-            if (duration < arr[middle].duration) {
-                stopIndex = middle;
-            } else if (duration > arr[middle].duration) {
-                startIndex = middle + 1;
-            }
-
-            middle = Math.floor((stopIndex + startIndex) / 2);
-        }
-
-        return (arr[middle].duration != duration) ? startIndex : middle;
     },
 
     shot: function(chrac, ts) {

@@ -42,19 +42,6 @@ var eventsMap = {
 var EventDelegator = {
 
 	/**
-	* @private
-	*/
-	eventArray: [
-		"drag",
-		"scroll",
-		"dragstart",
-		"mousewheel",
-		"touchstart",
-		"touchmove",
-		"touchend"
-	],
-
-	/**
 	* Attaches the evnet handlers to the character either its own events or
 	* else default events with the framework. As of now only these events are 
 	* supported;
