@@ -989,21 +989,7 @@ var ViewMgr = kind(
 	* @private
 	*/
 	handleDrag: function (sender, event) {
-		if (!this.dragging || !this.draggable || this.dismissed) return;
-		this.decorateDragEvent(event);
-
-		// check direction against orientation to ignore drags that don't apply to this. the check
-		// should only be necessary for the first drag event so it's further guarded by the special
-		// 'start' value of dragging.
-		if (this.dragging == 'start' && !event[this.orientation]) {
-			this.set('dragging', false);
-			return;
-		}
-		// Intentionally ignoring draggable mode here so dragView will reference the becoming-active
-		// view even if we are only supporting flick and not drag
-		else if (this.canDrag(event.direction)) {
-			this.set('dragging', true);
-
+		if (this.validateDrag(event)) {
 			// clean up on change of direction
 			if (this.direction !== event.direction) {
 				this.direction = event.direction;
@@ -1030,13 +1016,13 @@ var ViewMgr = kind(
 				this.dragView = this.dragView || false;
 			}
 			this.emit('drag', event);
+
+			return true;
 		} else {
 			// Reset the drag state when dragging in an invalid direction
 			this.resetDragView();
 			this.direction = 0;
 		}
-
-		return true;
 	},
 
 	/**
@@ -1049,32 +1035,31 @@ var ViewMgr = kind(
 			this.releaseDraggedView();
 			this.releaseDraggedView = null;
 		}
-		if (!this.dragging || !this.draggable || this.dismissed) return;
-
-		this.decorateDragEvent(event);
-		// if the view has been dragged far enough
-		if (this.flicked || event.percentDelta * 100 > this.dragThreshold) {
-			this.set('dragging', false);
-			// normally, there will be a becoming-active view to activate
-			if (this.dragView) {
-				// dragging for floating views can only be a back action so shift it off the stack
-				if (this.floating) this.stack.shift();
-				// stack updates aren't necessary as we updated it above
-				this.activateImmediate(this.dragView);
+		if (this.validateDrag(event)) {
+			// if the view has been dragged far enough
+			if (this.flicked || event.percentDelta * 100 > this.dragThreshold) {
+				this.set('dragging', false);
+				// normally, there will be a becoming-active view to activate
+				if (this.dragView) {
+					// dragging for floating views can only be a back action so shift it off the stack
+					if (this.floating) this.stack.shift();
+					// stack updates aren't necessary as we updated it above
+					this.activateImmediate(this.dragView);
+				}
+				// unless it's a floating ViewManager that is being dismissed
+				else if (this.isDimissable() && event.direction == -1) {
+					this.dismiss();
+				}
 			}
-			// unless it's a floating ViewManager that is being dismissed
-			else if (this.isDimissable() && event.direction == -1) {
-				this.dismiss();
+			// otherwise the drag was small enough to be cancelled
+			else {
+				this.cancelDrag();
 			}
-		}
-		// otherwise the drag was small enough to be cancelled
-		else {
-			this.cancelDrag();
-		}
-		this.flicked = false;
-		event.preventTap();
+			this.flicked = false;
+			event.preventTap();
 
-		return true;
+			return true;
+		}
 	},
 
 	/**
@@ -1103,6 +1088,33 @@ var ViewMgr = kind(
 			this.direction = -this.direction;
 			this.emit('cancelDrag');
 		}
+	},
+
+	/**
+	* Validates that the drag event should be processed
+	*
+	* @private
+	*/
+	validateDrag: function (event) {
+		var dragging = false,
+			draggable = this.dragging && this.draggable && !this.dismissed;
+
+		if (draggable) {
+			this.decorateDragEvent(event);
+			dragging = 
+				// check direction against orientation to ignore drags that don't apply to this. the
+				// check should only be necessary for the first drag event so it's further guarded
+				// by the special 'start' value of dragging.
+				!(this.dragging == 'start' && !event[this.orientation]) &&
+
+				// Intentionally ignoring draggable mode here so dragView will reference the
+				// becoming-active view even if we are only supporting flick and not drag
+				this.canDrag(event.direction);
+		
+			this.set('dragging', dragging);
+		}
+
+		return draggable && dragging;
 	},
 
 	/**
