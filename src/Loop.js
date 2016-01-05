@@ -2,6 +2,7 @@ require('enyo');
 
 /**
 * This module returns the Loop singleton
+* @wip
 * @module enyo/Loop
 */
 var
