@@ -11,6 +11,23 @@ var rolePlays = {};
 * @module enyo/AnimationSupport/Scene
 */
 module.exports = {
+
+    roll: function (scene) {
+        var actor,
+            actors = rolePlays[scene.getID()],
+            l = actors ? actors.length: 0,
+            active = l > 0;
+
+        for (var i = 0; i < l; i++) {
+            actor = actors[i];
+            if(actor.generated && !actor._initialPose) {
+                this.firstShot(actor);
+                scene.register(actor);
+                active = false;
+            }
+        }
+        scene.active = active;
+    },
     
     take: function(scene, ts) {
         var dur = scene.totalSpan(),
@@ -68,7 +85,7 @@ module.exports = {
         }
     },
 
-    casting: function (actors, scene) {
+    cast: function (actors, scene) {
         var acts = utils.isArray(actors) ? actors : [actors],
             id = scene.getID();
 
@@ -105,11 +122,11 @@ module.exports = {
         frame.accelerate(dom, pose.matrix);
     },
 
-    shot: function(chrac, ts) {
+    shot: function(actor, ts) {
         var v1, s, a, v,
             t = ts,
-            dt = chrac._eventCache,
-            dir = this.angle(chrac.direction),
+            dt = actor._eventCache,
+            dir = this.angle(actor.direction),
             v0 = dt.velocity || 0;
         
         v1 = dt[dir] / t;
@@ -125,7 +142,7 @@ module.exports = {
                 dt[dir] = 0;
             }
             dt.velocity = v1;
-            this.take(chrac, dt[dir] > 0 ? v : -v);
+            this.take(actor, dt[dir] > 0 ? v : -v);
         }   
     },
 

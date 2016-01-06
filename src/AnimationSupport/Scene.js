@@ -15,6 +15,7 @@ var Scene = module.exports = function(props) {
         dur = props.duration || 0;
 
     utils.mixin(scene, editor);
+
     if (props.animation) {
         var anims = utils.isArray(props.animation) ? props.animation : [props.animation];
 
@@ -23,7 +24,9 @@ var Scene = module.exports = function(props) {
             delete anims[i].duration;
         }
         delete props.animation;
+        delete props.duration;
     }
+
 
     utils.mixin(scene, props);
     core.trigger(scene);
@@ -46,8 +49,7 @@ Scene.create = function() {
  * otherwise actors will animate for remaining time span)
  */
 Scene.link = function(actors, scene) {
-    director.casting(actors, scene);
-    scene.hasActors = true;
+    director.cast(actors, scene);
 };
 
 
@@ -58,7 +60,6 @@ Scene.link = function(actors, scene) {
  */
 Scene.delink = function(actors, scene) {
     director.reject(scene, actors);
-    scene.hasActors = true;
 };
 
 
@@ -121,12 +122,12 @@ var sceneConstructor = function(id) {
     this.animating = false;
 
     /**
-     * An exposed property to know if there are actors existing in this scene.
-     * 'true' - the scene has some actors
-     * 'false' - the scene without any actors
+     * An exposed property to know if the scene is ready with actors performing action.
+     * 'true' - the scene actors are ready for action
+     * 'false' - some or all actors are not ready
      * @public
      */
-    this.hasActors = false;
+    this.active = false;
 
 
     this.getID = function () {
@@ -138,10 +139,12 @@ var sceneConstructor = function(id) {
      * @public
      */
     this.ready = function() {
-        var ret = this.animating && this.hasActors !== undefined;
-        if (ret && this._startTime)
-            ret = this._startTime <= utils.perfNow();
-        return ret;
+        if (this.animating) {
+            if (this.active) return true;
+            director.roll(this);
+            this._startTime = utils.perfNow();
+        }
+        return false;
     };
 
     /**
@@ -248,6 +251,16 @@ var sceneConstructor = function(id) {
     this.triggerEvent = function() {
         _isTriggered = false;
         return delegator.emitEvent(this, this.getAnimationDelta());
+    };
+
+    /**
+     * Activates handles for generated actors
+     * @public
+     */
+    this.register = function (actor) {
+        if (this.handlers) {
+            delegator.register(this, actor);
+        }
     };
 
 

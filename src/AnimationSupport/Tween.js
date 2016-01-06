@@ -2,8 +2,9 @@ require('enyo');
 
 var
     frame = require('./Frame'),
-    easings = require('./Easings'),
+    Easings = require('./Easings'),
     Vector = require('./Vector'),
+    Matrix = require('./Matrix'),
     utils = require('../utils');
 
 var oldState, newState, node, matrix, cState = [];
@@ -20,73 +21,70 @@ module.exports = {
     /**
      * @private
      */
-    step: function(charc, pose, t, d) {
-        var k, c, tState, oState, ease, points, path;
+    step: function(actor, pose, t, d) {
+        var k, c, state, ease, points, path;
 
-        node = charc.node;
-        newState = pose._endAnim;
+        node = actor.node;
+        state = actor.currentState = actor.currentState || {};
+        points = pose.controlPoints = pose.controlPoints || {};
         ease = pose.animate && pose.animate.ease ? pose.animate.ease : this.ease;
         path = pose.animate && pose.animate.path;
-        oldState = pose._startAnim;
-        charc.currentState = charc.currentState || {};
+
         if (pose.props) {
             for (k in pose.props) {
-                cState = frame.copy(charc.currentState[k] || []);
-                if (newState[k]) {
-                    if (ease && (typeof ease !== 'function')) {
-                        var checkEaseChange = easings.easeChanged(ease);
-                        var propChange = easings.propChange(k);
-                        if (!charc.controlPoints || (propChange === true || checkEaseChange === true)) {
-                            // for the first time or either of Ease/Propery changed
-                            charc.controlPoints = easings.calculateEase(ease, frame.copy(oldState[k]), frame.copy(newState[k]));
-                        } else if (propChange === false && checkEaseChange === false) {
-                            // for the cases where property and ease remain same and the states are varying
-                            var oldStateCheck = easings.oldStateChange(frame.copy(oldState[k]));
-                            var newStateCheck = easings.newStateChange(frame.copy(newState[k]));
-                            if (oldStateCheck === true || newStateCheck === true) {
-                                charc.controlPoints = easings.calculateEase(ease, frame.copy(oldState[k]), frame.copy(newState[k]));
-                            }
-                        }
-                        cState = this.getBezier(t, charc.controlPoints, cState);
-                        if (k == 'rotate')
-                            cState = Vector.toQuant(cState);
-                    } else {
-                        if (k == 'rotate') {
-                            tState = Vector.toQuant(newState[k]);
-                            oState = oldState[k];
-                            c = this.slerp;
-                        } else {
-                            tState = newState[k];
-                            oState = oldState[k];
-                            c = this.lerp;
-                        }
-                        cState = c(oState, tState, ease(t, d), cState);
-                    }
+                if (!pose._endAnim[k]) {
+                    continue;
                 }
 
+                cState = utils.clone(state[k] || []);
+                newState = utils.clone(pose._endAnim[k]);
+                oldState = utils.clone(pose._startAnim[k]);
+                
+                if (ease && (typeof ease !== 'function')) {
+                    if (k == 'rotate') {
+                        newState = Vector.toQuant(newState);
+                        points[k] = points[k] || 
+                            this.bezierSPoints(ease, oldState, newState, pose.props[k], points[k]);
+                        c = this.bezierSpline;
+                    } else {
+                        points[k] = points[k] || 
+                            this.bezierPoints(ease, oldState, newState, points[k]);
+                        c = this.bezier;
+                    }
+                    cState = c.call(this, t, points[k], cState);
+                } else {
+                    if (k == 'rotate') {
+                        newState = Vector.toQuant(newState);
+                        c = this.slerp;
+                    } else {
+                        c = this.lerp;
+                    }
+                    cState = c.call(this, oldState, newState, ease(t, d), cState);
+                }
+                
                 if (!frame.isTransform(k)) {
                     frame.setProperty(node, k, cState);
                 }
-                charc.currentState[k] = cState;
+                state[k] = cState;
             }
         } else {
-            utils.mixin(charc.currentState, oldState);
+            utils.mixin(state, oldState);
         }
 
+        //TODO: Support for properties other than translate
         if (path) {
-            points = this.getBezier(t, path, charc.currentState.translate, true);
-            charc.currentState.translate = points;
+            this.traversePath(t, path, state.translate);
         }
 
         matrix = frame.recomposeMatrix(
-            charc.currentState.translate,
-            charc.currentState.rotate,
-            charc.currentState.scale,
-            charc.currentState.skew,
-            charc.currentState.perspective
+            state.translate,
+            state.rotate,
+            state.scale,
+            state.skew,
+            state.perspective
         );
         frame.accelerate(node, matrix);
-        charc.currentState.matrix = matrix;
+        state.matrix = matrix;
     },
 
 
@@ -96,106 +94,7 @@ module.exports = {
     ease: function(t) {
         return t;
     },
-
-    //Without control points
-    beizerSlerpPoints: function(ease, startQuat, endQuat, endPoint) {
-        var tm, ag, q, key,
-            splinePoints = {},
-            eD = frame.parseValue(endPoint),
-            aN = startQuat;
-
-        if (ease && Object.keys(ease).length > 0) {
-            for (key in ease) {
-                tm = parseFloat(key) / 100;
-                ag = parseFloat(ease[key]);
-                eD.pop(); // remove angle from end point.
-                eD[eD.length] = ag;
-                q = Vector.toQuant(frame.copy(eD));
-                splinePoints[tm] = [aN, q];
-                aN = q;
-            }
-            splinePoints[1] = [aN, endQuat];
-        }
-        return splinePoints;
-    },
-
-    //Without control points
-    beizerSlerp: function(t, points, vR) {
-        var p, key;
-        for (p in points) {
-            if (p >= t) key = p;
-        }
-        vR = this.slerp(points[key][0], points[key][1], t);
-        return vR;
-    },
-
-    //With control points
-    beizerSPoints: function(ease, startQuat, endQuat, endPoint) {
-        var splinePoints = {},
-            time = [0],
-            quats = [startQuat];
-
-        var t, a, q, n, _a, aI, bN,
-            eD = frame.parseValue(endPoint);
-
-        if (ease && Object.keys(ease).length > 0) {
-            for (var key in ease) {
-                t = parseFloat(key) / 100;
-                a = parseFloat(ease[key]);
-                eD.pop(); // remove angle from end point.
-                eD[eD.length] = a;
-                q = Vector.toQuant(frame.copy(eD));
-                quats.push(q);
-                time.push(t);
-            }
-            quats.push(endQuat);
-            time.push(1);
-
-            n = quats.length - 1;
-            for (var i = 0, j = 1; i < n; i++, j++) {
-                if (i === 0) {
-                    aI = this.slerp(quats[0], this.slerp(quats[2], quats[1], 2.0), 1.0 / 3);
-                } else {
-                    _a = this.slerp(this.slerp(quats[i - 1], quats[i], 2.0), quats[i + 1], 0.5);
-                    aI = this.slerp(quats[j], _a, 1.0 / 3);
-                }
-                if (j === n) {
-                    bN = this.slerp(quats[j], this.slerp(quats[j - 2], quats[j - 1], 2.0), 1.0 / 3);
-                } else {
-                    _a = this.slerp(this.slerp(quats[j - 1], quats[j], 2.0), quats[j + 1], 0.5);
-                    bN = this.slerp(quats[j], _a, -1.0 / 3);
-                }
-                splinePoints[time[j]] = [quats[i], aI, bN, quats[i + 1]];
-            }
-        }
-        return splinePoints;
-    },
-
-    //With control points
-    beizerSpline: function(t, points, vR) {
-        if (!vR) vR = [];
-        var Q0, Q1, Q2, R0, R1;
-
-        var p, key, pts;
-        for (p in points) {
-            if (p >= t) key = p;
-        }
-        pts = points[key];
-
-        if (pts.length >= 4) {
-            Q0 = this.slerp(pts[0], pts[1], t);
-            Q1 = this.slerp(pts[1], pts[2], t);
-            Q2 = this.slerp(pts[2], pts[3], t);
-            R0 = this.slerp(Q0, Q1, t);
-            R1 = this.slerp(Q1, Q2, t);
-            vR = this.slerp(R0, R1, t);
-        } else
-            vR = this.slerp(pts[0], pts[1], t);
-        return vR;
-    },
-
-
-
+    
     lerp: function(vA, vB, t, vR) {
         if (!vR) vR = [];
         var i, l = vA.length;
@@ -232,7 +131,7 @@ module.exports = {
      * @public
      * @params t: time, points: knot and control points, vR: resulting point
      */
-    getBezier: function(t, points, vR, isPath) {
+    bezier: function(t, points, vR) {
 
         if (!vR) vR = [];
 
@@ -242,21 +141,133 @@ module.exports = {
             lastIndex = (c - 1),
             startPoint = points[0],
             endPoint = points[lastIndex],
-            values = easings.getBezierValues(t, lastIndex);
+            values = Easings.getBezierValues(t, lastIndex);
+
         for (i = 0; i < l; i++) {
             vR[i] = 0;
             for (j = 0; j < c; j++) {
-                if (isPath) {
-                    vR[i] = vR[i] + (points[j][i] * values[j]);
+                if ((j > 0) && (j < (c - 1))) {
+                    vR[i] = vR[i] + ((startPoint[i] + (points[j][i] * (endPoint[i] - startPoint[i]))) * values[j]);
                 } else {
-                    if ((j > 0) && (j < (c - 1))) {
-                        vR[i] = vR[i] + ((startPoint[i] + (points[j][i] * (endPoint[i] - startPoint[i]))) * values[j]);
-                    } else {
-                        vR[i] = vR[i] + (points[j][i] * values[j]);
-                    }
+                    vR[i] = vR[i] + (points[j][i] * values[j]);
                 }
             }
         }
+        return vR;
+    },
+
+    bezierPoints: function(easeObj, startPoint, endPoint, points) {
+        var order = (easeObj && Object.keys(easeObj).length) ? (Object.keys(easeObj).length + 1) : 0;
+        var bValues = [],
+            m1 = [],
+            m2 = [],
+            m3 = [],
+            m4 = [],
+            l = 0;
+        points = [startPoint];
+
+        var t, a;
+        for (var key in easeObj) {
+            t = parseFloat(key) / 100;
+            a = parseFloat(easeObj[key]) / 100;
+            bValues = Easings.getBezierValues(t, order);
+            bValues.shift();
+            m1.push(a - bValues.pop());
+            m2.push(bValues);
+        }
+
+        m3 = Matrix.inverseN(m2, bValues.length);
+        m4 = Matrix.multiplyN(m3, m1);
+        l = m4.length;
+        for (var i = 0; i < l; i++) {
+            points.push([m4[i], m4[i], m4[i]]);
+        }
+
+        points.push(endPoint);
+        return points;
+    },
+
+    traversePath: function (t, path, vR) {
+        if (!vR) vR = [];
+
+        var i, j,
+            c = path.length,
+            l = path[0].length,
+            lastIndex = (c - 1),
+            values = Easings.getBezierValues(t, lastIndex);
+
+        for (i = 0; i < l; i++) {
+            vR[i] = 0;
+            for (j = 0; j < c; j++) {
+                vR[i] = vR[i] + (path[j][i] * values[j]);
+            }
+        }
+        return vR;
+    },
+
+    //With control points
+    bezierSPoints: function(ease, startQuat, endQuat, endPoint, splinePoints) {
+        var time = [0],
+            quats = [startQuat];
+
+        var t, a, q, n, _a, aI, bN,
+            eD = frame.parseValue(endPoint);
+
+        splinePoints = splinePoints || {};
+
+        if (ease && Object.keys(ease).length > 0) {
+            for (var key in ease) {
+                t = parseFloat(key) / 100;
+                a = parseFloat(ease[key]);
+                eD.pop(); // remove angle from end point.
+                eD[eD.length] = a;
+                q = Vector.toQuant(frame.copy(eD));
+                quats.push(q);
+                time.push(t);
+            }
+            quats.push(endQuat);
+            time.push(1);
+
+            n = quats.length - 1;
+            for (var i = 0, j = 1; i < n; i++, j++) {
+                if (i === 0) {
+                    aI = this.slerp(quats[0], this.slerp(quats[2], quats[1], 2.0), 1.0 / 3);
+                } else {
+                    _a = this.slerp(this.slerp(quats[i - 1], quats[i], 2.0), quats[i + 1], 0.5);
+                    aI = this.slerp(quats[j], _a, 1.0 / 3);
+                }
+                if (j === n) {
+                    bN = this.slerp(quats[j], this.slerp(quats[j - 2], quats[j - 1], 2.0), 1.0 / 3);
+                } else {
+                    _a = this.slerp(this.slerp(quats[j - 1], quats[j], 2.0), quats[j + 1], 0.5);
+                    bN = this.slerp(quats[j], _a, -1.0 / 3);
+                }
+                splinePoints[time[j]] = [quats[i], aI, bN, quats[i + 1]];
+            }
+        }
+        return splinePoints;
+    },
+
+    //With control points
+    bezierSpline: function(t, points, vR) {
+        if (!vR) vR = [];
+        var Q0, Q1, Q2, R0, R1;
+
+        var p, key, pts;
+        for (p in points) {
+            if (p >= t) key = p;
+        }
+        pts = points[key];
+
+        if (pts.length >= 4) {
+            Q0 = this.slerp(pts[0], pts[1], t);
+            Q1 = this.slerp(pts[1], pts[2], t);
+            Q2 = this.slerp(pts[2], pts[3], t);
+            R0 = this.slerp(Q0, Q1, t);
+            R1 = this.slerp(Q1, Q2, t);
+            vR = this.slerp(R0, R1, t);
+        } else
+            vR = this.slerp(pts[0], pts[1], t);
         return vR;
     }
 };

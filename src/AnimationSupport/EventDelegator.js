@@ -50,8 +50,8 @@ var EventDelegator = {
 	* - mousewheel
 	* @public
 	*/
-	register: function (charc) {
-		var events = charc.handleAnimationEvents || {};
+	register: function (events) {
+		events = events || {};
 		for (var key in events) {
 			this.addRemoveListener(charc, key, events[key]);
 		}

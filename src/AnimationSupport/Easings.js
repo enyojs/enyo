@@ -4,7 +4,6 @@
  * @module enyo/AnimationSupport/Easings
  * @public
  */
-var matrixUtil = require('./Matrix');
 
 var b = 0,
     c = 1,
@@ -134,37 +133,6 @@ var easings = {
         return true;
     },
 
-    calculateEase: function(easeObj, startPoint, endPoint) {
-        var order = (easeObj && Object.keys(easeObj).length) ? (Object.keys(easeObj).length + 1) : 0;
-        var controlPoints = [startPoint],
-            bValues = [],
-            m1 = [],
-            m2 = [],
-            m3 = [],
-            m4 = [],
-            l = 0;
-
-        var t, a;
-        for (var key in easeObj) {
-            t = parseFloat(key) / 100;
-            a = parseFloat(easeObj[key]) / 100;
-            bValues = easings.getBezierValues(t, order);
-            bValues.shift();
-            m1.push(a - bValues.pop());
-            m2.push(bValues);
-        }
-
-        m3 = matrixUtil.inverseN(m2, bValues.length);
-
-        m4 = matrixUtil.multiplyN(m3, m1);
-        l = m4.length;
-        for (var i = 0; i < l; i++) {
-            controlPoints.push([m4[i], m4[i], m4[i]]);
-        }
-
-        controlPoints.push(endPoint);
-        return controlPoints;
-    },
     /**
      * @private
      * @params n: order, k: current position
