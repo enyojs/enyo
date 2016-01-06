@@ -53,7 +53,7 @@ module.exports = {
                     } else {
                         if (k == 'rotate') {
                             tState = Vector.toQuant(newState[k]);
-                            oState = Vector.toQuant(oldState[k]);
+                            oState = oldState[k];
                             c = this.slerp;
                         } else {
                             tState = newState[k];

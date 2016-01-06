@@ -15,9 +15,9 @@ var Scene = module.exports = function(props) {
         dur = props.duration || 0;
 
     utils.mixin(scene, editor);
-
     if (props.animation) {
         var anims = utils.isArray(props.animation) ? props.animation : [props.animation];
+
         for (var i = 0; i < anims.length; i++) {
             scene.addAnimation(anims[i], anims[i].duration || dur);
             delete anims[i].duration;
@@ -36,7 +36,7 @@ var Scene = module.exports = function(props) {
  * (To used for runtime creation of animations)
  */
 Scene.create = function() {
-    return new sceneConstructor();
+    return new sceneConstructor("@"+ utils.perfNow());
 };
 
 
@@ -62,8 +62,10 @@ Scene.delink = function(actors, scene) {
 };
 
 
-var sceneConstructor = function() {
+var sceneConstructor = function(id) {
     var
+
+        _id = id,
     /**
      * Holds refereneces of the all animations added to this scene.
      * @private
@@ -125,6 +127,11 @@ var sceneConstructor = function() {
      * @public
      */
     this.hasActors = false;
+
+
+    this.getID = function () {
+        return _id;
+    };
 
     /**
      * Checks if the sceen is/should be animating or not.

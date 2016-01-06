@@ -15,7 +15,7 @@ module.exports = {
     take: function(scene, ts) {
         var dur = scene.totalSpan(),
             tm = scene.rolePlay(ts),
-            actors = rolePlays[scene];
+            actors = rolePlays[scene.getID()];
 
         if (tm < 0) return;
         if (tm <= dur) {
@@ -69,26 +69,29 @@ module.exports = {
     },
 
     casting: function (actors, scene) {
-        var acts = utils.isArray(actors) ? actors : [actors];
-        if (!rolePlays[scene]) {
-            rolePlays[scene] = acts;
+        var acts = utils.isArray(actors) ? actors : [actors],
+            id = scene.getID();
+
+        if (!rolePlays[id]) {
+            rolePlays[id] = acts;
         } else {
-            rolePlays[scene] = acts.reduce(function(actors, actor) {
+            rolePlays[id] = acts.reduce(function(actors, actor) {
                 actors.push( actor );
                 return actors;
-            }, rolePlays[scene]);
+            }, rolePlays[id]);
         }
     },
 
     reject: function (scene, actors) {
-        actors = actors || rolePlays[scene];
+        var id = scene.getID();
+        actors = actors || rolePlays[id];
         var acts = utils.isArray(actors) ? actors : [actors];
-        if (rolePlays[scene]) {
-            rolePlays[scene] = acts.reduce(function(actors, actor) {
+        if (rolePlays[id]) {
+            rolePlays[id] = acts.reduce(function(actors, actor) {
                 var i = actors.indexOf(actor);
                 if (i >= 0) actors.splice(i, 1);
                 return actors;
-            }, rolePlays[scene]);
+            }, rolePlays[id]);
         }
     },
 
@@ -98,6 +101,7 @@ module.exports = {
         pose.duration = 0;
         actor._initialPose = pose;
         actor.currentState = pose.currentState;
+        
         frame.accelerate(dom, pose.matrix);
     },
 
