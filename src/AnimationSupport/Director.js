@@ -22,7 +22,6 @@ module.exports = {
             actor = actors[i];
             if(actor.generated && !actor._initialPose) {
                 this.firstShot(actor);
-                scene.register(actor);
                 active = false;
             }
         }
@@ -30,27 +29,32 @@ module.exports = {
     },
     
     take: function(scene, ts) {
-        var dur = scene.totalSpan(),
-            tm = scene.rolePlay(ts),
-            actors = rolePlays[scene.getID()];
+        var tm, stm, actor,
+            dur = scene.totalSpan(),
+            active = false,
+            actors = rolePlays[scene.getID()],
+            l = actors.length;
 
-        if (tm < 0) return;
-        if (tm <= dur) {
-            for (var i = 0; i < actors.length; i++) {
-                if(actors[i].generated)
-                    this.action(actors[i], scene, tm);
-            }
-        } else {
-            this.cut(scene);
+        if (scene._frameSpeed) {
+            stm = scene.rolePlay(ts, actor);
         }
-    },
-
-    cut: function (scene) {
-        scene.animating = false;
-        scene.timeline = 0;
-
-        //TODO: Use Event Delegator to emit this event.
-        scene.completed && scene.completed(scene);
+        for (var i = 0; i < l; i++) {
+            actor = actors[i];
+            if (actor.generated) {
+                actor = stm ? scene : actor;
+                tm = stm || scene.rolePlay(ts, actor);
+                tm -= (actor._startTime || 0);
+                if (isNaN(tm) || tm <= 0) continue;
+                if (tm < dur) {
+                    this.action(actors[i], scene, tm);
+                    active = true;
+                } else {
+                    actor.timeline = dur;
+                    this.cut(scene, actor);
+                }
+            }
+        }
+        scene.animating = active;
     },
 
     action: function(actor, scene, since) {
@@ -84,6 +88,14 @@ module.exports = {
             tween.step(actor, props, 1, runningDur);
         }
     },
+
+    
+    cut: function (scene, actor) {
+        //TODO: Use Event Delegator to emit this event.
+        //scene.clearAnimation();
+        scene.completed && scene.completed(actor);
+    },
+
 
     cast: function (actors, scene) {
         var acts = utils.isArray(actors) ? actors : [actors],

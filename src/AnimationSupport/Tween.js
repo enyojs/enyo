@@ -22,7 +22,7 @@ module.exports = {
      * @private
      */
     step: function(actor, pose, t, d) {
-        var k, c, state, ease, points, path;
+        var k, fn, state, ease, points, path;
 
         node = actor.node;
         state = actor.currentState = actor.currentState || {};
@@ -45,21 +45,21 @@ module.exports = {
                         newState = Vector.toQuant(newState);
                         points[k] = points[k] || 
                             this.bezierSPoints(ease, oldState, newState, pose.props[k], points[k]);
-                        c = this.bezierSpline;
+                        fn = this.bezierSpline;
                     } else {
                         points[k] = points[k] || 
                             this.bezierPoints(ease, oldState, newState, points[k]);
-                        c = this.bezier;
+                        fn = this.bezier;
                     }
-                    cState = c.call(this, t, points[k], cState);
+                    cState = fn.call(this, t, points[k], cState);
                 } else {
                     if (k == 'rotate') {
                         newState = Vector.toQuant(newState);
-                        c = this.slerp;
+                        fn = this.slerp;
                     } else {
-                        c = this.lerp;
+                        fn = this.lerp;
                     }
-                    cState = c.call(this, oldState, newState, ease(t, d), cState);
+                    cState = fn.call(this, oldState, newState, ease(t, d), cState);
                 }
                 
                 if (!frame.isTransform(k)) {

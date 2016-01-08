@@ -8,54 +8,66 @@ module.exports = {
 
 	timeline: 0,
 	_cachedValue: 0,
-	_frameSpeed: 1,
+	_frameSpeed: 0,
 	_startTime: 0,
 
-	cache: function(){
-		if(this._frameSpeed === 0){
-			this._frameSpeed = this._cachedValue;			
+	cache: function(actor) {
+		actor = actor || this;
+		if(actor._frameSpeed === 0){
+			actor._frameSpeed = actor._cachedValue;
 		}
-	},
-	
-	play : function (delay){		
-		this._frameSpeed = 1;
 		this.animating = true;
 	},
-
-	resume: function() {
-		this.cache();
-		this._frameSpeed *= 1;
+	
+	play: function (actor) {
+		actor = actor || this;
+		actor._frameSpeed = 1;
+		this.animating = true;
+		actor._startTime = (actor.delay || 0);
 	},
 
-	pause: function () {
-		this._cachedValue = this._frameSpeed;
-		this._frameSpeed = 0;
+	resume: function(actor) {
+		this.cache(actor);
+		actor = actor || this;
+		actor._frameSpeed *= 1;
 	},
 
-	reverse: function () {
-		this.cache();
-		this._frameSpeed *= -1;
+	pause: function (actor) {
+		actor = actor || this;
+		actor._cachedValue = actor._frameSpeed;
+		actor._frameSpeed = 0;
 	},
 
-	fast: function (mul) {
-		this.cache();
-		this._frameSpeed *= mul;
+	reverse: function (actor) {
+		this.cache(actor);
+		actor = actor || this;
+		actor._frameSpeed *= -1;
 	},
 
-	slow: function (mul) {
-		this.cache();
-		this._frameSpeed *= mul;
+	fast: function (mul, actor) {
+		this.cache(actor);
+		actor = actor || this;
+		actor._frameSpeed *= mul;
 	},
 
-	stop: function () {
-		this._cachedValue = 1;
-		this._frameSpeed = 0;
-		this.timeline = 0;
+	slow: function (mul, actor) {
+		this.cache(actor);
+		actor = actor || this;
+		actor._frameSpeed *= mul;
 	},
 
-	rolePlay: function (t) {
-		this.timeline += _rolePlay(t, this._frameSpeed);
-		return this.timeline;
+	stop: function (actor) {
+		actor = actor || this;
+		actor._cachedValue = 1;
+		actor._frameSpeed = 0;
+		actor.timeline = 0;
+	},
+
+	rolePlay: function (t, actor) {
+		actor = actor || this;
+		if (!actor.timeline || actor.timeline < 0) actor.timeline = 0;
+		actor.timeline += _rolePlay(t, actor._frameSpeed);
+		return actor.timeline;
 	}
 };
 

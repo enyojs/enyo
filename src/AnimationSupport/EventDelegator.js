@@ -200,9 +200,7 @@ var EventDelegator = {
 		inEvent.dY = inEvent.deltaY;
 		inEvent.dZ = 0;
 		inEvent.vtype = eventsMap[inEvent.type];
-
 		sender.setAnimationDelta(inEvent);
-		sender._virtualEvent = eventsMap[inEvent.type];
 	}
 };
 

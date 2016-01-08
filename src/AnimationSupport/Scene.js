@@ -27,7 +27,6 @@ var Scene = module.exports = function(props) {
         delete props.duration;
     }
 
-
     utils.mixin(scene, props);
     core.trigger(scene);
     return scene;
@@ -142,7 +141,6 @@ var sceneConstructor = function(id) {
         if (this.animating) {
             if (this.active) return true;
             director.roll(this);
-            this._startTime = utils.perfNow();
         }
         return false;
     };
@@ -203,6 +201,12 @@ var sceneConstructor = function(id) {
         return (_poses[middle].duration != duration) ? startIndex : middle;
     };
 
+    this.clearAnimation = function () {
+        for (var i = 0; i < _poses.length; i++) {
+            _poses[i]._startAnim = undefined;
+        }
+    };
+
     /**
      * Returns animation pose based on index from the list of 
      * animations added to this scene.
@@ -259,7 +263,7 @@ var sceneConstructor = function(id) {
      */
     this.register = function (actor) {
         if (this.handlers) {
-            delegator.register(this, actor);
+            delegator.register(actor, this.handlers);
         }
     };
 
