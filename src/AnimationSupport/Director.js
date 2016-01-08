@@ -37,6 +37,7 @@ module.exports = {
 
         if (scene._frameSpeed) {
             stm = scene.rolePlay(ts, actor);
+            active = true;
         }
         for (var i = 0; i < l; i++) {
             actor = actors[i];
