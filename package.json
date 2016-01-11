@@ -26,12 +26,7 @@
       "web": "http://enyojs.com/"
     }
   ],
-  "licenses": [
-    {
-      "type": "Apache-2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0"
-    }
-  ],
+  "license": "Apache-2.0",
   "scripts": {
     "test": "./node_modules/.bin/gulp"
   },
