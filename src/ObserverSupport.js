@@ -509,7 +509,8 @@ var ObserverSupport = {
 				chain;
 			
 			sup.apply(this, arguments);
-			
+
+			this.removeAllObservers();
 			if (chains) {
 				for (path in chains) {
 					chain = chains[path];
