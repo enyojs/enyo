@@ -52,9 +52,7 @@ var platforms = [
 	// Android 4+ using Chrome
 	{platform: 'androidChrome', regex: /Android .* Chrome\/(\d+)[.\d]+/},
 	// Android 2 - 4
-	{platform: 'android', regex: /Android (\d+)/},
-	// Some android phones, e.g. ZTE and Lenovo
-	{platform: "android", regex: /Android\/(\d+)/},
+	{platform: 'android', regex: /Android(?:\s|\/)(\d+)/},
 	// Kindle Fire
 	// Force version to 2, (desktop mode does not list android version)
 	{platform: 'android', regex: /Silk\/1./, forceVersion: 2, extra: {silk: 1}},
