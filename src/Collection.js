@@ -1282,6 +1282,9 @@ exports = module.exports = kind(
 			if (props && props.options) {
 				this.options = utils.mixin({}, [this.options, props.options]);
 				delete props.options;
+			} else {
+				// ensure we have our own copy of options
+				this.options = utils.clone(this.options);
 			}
 			
 			opts = opts? utils.mixin({}, [this.options, opts]): this.options;
