@@ -1043,12 +1043,13 @@ exports = module.exports = kind(
 				// before we lose access to the collection's content!
 				return this;
 			}
-			
-			if (this.length && options.destroy) this.empty(options);
-			
+
+			// remove the models from the collection which will also remove the its event listeners
+			if (this.length) this.empty(options);
+
 			// set the final resting state of this collection
 			this.set('status', States.DESTROYED);
-			
+
 			sup.apply(this, arguments);
 		};
 	}),
@@ -1293,6 +1294,9 @@ exports = module.exports = kind(
 			if (props && props.options) {
 				this.options = utils.mixin({}, [this.options, props.options]);
 				delete props.options;
+			} else {
+				// ensure we have our own copy of options
+				this.options = utils.clone(this.options);
 			}
 			
 			opts = opts? utils.mixin({}, [this.options, opts]): this.options;
