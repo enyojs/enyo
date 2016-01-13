@@ -1031,12 +1031,13 @@ exports = module.exports = kind(
 				// before we lose access to the collection's content!
 				return this;
 			}
-			
-			if (this.length && options.destroy) this.empty(options);
-			
+
+			// remove the models from the collection which will also remove the its event listeners
+			if (this.length) this.empty(options);
+
 			// set the final resting state of this collection
 			this.set('status', States.DESTROYED);
-			
+
 			sup.apply(this, arguments);
 		};
 	}),
