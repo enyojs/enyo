@@ -486,11 +486,11 @@ module.exports = kind(
 
 		if (direction < 0) {
 			for (i = panels.length - 1; i > index; i--) {
-				this.removePanel(panels[i]);
+				this.removePanel(panels[i], this.popOnBack);
 			}
 		} else {
 			for (i = 0; i < index; i++) {
-				this.removePanel(panels[i], true);
+				this.removePanel(panels[i], !this.cacheViews, true);
 			}
 		}
 	},
@@ -499,17 +499,19 @@ module.exports = kind(
 	* Removes the specified panel.
 	*
 	* @param {Object} panel - The panel to remove.
+	* @param {Boolean} destroy - Whether or not the panel should be destroyed; if `false`, the panel
+	*	will instead be cached.
 	* @param {Boolean} [preserve] - If {@link module:enyo/LightPanels~LightPanels#cacheViews} is
 	*	`true`, this value is used to determine whether or not to preserve the current panel's
 	*	position in the component hierarchy and on the screen, when caching.
 	* @private
 	*/
-	removePanel: function (panel, preserve) {
+	removePanel: function (panel, destroy, preserve) {
 		if (panel) {
-			if (this.cacheViews) {
-				this.cacheView(panel, preserve);
-			} else {
+			if (destroy) {
 				panel.destroy();
+			} else {
+				this.cacheView(panel, preserve);
 			}
 		}
 	},
@@ -652,13 +654,7 @@ module.exports = kind(
 	cleanUpPanel: function (panel) {
 		if (panel) {
 			panel.set('state', panel === this._currentPanel ? States.ACTIVE : States.INACTIVE);
-			if (panel.postTransition) {
-				// Async'ing this as it seems to improve ending transition performance on the TV.
-				// Requires further investigation into its behavior.
-				utils.asyncMethod(this, function () {
-					panel.postTransition();
-				});
-			}
+			panel.postTransition && panel.postTransition();
 		}
 	},
 
@@ -677,11 +673,6 @@ module.exports = kind(
 			prevPanel = this._previousPanel;
 			currPanel = this._currentPanel;
 
-			if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
-				(this._indexDirection > 0 && this.cacheViews && this.index > 0)) {
-				this.removePanels(this.index, this._indexDirection);
-			}
-
 			if (prevPanel) {
 				prevPanel.removeClass('shifted');
 				prevPanel.addClass('offscreen');
@@ -689,6 +680,11 @@ module.exports = kind(
 
 			this.cleanUpPanel(prevPanel);
 			this.cleanUpPanel(currPanel);
+
+			if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
+				(this._indexDirection > 0 && this.cacheViews && this.index > 0)) {
+				this.removePanels(this.index, this._indexDirection);
+			}
 
 			this.removeClass('transitioning');
 			this.transitioning = false;
