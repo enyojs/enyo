@@ -35,7 +35,7 @@ var utils = require('./utils');
 *
 * @module enyo/platform
 */
-exports = module.exports = 
+exports = module.exports =
 	/** @lends module:enyo/platform~platform */ {
 	//* `true` if the platform has native single-finger [events]{@glossary event}.
 	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints),
@@ -52,7 +52,7 @@ var platforms = [
 	// Android 4+ using Chrome
 	{platform: 'androidChrome', regex: /Android .* Chrome\/(\d+)[.\d]+/},
 	// Android 2 - 4
-	{platform: 'android', regex: /Android (\d+)/},
+	{platform: 'android', regex: /Android(?:\s|\/)(\d+)/},
 	// Kindle Fire
 	// Force version to 2, (desktop mode does not list android version)
 	{platform: 'android', regex: /Silk\/1./, forceVersion: 2, extra: {silk: 1}},
