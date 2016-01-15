@@ -576,7 +576,7 @@ var dom = module.exports = {
 };
 
 // override setInnerHtml for Windows 8 HTML applications
-if (typeof global.MSApp !== 'undefined') {
+if (typeof global.MSApp !== 'undefined' && global.MSApp.execUnsafeLocalFunction !== 'undefined') {
 	dom.setInnerHtml = function(node, html) {
 		global.MSApp.execUnsafeLocalFunction(function() {
 			node.innerHTML = html;
