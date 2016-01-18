@@ -1,4 +1,5 @@
-var kind = require('enyo/kind');
+var kind = require('enyo/kind'),
+	utils = require('enyo/utils');
 
 /**
 * @module enyo/ShowingTransitionSupport
@@ -171,8 +172,7 @@ module.exports = {
 					// and add the final-state class
 					this.addClass(this.showingClass);
 					this.startJob('showingTransition', function () {
-						if (this.shownMethod && typeof this.shownMethod == 'string') this[this.shownMethod];	// Run the supplied method.
-						else if (typeof this.shownMethod == 'function') this.shownMethod.call(this);	// Run the supplied method.
+						utils.call(this, this.shownMethod);	// Run the supplied method.
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
@@ -188,16 +188,15 @@ module.exports = {
 				if (this.hidingDuration && this.generated) {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
-					this.startJob('showingTransition', this.bindSafely(function () {
-						if (this.hiddenMethod && typeof this.hiddenMethod == 'string') this[this.hiddenMethod];	// Run the supplied method.
-						else if (typeof this.hiddenMethod == 'function') this.hiddenMethod.call(this);	// Run the supplied method.
+					this.startJob('showingTransition', function () {
+						utils.call(this, this.hiddenMethod);	// Run the supplied method.
 						this.removeClass(this.hidingClass);
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
 						sup.apply(this, args);
 						this.applyStyle('visibility', 'hidden');
 						this.applyStyle('display', null);
-					}), this.hidingDuration);
+					}, this.hidingDuration);
 				} else {
 					// No transition, just a hidden class.
 					this.removeClass(this.hidingClass);
