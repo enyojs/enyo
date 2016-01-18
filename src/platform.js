@@ -38,9 +38,9 @@ var utils = require('./utils');
 exports = module.exports =
 	/** @lends module:enyo/platform~platform */ {
 	//* `true` if the platform has native single-finger [events]{@glossary event}.
-	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints),
+	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints || window.navigator.maxTouchPoints),
 	//* `true` if the platform has native double-finger [events]{@glossary event}.
-	gesture: Boolean(('ongesturestart' in window) || window.navigator.msMaxTouchPoints)
+	gesture: Boolean(('ongesturestart' in window) || window.navigator.msMaxTouchPoints || window.navigator.maxTouchPoints)
 };
 
 /**
@@ -49,6 +49,8 @@ exports = module.exports =
 var ua = navigator.userAgent;
 var ep = exports;
 var platforms = [
+	// Windows Phone 7 - 10
+	{platform: 'windowsPhone', regex: /Windows Phone (?:OS )?(\d+)[.\d]+/},
 	// Android 4+ using Chrome
 	{platform: 'androidChrome', regex: /Android .* Chrome\/(\d+)[.\d]+/},
 	// Android 2 - 4
@@ -60,8 +62,6 @@ var platforms = [
 	// Force version to 4
 	{platform: 'android', regex: /Silk\/2./, forceVersion: 4, extra: {silk: 2}},
 	{platform: 'android', regex: /Silk\/3./, forceVersion: 4, extra: {silk: 3}},
-	// Windows Phone 7 - 8
-	{platform: 'windowsPhone', regex: /Windows Phone (?:OS )?(\d+)[.\d]+/},
 	// IE 8 - 10
 	{platform: 'ie', regex: /MSIE (\d+)/},
 	// IE 11
