@@ -29,19 +29,19 @@ var sources = {};
 */
 var Source = module.exports = kind(
 	/** @lends module:enyo/Source~Source.prototype */ {
-	
+
 	name: 'enyo.Source',
-	
+
 	/**
 	* @private
 	*/
 	kind: null,
-	
+
 	/**
 	* @private
 	*/
 
-	
+
 	/**
 	* When initialized, the source should be passed properties to set on itself.
 	* These properties should include the name by which it will be referenced in
@@ -53,11 +53,11 @@ var Source = module.exports = kind(
 	constructor: function (props) {
 		if (props) this.importProps(props);
 		// automatic coersion of name removing prefix
-		this.name || (this.name = this.kindName.replace(/^(.*)\./, ""));
+		this.name || (this.name = this.kindName.replace(/^(.*)\./, ''));
 		// now add to the global registry of sources
 		sources[this.name] = this;
 	},
-	
+
 	/**
 	* Overload this method to handle retrieval of data. This method should accept an options
 	* [hash]{@glossary Object} with additional configuration properties, including `success`
@@ -72,7 +72,7 @@ var Source = module.exports = kind(
 	fetch: function (model, opts) {
 		//
 	},
-	
+
 	/**
 	* Overload this method to handle persisting of data. This method should accept an options
 	* [hash]{@glossary Object} with additional configuration properties, including `success`
@@ -87,7 +87,7 @@ var Source = module.exports = kind(
 	commit: function (model, opts) {
 		//
 	},
-	
+
 	/**
 	* Overload this method to handle deletion of data. This method should accept an options
 	* [hash]{@glossary Object} with additional configuration properties, including `success`
@@ -101,7 +101,7 @@ var Source = module.exports = kind(
 	*	`success` and `error` callbacks.
 	*/
 	destroy: function (model, opts) {
-		
+
 		// if called with no parameters we actually just breakdown the source and remove
 		// it as being available
 		if (!arguments.length) {
@@ -109,7 +109,7 @@ var Source = module.exports = kind(
 			this.name = null;
 		}
 	},
-	
+
 	/**
 	* Overload this method to handle querying of data based on the passed-in constructor. This
 	* method should accept an options [hash]{@glossary Object} with additional configuration
@@ -124,21 +124,21 @@ var Source = module.exports = kind(
 	find: function (ctor, opts) {
 		//
 	},
-	
+
 	/**
 	* @private
 	*/
 	importProps: function (props) {
 		props && utils.mixin(this, props);
 	},
-	
+
 	/**
 	* @see module:enyo/utils#getPath
 	* @method
 	* @public
 	*/
 	get: utils.getPath,
-	
+
 	/**
 	* @see module:enyo/utils#setPath
 	* @method
@@ -166,9 +166,9 @@ var Source = module.exports = kind(
 */
 Source.create = function (props) {
 	var Ctor = (props && props.kind) || this;
-	
+
 	if (typeof Ctor == 'string') Ctor = kind.constructorForKind(Ctor);
-	
+
 	return new Ctor(props);
 };
 
@@ -177,10 +177,10 @@ Source.create = function (props) {
 * @private
 */
 Source.concat = function (ctor, props) {
-	
+
 	// force noDefer so that we can actually set this method on the constructor
 	if (props) props.noDefer = true;
-	
+
 	ctor.create = Source.create;
 };
 
@@ -190,83 +190,83 @@ Source.concat = function (ctor, props) {
 */
 Source.execute = function (action, model, opts) {
 	var source = opts.source || model.source,
-	
+
 		// we need to be able to bind the success and error callbacks for each of the
 		// sources we'll be using
 		options = utils.clone(opts, true),
 		nom = source,
 		msg;
-	
+
 	if (source) {
-		
+
 		// if explicitly set to true then we need to use all available sources in the
 		// application
 		if (source === true) {
-			
+
 			for (nom in sources) {
 				source = sources[nom];
 				if (source[action]) {
-					
+
 					// bind the source name to the success and error callbacks
 					options.success = opts.success.bind(null, nom);
 					options.error = opts.error.bind(null, nom);
-					
-					source[action](model, options);
+
+					return source[action](model, options);
 				}
 			}
 		}
-		
+
 		// if it is an array of specific sources to use we, well, will only use those!
 		else if (source instanceof Array) {
 			source.forEach(function (nom) {
 				var src = typeof nom == 'string' ? sources[nom] : nom;
-				
+
 				if (src && src[action]) {
 					// bind the source name to the success and error callbacks
 					options.success = opts.success.bind(null, src.name);
 					options.error = opts.error.bind(null, src.name);
-					
+
 					src[action](model, options);
 				}
 			});
 		}
-		
+
 		// if it is an instance of a source
 		else if (source instanceof Source && source[action]) {
-			
+
 			// bind the source name to the success and error callbacks
 			options.success = opts.success.bind(null, source.name);
 			options.error = opts.error.bind(null, source.name);
-			
-			source[action](model, options);
+
+			return source[action](model, options);
 		}
-		
+
 		// otherwise only one was specified and we attempt to use that
 		else if ((source = sources[nom]) && source[action]) {
-			
+
 			// bind the source name to the success and error callbacks
 			options.success = opts.success.bind(null, nom);
 			options.error = opts.error.bind(null, nom);
-			
-			source[action](model, options);
+
+			return source[action](model, options);
 		}
-		
+
 		// we could not resolve the requested source
 		else {
 			msg = 'enyo.Source.execute(): requested source(s) could not be found for ' +
 				model.kindName + '.' + action + '()';
-			
+
 			logger.warn(msg);
-			
+
 			// we need to fail the attempt and let it be handled
 			opts.error(nom ? typeof nom == 'string' ? nom : nom.name : 'UNKNOWN', msg);
 		}
 	} else {
 		msg = 'enyo.Source.execute(): no source(s) provided for ' + model.kindName + '.' +
 			action + '()';
-			
+
 		logger.warn(msg);
-		
+
 		// we need to fail the attempt and let it be handled
 		opts.error(nom ? typeof nom == 'string' ? nom : nom.name : 'UNKNOWN', msg);
 	}
