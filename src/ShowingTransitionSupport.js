@@ -26,9 +26,10 @@ var kind = require('enyo/kind'),
 * applied immediately, skipping the transition state classes.
 *
 * An optional method may be supplied to fire at the end of either of the transitions, using
-* {hidingMethod} and/or {showingMethod}
+* {hidingMethod} and/or {showingMethod}.
 *
 * @mixin
+* @wip
 * @public
 */
 module.exports = {
