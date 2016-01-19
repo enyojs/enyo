@@ -10,13 +10,6 @@ var
 	utils = require('./utils'),
 	logger = require('./logger');
 
-/**
-* All of the known, instanced [sources]{@link module:enyo/Source~Source}, by name.
-*
-* @name enyo~sources
-* @type {Object}
-* @readonly
-*/
 var sources = {};
 
 /**
@@ -92,7 +85,7 @@ var Source = module.exports = kind(
 	* Overload this method to handle deletion of data. This method should accept an options
 	* [hash]{@glossary Object} with additional configuration properties, including `success`
 	* and `error` callbacks to handle the result. If called without parameters, it will
-	* instead destroy itself and be removed from [enyo.sources]{@link enyo~sources}, rendering
+	* instead destroy itself and be removed from [sources]{@link module:enyo/Source~Source.sources}, rendering
 	* itself unavailable for further operations.
 	*
 	* @param {(module:enyo/Model~Model|module:enyo/Collection~Collection)} model The [model]{@link module:enyo/Model~Model} or
@@ -152,11 +145,11 @@ var Source = module.exports = kind(
 * properties should include a `kind` property with the name of the
 * [kind]{@glossary kind} of source and a `name` for the instance. This static
 * method is also available on all [subkinds]{@glossary subkind} of
-* `enyo.Source`. The instance will automatically be added to the
-* [enyo.sources]{@link enyo~sources} [object]{@glossary Object} and may be
+* `enyo/Source`. The instance will automatically be added to the
+* [sources]{@link module:enyo/Source~Source.sources} [object]{@glossary Object} and may be
 * referenced by its `name`.
 *
-* @name enyo.Source.create
+* @name module:enyo/Source~Source.create
 * @static
 * @method
 * @param {Object} props - The properties to pass to the constructor for the requested
@@ -173,7 +166,9 @@ Source.create = function (props) {
 };
 
 /**
+* @name module:enyo/Source~Source.concat
 * @static
+* @method
 * @private
 */
 Source.concat = function (ctor, props) {
@@ -185,7 +180,9 @@ Source.concat = function (ctor, props) {
 };
 
 /**
+* @name module:enyo/Source~Source.execute
 * @static
+* @method
 * @private
 */
 Source.execute = function (action, model, opts) {
@@ -272,4 +269,12 @@ Source.execute = function (action, model, opts) {
 	}
 };
 
+/**
+* All of the known, instanced [sources]{@link module:enyo/Source~Source}, by name.
+* @name module:enyo/Source~Source.sources
+* @type {Object}
+* @public
+* @readonly
+*/
 Source.sources = sources;
+

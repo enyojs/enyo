@@ -4,7 +4,7 @@ var
 
 /**
 * The extended {@glossary event} [object]{@glossary Object} that is provided when we
-* emulate iOS gesture events on non-iOS devices.
+* emulate iOS multitouch gesture events on non-iOS devices.
 *
 * @typedef {Object} module:enyo/gesture/touchGestures~EmulatedGestureEvent
 * @property {Number} pageX - The x-coordinate of the center point between fingers.

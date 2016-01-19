@@ -14,7 +14,7 @@ var
 * The extended {@glossary event} [object]{@glossary Object} that is provided when the
 * [onActiveChanged]{@link module:enyo/Group~Group#onActiveChanged} event is fired.
 *
-* @typedef {Object} enyo.Group~ActiveChangedEvent
+* @typedef {Object} module:enyo/Group~Group~ActiveChangedEvent
 * @property {module:enyo/Control~Control} active - The active [control]{@link module:enyo/Control~Control} for the
 *	[group]{@link module:enyo/Group~Group}.
 */

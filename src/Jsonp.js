@@ -38,11 +38,11 @@ var JsonpRequest = module.exports = kind(
 	* @private
 	*/
 	published: {
+		/** @lends module:enyo/Jsonp~JsonpRequest.prototype */
 		
 		/**
 		* The URL for the service.
 		*
-		* @memberof enyo.JsonpRequest.prototype
 		* @type {String}
 		* @default ''
 		* @public
@@ -52,7 +52,6 @@ var JsonpRequest = module.exports = kind(
 		/**
 		* The optional character set to use to interpret the return data.
 		*
-		* @memberof enyo.JsonpRequest.prototype
 		* @type {String}
 		* @default null
 		* @public
@@ -65,7 +64,6 @@ var JsonpRequest = module.exports = kind(
 		* This may also be set to `null` in some cases.
 		*
 		* @see module:enyo/Jsonp~JsonpRequest.overrideCallback
-		* @memberof enyo.JsonpRequest.prototype
 		* @type {String}
 		* @default 'callback'
 		* @public
@@ -77,7 +75,6 @@ var JsonpRequest = module.exports = kind(
 		* to (attempt to) force a new fetch of the resource instead of reusing a
 		* local cache.
 		*
-		* @memberof enyo.JsonpRequest.prototype
 		* @type {Boolean}
 		* @default true
 		* @public
@@ -92,7 +89,6 @@ var JsonpRequest = module.exports = kind(
 		* name and only one [JsonpRequest]{@link module:enyo/Jsonp~JsonpRequest} using this property may
 		* be active at a time.
 		*
-		* @memberof enyo.JsonpRequest.prototype
 		* @type {String}
 		* @default null
 		* @public

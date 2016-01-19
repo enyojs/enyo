@@ -15,7 +15,7 @@ var
 * when the [onSelect]{@link module:enyo/Selection~Selection#onSelect} and
 * [onDeselect]{@link module:enyo/Selection~Selection#onDeselect} events are fired.
 *
-* @typedef {Object} enyo.Selection~SelectionEvent
+* @typedef {Object} module:enyo/Selection~Selection~SelectionEvent
 * @property {Number|String} key The key that was used to register the
 *	[selection]{@link module:enyo/Selection~Selection} (usually a row index).
 * @property {Object} data - References data registered with the key by the code
