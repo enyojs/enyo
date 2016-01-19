@@ -56,14 +56,16 @@ module.exports = {
         var pose, t,
             index = this.poseByTime(actor._animPose, since),
             props = actor._animPose[index],
+            ind = this.poseByTime(actor._animPath, since),
+            path = actor._animPath[ind].path,
             prevDur = actor._animPose[(index - 1) < 0 ? 0 : (index - 1)].duration,
             currentAnimSince = since - prevDur,
             runningDur = props.duration - prevDur;
+            actor.path = path;
         if (!props._startAnim) {
             pose = frame.getComputedProperty(actor.hasNode(), props.animate, actor.currentState);
             utils.mixin(props, pose);
         }
-
         if (currentAnimSince < 0) return;
         if (currentAnimSince <= runningDur && runningDur !== 0) {
             t = currentAnimSince / runningDur;

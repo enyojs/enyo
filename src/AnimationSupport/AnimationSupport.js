@@ -80,6 +80,8 @@ var AnimationSupport = {
 
 	_animPose: [],
 
+	_animPath: [],
+
 	_pose: [],
 
 	mixins: [EventEmitter, FrameEditor],
@@ -159,14 +161,20 @@ var AnimationSupport = {
 	},
 
 	/**
+	* Adds new path on already existing path for this character.
+	* @public
+	*/
+	addPath: function(path,dur){
+		this.addAnimation({},dur);
+		this._animPath.push({path:path,duration:this.totalDuration});
+	},
+	/**
 	* Sets new animation for this character.
 	* @public
 	*/
 	setAnimation: function (newProp) {
 		this._prop = newProp;
 	},
-
-
 	/**
 	* Sets the delta values of x, y and z for events
 	* @param {Object} obj - Object contains dX, dY and dZ as keys
@@ -284,6 +292,9 @@ kind.concatHandler = function (ctor, props, instance) {
 		if ((props.animate && typeof props.animate != 'function' ) ||
 			(props.keyFrame && typeof props.keyFrame != 'function')) {
 			animation.trigger(proto);
+			if(props.path){
+					AnimationSupport.addPath(props.path,props.duration);
+			}
 		}
 		if (props.handleAnimationEvents && typeof props.handleAnimationEvents != 'function') {
 			animation.register(proto);
