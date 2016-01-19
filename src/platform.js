@@ -52,7 +52,7 @@ exports = module.exports = {
 	* The name of the platform that was detected or `undefined` if the platform
 	* was unrecognized. This value is the key name for the major version of the
 	* platform on the exported object.
-	* @var {string} platformName
+	* @member {string} platformName
 	* @public
 	*/
 
