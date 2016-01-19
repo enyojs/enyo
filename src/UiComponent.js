@@ -254,6 +254,7 @@ var UiComponent = module.exports = kind(
 	* @param {module:enyo/UiComponent~UpdateComponentsOptions} [opts] - Additional options for how
 	*	the update operation should behave.
 	* @returns {Boolean} - Whether or not the component should be re-rendered.
+	* @wip
 	* @public
 	*/
 	updateComponents: function (props, ext, opts) {
