@@ -1,13 +1,18 @@
+/**
+* This module exports the {@link module:enyo/ShowingTransitionSupport~ShowingTransitionSupport} mixin.
+*
+* @wip
+* @module enyo/ShowingTransitionSupport
+*/
+
 var kind = require('enyo/kind'),
 	utils = require('enyo/utils');
 
 /**
-* @module enyo/ShowingTransitionSupport
-*
-* The {@link module:enyo/ShowingTransitionSupport} [mixin]{@glossary mixin} is applicable to
-* and control that should use a transition or animation when it is shown or hidden. This mixin adds
-* optional state-classes to the component at its resting or transitioning states. The states are as
-* follows:
+* The {@link module:enyo/ShowingTransitionSupport~ShowingTransitionSupport} [mixin]{@glossary mixin}
+* is applicable to any control that should use a transition or animation when it is shown or hidden.
+* This mixin adds optional state-classes to the component at its resting or transitioning states.
+* The states are as follows:
 *
 * * 'shown' and 'hidden' - resting, static, not-transitioning, past tense states.
 * * 'showing' and 'hiding' - transitioning-to, progressive tense states.
@@ -17,24 +22,26 @@ var kind = require('enyo/kind'),
 * 'showing' CSS classes are already defined as defaults, to account for the most common use case.
 * The same classes are allowed to be used on multiple states.
 *
-* It may be desirable to only have a transition on only one of the showing or hiding states; this is
+* It may be desirable to have a transition on only one of the showing or hiding states; this is
 * also possible.
 *
-* Transitions take time, so be sure to include a {hidingDuration} and/or {showingDuration}. You may
+* Transitions take time, so be sure to include a `hidingDuration` and/or `showingDuration`. You may
 * take advantage of this [mixin]{@glossary mixin}'s state classes without using transitions by
 * leaving the duration properties blank (0, null or undefined) and the resting states will simply be
 * applied immediately, skipping the transition state classes.
 *
 * An optional method may be supplied to fire at the end of either of the transitions, using
-* {hidingMethod} and/or {showingMethod}.
+* `hidingMethod` and/or `showingMethod`.
 *
 * @mixin
 * @wip
 * @public
 */
-module.exports = {
+var ShowingTransitionSupport = {
 
 	/**
+	* @ignore
+	* @readonly
 	* @private
 	*/
 	name: 'ShowingTransitionSupport',
@@ -210,3 +217,5 @@ module.exports = {
 		};
 	})
 };
+
+module.exports = ShowingTransitionSupport;
