@@ -39,7 +39,7 @@ var utils = require('./utils');
 exports = module.exports = {
 	/**
 	* `true` if the platform has native single-finger [events]{@glossary event}.
-	* @public 
+	* @public
 	*/
 	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints),
 	/**
@@ -52,7 +52,7 @@ exports = module.exports = {
 	* The name of the platform that was detected or `undefined` if the platform
 	* was unrecognized. This value is the key name for the major version of the
 	* platform on the exported object.
-	* @member {string} platformName
+	* @member {String} platformName
 	* @public
 	*/
 
