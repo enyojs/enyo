@@ -195,7 +195,8 @@ Source.execute = function (action, model, opts) {
 		// sources we'll be using
 		options = utils.clone(opts, true),
 		nom = source,
-		msg;
+		msg,
+		ret;
 
 	if (source) {
 
@@ -211,7 +212,7 @@ Source.execute = function (action, model, opts) {
 					options.success = opts.success.bind(null, nom);
 					options.error = opts.error.bind(null, nom);
 
-					return source[action](model, options);
+					ret = source[action](model, options);
 				}
 			}
 		}
@@ -220,13 +221,14 @@ Source.execute = function (action, model, opts) {
 		else if (source instanceof Array) {
 			source.forEach(function (nom) {
 				var src = typeof nom == 'string' ? sources[nom] : nom;
+				ret = [];
 
 				if (src && src[action]) {
 					// bind the source name to the success and error callbacks
 					options.success = opts.success.bind(null, src.name);
 					options.error = opts.error.bind(null, src.name);
 
-					src[action](model, options);
+					ret.push(src[action](model, options));
 				}
 			});
 		}
@@ -238,7 +240,7 @@ Source.execute = function (action, model, opts) {
 			options.success = opts.success.bind(null, source.name);
 			options.error = opts.error.bind(null, source.name);
 
-			return source[action](model, options);
+			ret = source[action](model, options);
 		}
 
 		// otherwise only one was specified and we attempt to use that
@@ -248,7 +250,7 @@ Source.execute = function (action, model, opts) {
 			options.success = opts.success.bind(null, nom);
 			options.error = opts.error.bind(null, nom);
 
-			return source[action](model, options);
+			ret = source[action](model, options);
 		}
 
 		// we could not resolve the requested source
@@ -270,6 +272,8 @@ Source.execute = function (action, model, opts) {
 		// we need to fail the attempt and let it be handled
 		opts.error(nom ? typeof nom == 'string' ? nom : nom.name : 'UNKNOWN', msg);
 	}
+
+	return ret;
 };
 
 Source.sources = sources;
