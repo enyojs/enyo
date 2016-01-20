@@ -21,7 +21,7 @@ function addListener(obj, e, fn, ctx) {
 		method: fn,
 		ctx: ctx || obj
 	});
-	
+
 	return obj;
 }
 
@@ -31,14 +31,14 @@ function addListener(obj, e, fn, ctx) {
 function removeListener(obj, e, fn, ctx) {
 	var listeners = obj.listeners()
 		, idx;
-		
+
 	if (listeners.length) {
 		idx = listeners.findIndex(function (ln) {
 			return ln.event == e && ln.method === fn && (ctx? ln.ctx === ctx: true);
 		});
 		idx >= 0 && listeners.splice(idx, 1);
 	}
-	
+
 	return obj;
 }
 
@@ -49,7 +49,7 @@ function emit(obj, args) {
 	var len = args.length
 		, e = args[0]
 		, listeners = obj.listeners(e);
-		
+
 	if (listeners.length) {
 		if (len > 1) {
 			args = utils.toArray(args);
@@ -59,10 +59,10 @@ function emit(obj, args) {
 		}
 
 		for (var i=0, ln; (ln=listeners[i]); ++i) ln.method.apply(ln.ctx, args);
-		
+
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -77,28 +77,28 @@ function emit(obj, args) {
 * @public
 */
 var EventEmitter = {
-	
+
 	/**
 	* @private
 	*/
 	name: 'EventEmitter',
-	
+
 	/**
 	* @private
 	*/
 	_silenced: false,
-	
+
 	/**
 	* @private
 	*/
 	_silenceCount: 0,
-	
+
 	/**
 	* Disables propagation of [events]{@glossary event}. This is a counting
-	* semaphor and [unsilence()]{@link module:enyo/EventEmitter~EventEmitter.unsilence} will need to
+	* semaphor and [unsilence()]{@link module:enyo/EventEmitter~EventEmitter#unsilence} will need to
 	* be called the same number of times that this method is called.
 	*
-	* @see module:enyo/EventEmitter~EventEmitter.unsilence
+	* @see module:enyo/EventEmitter~EventEmitter#unsilence
 	* @returns {this} The callee for chaining.
 	* @public
 	*/
@@ -107,13 +107,13 @@ var EventEmitter = {
 		this._silenceCount++;
 		return this;
 	},
-	
+
 	/**
 	* Enables propagation of [events]{@glossary event}. This is a counting
 	* semaphor and this method will need to be called the same number of times
-	* that [silence()]{@link module:enyo/EventEmitter~EventEmitter.silence} was called.
+	* that [silence()]{@link module:enyo/EventEmitter~EventEmitter#silence} was called.
 	*
-	* @see module:enyo/EventEmitter~EventEmitter.silence
+	* @see module:enyo/EventEmitter~EventEmitter#silence
 	* @returns {this} The callee for chaining.
 	* @public
 	*/
@@ -127,29 +127,28 @@ var EventEmitter = {
 		}
 		return this;
 	},
-	
+
 	/**
-	* Determines whether the callee is currently [silenced]{@link module:enyo/EventEmitter~EventEmitter.silence}.
+	* Determines whether the callee is currently [silenced]{@link module:enyo/EventEmitter~EventEmitter#silence}.
 	*
 	* @returns {Boolean} Whether or not the callee is
-	*	[silenced]{@link module:enyo/EventEmitter~EventEmitter.silence}.
+	*	[silenced]{@link module:enyo/EventEmitter~EventEmitter#silence}.
 	* @public
 	*/
 	isSilenced: function () {
 		return this._silenced;
 	},
-	
+
 	/**
-	* @alias enyo.EventEmitter.on
-	* @deprecated
+	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter#on}
 	* @public
 	*/
 	addListener: function (e, fn, ctx) {
 		return addListener(this, e, fn, ctx);
 	},
-	
+
 	/**
-	* Adds an {@glossary event} listener. Until [removed]{@link module:enyo/EventEmitter~EventEmitter.off},
+	* Adds an {@glossary event} listener. Until [removed]{@link module:enyo/EventEmitter~EventEmitter#off},
 	* this listener will fire every time the event is
 	* [emitted]{@link module:enyo/EventEmitter~EventEmitter#emit}.
 	*
@@ -162,16 +161,15 @@ var EventEmitter = {
 	on: function (e, fn, ctx) {
 		return addListener(this, e, fn, ctx);
 	},
-	
+
 	/**
-	* @alias enyo.EventEmitter.off
-	* @deprecated
+	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter#off}
 	* @public
 	*/
 	removeListener: function (e, fn, ctx) {
 		return removeListener(this, e, fn, ctx);
 	},
-	
+
 	/**
 	* Removes an {@glossary event} listener.
 	*
@@ -185,7 +183,7 @@ var EventEmitter = {
 	off: function (e, fn, ctx) {
 		return removeListener(this, e, fn, ctx);
 	},
-	
+
 	/**
 	* Removes all listeners, or all listeners for a given {@glossary event}.
 	*
@@ -195,7 +193,7 @@ var EventEmitter = {
 	removeAllListeners: function (e) {
 		var euid = this.euid
 			, loc = euid && eventTable[euid];
-		
+
 		if (loc) {
 			if (e) {
 				eventTable[euid] = loc.filter(function (ln) {
@@ -205,10 +203,10 @@ var EventEmitter = {
 				eventTable[euid] = null;
 			}
 		}
-		
+
 		return this;
 	},
-	
+
 	/**
 	* Primarily intended for internal use, this method returns an immutable copy
 	* of all listeners, or all listeners for a particular {@glossary event} (if any).
@@ -222,21 +220,20 @@ var EventEmitter = {
 	listeners: function (e) {
 		var euid = this.euid || (this.euid = utils.uid('e'))
 			, loc = eventTable[euid] || (eventTable[euid] = []);
-		
+
 		return !e? loc: loc.filter(function (ln) {
 			return ln.event == e || ln.event == '*';
 		});
 	},
-	
+
 	/**
-	* @alias enyo.EventEmitter.emit
-	* @deprecated
+	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter#emit}
 	* @public
 	*/
 	triggerEvent: function () {
 		return !this._silenced? emit(this, arguments): false;
 	},
-	
+
 	/**
 	* Emits the named {@glossary event}. All subsequent arguments will be passed
 	* to the event listeners.
