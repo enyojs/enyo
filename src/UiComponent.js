@@ -14,6 +14,15 @@ var
 	Component = require('./Component');
 
 /**
+* The configurable options used by {@link module:enyo/UiComponent~UiComponent} when updating
+* components.
+*
+* @typedef {Object} enyo/UiComponent~UiComponent~UpdateComponentsOptions
+* @property {Boolean} [silent] - If `true`, component properties will be updated silently i.e. they
+*	will be set directly, rather than via the generic `set` method.
+*/
+
+/**
 * {@link module:enyo/UiComponent~UiComponent} implements a container strategy suitable for presentation layers.
 *
 * `UiComponent` itself is abstract. Concrete [subkinds]{@glossary subkind} include
@@ -226,36 +235,43 @@ var UiComponent = module.exports = kind(
 		};
 	}),
 
-		/**
+	/**
 	* An alternative component update path that attempts to intelligently update only the
 	* relevant portions of the component which have changed.
 	*
-	* @param {Array} comps - An array of kind definitions to be set as the child components of
+	* @param {Object[]} props - An array of kind definitions to be set as the child components of
 	*	this component.
+	* @param {Object} [ext] - Additional properties to be supplied as defaults for components, when
+	*	being created or recreated. These properties have no bearing on the diff computation of the
+	*	child components.
+	* @param {module:enyo/UiComponent~UpdateComponentsOptions} [opts] - Additional options for how
+	*	the update operation should behave.
 	* @returns {Boolean} - Whether or not the component should be re-rendered.
+	* @wip
 	* @public
 	*/
-	updateComponents: function (comps) {
+	updateComponents: function (props, ext, opts) {
 		var allStatefulKeys = {},
-			isChanged = this.computeComponentsDiff(comps, allStatefulKeys),
-			comp, controls, control, keys, key, idxKey, idxComp, kind;
+			isChanged = this.computeComponentsDiff(props, allStatefulKeys),
+			prop, controls, control, keys, key, idxKey, idxProp, kind;
 
 		if (isChanged) {
 			this.destroyClientControls();
-			this.createComponents(comps);
+			this.createComponents(props, ext);
 			return true;
 		} else {
 			controls = this.getClientControls();
-			for (idxComp = 0; idxComp < comps.length; idxComp++) {
-				comp = comps[idxComp];
-				control = controls[idxComp];
-				kind = comp.kind || this.defaultKind;
-				keys = allStatefulKeys[idxComp];
+			for (idxProp = 0; idxProp < props.length; idxProp++) {
+				prop = props[idxProp];
+				control = controls[idxProp];
+				kind = prop.kind || this.defaultKind;
+				keys = allStatefulKeys[idxProp];
 
 				for (idxKey = 0; idxKey < keys.length; idxKey++) { // for each key, determine if there is a change
 					key = keys[idxKey];
-					if (comp[key] != control[key]) {
-						control.set(key, comp[key]);
+					if (prop[key] != control[key]) {
+						if (opts && opts.silent) control[key] = prop[key];
+						else control.set(key, prop[key]);
 					}
 				}
 			}
@@ -689,7 +705,7 @@ var UiComponent = module.exports = kind(
 			);
 		}
 	},
-	
+
 	/**
 	* @method
 	* @private
