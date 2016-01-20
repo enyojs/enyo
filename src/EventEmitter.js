@@ -70,8 +70,8 @@ function emit(obj, args) {
 * {@link module:enyo/EventEmitter~EventEmitter} is a {@glossary mixin} that adds support for
 * registered {@glossary event} listeners. These events are different from
 * bubbled events (e.g., DOM events and [handlers]{@link module:enyo/Component~Component#handlers}).
-* When [emitted]{@link module:enyo/EventEmitter~EventEmitter#emit}, these events **do not bubble**
-* and will only be handled by [registered listeners]{@link module:enyo/EventEmitter~EventEmitter#on}.
+* When [emitted]{@link module:enyo/EventEmitter~EventEmitter.emit}, these events **do not bubble**
+* and will only be handled by [registered listeners]{@link module:enyo/EventEmitter~EventEmitter.on}.
 *
 * @mixin
 * @public
@@ -95,10 +95,10 @@ var EventEmitter = {
 
 	/**
 	* Disables propagation of [events]{@glossary event}. This is a counting
-	* semaphor and [unsilence()]{@link module:enyo/EventEmitter~EventEmitter#unsilence} will need to
+	* semaphor and [unsilence()]{@link module:enyo/EventEmitter~EventEmitter.unsilence} will need to
 	* be called the same number of times that this method is called.
 	*
-	* @see module:enyo/EventEmitter~EventEmitter#unsilence
+	* @see module:enyo/EventEmitter~EventEmitter.unsilence
 	* @returns {this} The callee for chaining.
 	* @public
 	*/
@@ -111,9 +111,9 @@ var EventEmitter = {
 	/**
 	* Enables propagation of [events]{@glossary event}. This is a counting
 	* semaphor and this method will need to be called the same number of times
-	* that [silence()]{@link module:enyo/EventEmitter~EventEmitter#silence} was called.
+	* that [silence()]{@link module:enyo/EventEmitter~EventEmitter.silence} was called.
 	*
-	* @see module:enyo/EventEmitter~EventEmitter#silence
+	* @see module:enyo/EventEmitter~EventEmitter.silence
 	* @returns {this} The callee for chaining.
 	* @public
 	*/
@@ -129,10 +129,10 @@ var EventEmitter = {
 	},
 
 	/**
-	* Determines whether the callee is currently [silenced]{@link module:enyo/EventEmitter~EventEmitter#silence}.
+	* Determines whether the callee is currently [silenced]{@link module:enyo/EventEmitter~EventEmitter.silence}.
 	*
 	* @returns {Boolean} Whether or not the callee is
-	*	[silenced]{@link module:enyo/EventEmitter~EventEmitter#silence}.
+	*	[silenced]{@link module:enyo/EventEmitter~EventEmitter.silence}.
 	* @public
 	*/
 	isSilenced: function () {
@@ -140,7 +140,7 @@ var EventEmitter = {
 	},
 
 	/**
-	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter#on}
+	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter.on}
 	* @public
 	*/
 	addListener: function (e, fn, ctx) {
@@ -148,9 +148,9 @@ var EventEmitter = {
 	},
 
 	/**
-	* Adds an {@glossary event} listener. Until [removed]{@link module:enyo/EventEmitter~EventEmitter#off},
+	* Adds an {@glossary event} listener. Until [removed]{@link module:enyo/EventEmitter~EventEmitter.off},
 	* this listener will fire every time the event is
-	* [emitted]{@link module:enyo/EventEmitter~EventEmitter#emit}.
+	* [emitted]{@link module:enyo/EventEmitter~EventEmitter.emit}.
 	*
 	* @param {String} e - The {@glossary event} name to register for.
 	* @param {Function} fn - The listener.
@@ -163,7 +163,7 @@ var EventEmitter = {
 	},
 
 	/**
-	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter#off}
+	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter.off}
 	* @public
 	*/
 	removeListener: function (e, fn, ctx) {
@@ -227,7 +227,7 @@ var EventEmitter = {
 	},
 
 	/**
-	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter#emit}
+	* @deprecated Replaced by {@link module:enyo/EventEmitter~EventEmitter.emit}
 	* @public
 	*/
 	triggerEvent: function () {
