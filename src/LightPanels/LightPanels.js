@@ -688,6 +688,8 @@ module.exports = kind(
 				this.removePanels(this.index, this._indexDirection);
 			}
 
+			if (this.popQueue && this.popQueue.length) this.finalizePurge();
+
 			this.removeClass('transitioning');
 			this.transitioning = false;
 		}
@@ -812,14 +814,25 @@ module.exports = kind(
 	},
 
 	/**
-	* Destroys all panels.
+	* Destroys all panels. These will be queued for destruction after the next panel has loaded.
 	*
 	* @private
 	*/
 	purge: function () {
-		var panels = this.getPanels(),
-			panel;
+		var panels = this.getPanels();
+		this.popQueue = panels.slice();
+		panels.length = 0;
+		this.index = -1;
+	},
 
+	/**
+	* Clean-up any panels queued for destruction.
+	*
+	* @private
+	*/
+	finalizePurge: function () {
+		var panels = this.popQueue,
+			panel;
 		while (panels.length) {
 			panel = panels.pop();
 			if (this.cacheViews) {
@@ -829,8 +842,6 @@ module.exports = kind(
 				panel.destroy();
 			}
 		}
-
-		this.index = -1;
 	},
 
 	/**
