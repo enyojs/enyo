@@ -50,7 +50,7 @@ var EventDelegator = {
 	* - mousewheel
 	* @public
 	*/
-	register: function (events) {
+	register: function (charc, events) {
 		events = events || {};
 		for (var key in events) {
 			this.addRemoveListener(charc, key, events[key]);
@@ -66,8 +66,8 @@ var EventDelegator = {
 	* - mousewheel
 	* @public
 	*/
-	deRegister: function (charc) {
-		var events = charc.handleAnimationEvents || {};
+	deRegister: function (charc, events) {
+		events = events || {};
 		for (var key in events) {
 			this.addRemoveListener(charc, key, events[key], true);
 		}

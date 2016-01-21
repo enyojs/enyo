@@ -22,8 +22,12 @@ module.exports = {
 	play: function (actor) {
 		actor = actor || this;
 		actor._frameSpeed = 1;
-		this.animating = true;
 		actor._startTime = (actor.delay || 0);
+		if (isNaN(actor.timeline) || !actor.timeline) {
+			actor.timeline = 0;
+		}
+		this.trigger();
+		this.animating = true;
 	},
 
 	resume: function(actor) {
@@ -61,12 +65,21 @@ module.exports = {
 		actor._cachedValue = 1;
 		actor._frameSpeed = 0;
 		actor.timeline = 0;
+		this.animating = false;
+		this.cancel();
 	},
 
 	rolePlay: function (t, actor) {
 		actor = actor || this;
-		if (!actor.timeline || actor.timeline < 0) actor.timeline = 0;
-		actor.timeline += _rolePlay(t, actor._frameSpeed);
+		if (actor.timeline === undefined || actor.timeline < 0) 
+			actor.timeline = 0;
+		
+		if(actor.delay > 0) {
+			console.log(actor.name, actor.delay);
+			actor.delay -= _rolePlay(t, actor._frameSpeed);
+		} else {
+			actor.timeline += _rolePlay(t, actor._frameSpeed);
+		}
 		return actor.timeline;
 	}
 };

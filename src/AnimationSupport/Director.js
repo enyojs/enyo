@@ -4,7 +4,7 @@ var frame = require('./Frame'),
 	tween = require('./Tween'),
     utils =  require('../utils');
 
-var rolePlays = {};
+//var rolePlays = {};
 
 /**
 * This modules exposes the features to support 'Director' approach.
@@ -14,9 +14,9 @@ module.exports = {
 
     roll: function (scene) {
         var actor,
-            actors = rolePlays[scene.getID()],
+            actors = scene.rolePlays ? scene.rolePlays[scene.getID()]: [],
             l = actors ? actors.length: 0,
-            active = l > 0;
+            active = true;
 
         for (var i = 0; i < l; i++) {
             actor = actors[i];
@@ -27,80 +27,47 @@ module.exports = {
         }
         scene.active = active;
     },
-    
-    take: function(scene, ts) {
-        var tm, stm, actor,
-            dur = scene.totalSpan(),
-            active = false,
-            actors = rolePlays[scene.getID()],
-            l = actors.length;
 
-        if (scene._frameSpeed) {
-            stm = scene.rolePlay(ts, actor);
-            active = true;
+    take: function (scene, ts) {
+        var pose, 
+            dur = scene.span,
+            tm = scene.timeline;
+
+        //TODO: need to find the right spot for capturing inital pose.
+        if (!scene.active) {
+            this.roll(scene);
         }
-        for (var i = 0; i < l; i++) {
-            actor = actors[i];
-            if (actor.generated) {
-                actor = stm ? scene : actor;
-                tm = stm || scene.rolePlay(ts, actor);
-                tm -= (actor._startTime || 0);
-                if (isNaN(tm) || tm <= 0) continue;
-                if (tm < dur) {
-                    this.action(actors[i], scene, tm);
-                    active = true;
-                } else {
-                    actor.timeline = dur;
-                    this.cut(scene, actor);
-                }
-            }
-        }
-        scene.animating = active;
-    },
-
-    action: function(actor, scene, since) {
-        var pose, t, prevDur, currentAnimSince, runningDur,
-            index = scene.animateAtTime(since),
-            props = scene.getAnimation(index);
-
-        if(index) {
-            prevDur = scene.getAnimation(index - 1).duration;
-        } else {
-            if (!actor._initialPose) this.firstShot(actor);
-            prevDur = actor._initialPose.duration;
-        }
-        
-        currentAnimSince = since - prevDur,
-        runningDur = props.duration - prevDur;
-
-        if (!props._startAnim) {
-            pose = frame.getComputedProperty(actor.hasNode(), props.animate, actor.currentState);
-            utils.mixin(props, pose);
-        }
-
-        if (currentAnimSince < 0) return;
-        if (currentAnimSince <= runningDur && runningDur !== 0) {
-            t = currentAnimSince / runningDur;
-            tween.step(actor, props, ( t > 0.98) ?  t = 1 : t, runningDur);
-
+        if (isNaN(tm) || tm < 0) return;
+        if (tm <= dur) {
+            pose = scene.action(ts, pose);
             //TODO: Use Event Delegator to emit this event.
-            scene.step && scene.step(actor, t);
+            scene.step && scene.step(pose);
         } else {
-            tween.step(actor, props, 1, runningDur);
+            scene.timeline = dur;
+            scene.animating = false;
         }
     },
 
-    
-    cut: function (scene, actor) {
-        //TODO: Use Event Delegator to emit this event.
-        //scene.clearAnimation();
-        scene.completed && scene.completed(actor);
+    action: function (pose, actor, since, dur) {
+        var t;
+
+        if (!pose._startAnim) {
+            utils.mixin(pose,
+                frame.getComputedProperty(actor.hasNode(), pose.animate, actor.currentState));
+        }
+        if (since < 0) since = 0;
+        if (since <= dur && dur !== 0) {
+            t = since / dur;
+            tween.step(actor, pose, ( t > 0.98) ? 1 : t, dur);
+        } else {
+            tween.step(actor, pose, 1, dur);
+        }
     },
-
-
+ 
     cast: function (actors, scene) {
         var acts = utils.isArray(actors) ? actors : [actors],
-            id = scene.getID();
+            id = scene.getID(),
+            rolePlays = scene.rolePlays || [];
 
         if (!rolePlays[id]) {
             rolePlays[id] = acts;
@@ -110,12 +77,14 @@ module.exports = {
                 return actors;
             }, rolePlays[id]);
         }
+        scene.rolePlays = rolePlays;
     },
 
     reject: function (scene, actors) {
-        var id = scene.getID();
+        var id = scene.getID(), acts,
+            rolePlays = scene.rolePlays || [];
         actors = actors || rolePlays[id];
-        var acts = utils.isArray(actors) ? actors : [actors];
+        acts = utils.isArray(actors) ? actors : [actors];
         if (rolePlays[id]) {
             rolePlays[id] = acts.reduce(function(actors, actor) {
                 var i = actors.indexOf(actor);
@@ -123,16 +92,16 @@ module.exports = {
                 return actors;
             }, rolePlays[id]);
         }
+        scene.rolePlays = rolePlays;
     },
 
     firstShot: function (actor) {
         var dom = actor.hasNode(),
             pose = frame.getComputedProperty(dom, undefined);
-        pose.duration = 0;
+        pose.span = 0;
         actor._initialPose = pose;
         actor.currentState = pose.currentState;
-        
-        frame.accelerate(dom, pose.matrix);
+        // frame.accelerate(dom, pose.matrix);
     },
 
     shot: function(actor, ts) {

@@ -25,7 +25,7 @@ module.exports = {
         var k, fn, state, ease, points, path;
 
         node = actor.node;
-        state = actor.currentState = actor.currentState || {};
+        state = actor.currentState = actor.currentState || pose.currentState || {};
         points = pose.controlPoints = pose.controlPoints || {};
         ease = pose.animate && pose.animate.ease ? pose.animate.ease : this.ease;
         path = pose.animate && pose.animate.path;
@@ -85,6 +85,7 @@ module.exports = {
         );
         frame.accelerate(node, matrix);
         state.matrix = matrix;
+        pose.currentState = state;
     },
 
 
