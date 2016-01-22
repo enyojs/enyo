@@ -680,13 +680,14 @@ module.exports = kind(
 				prevPanel.addClass('offscreen');
 			}
 
-			if (this.popQueue && this.popQueue.length) this.finalizePurge();
-
 			this.cleanUpPanel(prevPanel);
 			this.cleanUpPanel(currPanel);
 
-			if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
-				(this._indexDirection > 0 && this.cacheViews && this.index > 0)) {
+			if (this.popQueue && this.popQueue.length) {
+				this.finalizePurge();
+			} else if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews)
+				&& this.index < this.getPanels().length - 1)
+				|| (this._indexDirection > 0 && this.cacheViews && this.index > 0)) {
 				this.removePanels(this.index, this._indexDirection);
 			}
 
