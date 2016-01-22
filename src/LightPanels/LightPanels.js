@@ -680,6 +680,8 @@ module.exports = kind(
 				prevPanel.addClass('offscreen');
 			}
 
+			if (this.popQueue && this.popQueue.length) this.finalizePurge();
+
 			this.cleanUpPanel(prevPanel);
 			this.cleanUpPanel(currPanel);
 
@@ -817,9 +819,20 @@ module.exports = kind(
 	* @private
 	*/
 	purge: function () {
-		var panels = this.getPanels(),
-			panel;
+		var panels = this.getPanels();
+		this.popQueue = panels.slice();
+		panels.length = 0;
+		this.index = -1;
+	},
 
+	/**
+	* Clean-up any panels queued for destruction.
+	*
+	* @private
+	*/
+	finalizePurge: function () {
+		var panels = this.popQueue,
+			panel;
 		while (panels.length) {
 			panel = panels.pop();
 			if (this.cacheViews) {
@@ -829,8 +842,6 @@ module.exports = kind(
 				panel.destroy();
 			}
 		}
-
-		this.index = -1;
 	},
 
 	/**
