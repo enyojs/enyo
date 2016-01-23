@@ -142,13 +142,27 @@ var ViewPreloadSupport = {
 	* @public
 	*/
 	restoreView: function (id) {
+		var view = this.popView(id);
+
+		if (view) {
+			this.addControl(view);
+		}
+
+		return view;
+	},
+
+	/**
+	* Pops the specified view that was previously cached.
+	*
+	* @param {String} id - The unique identifier for the cached view that is being popped.
+	* @public
+	*/
+	popView: function (id) {
 		var cp = this._cachedViews,
 			view = cp[id];
 
 		if (view) {
 			this.$.viewCache.removeControl(view);
-			this.addControl(view);
-
 			this._cachedViews[id] = null;
 		}
 
