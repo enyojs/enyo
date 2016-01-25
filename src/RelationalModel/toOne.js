@@ -36,7 +36,7 @@ var toOne = module.exports = kind(
 	* [kind]{@glossary kind}.
 	*
 	* @type module:enyo/RelationalModel~RelationOptions
-	* @property {module:enyo/Relation} inverseType=module:enyo/RelationalModel~toOne - This can be
+	* @property {module:enyo/Relation~Relation} inverseType=module:enyo/RelationalModel~toOne - This can be
 	*	{@link module:enyo/RelationalModel~toOne} or {@link module:enyo/RelationalModel~toMany}.
 	* @property {Object} modelOptions - An options hash to pass to the related instance if
 	*	`create` is `true`.

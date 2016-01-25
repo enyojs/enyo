@@ -36,7 +36,7 @@ var manyToMany = module.exports = kind(
 	*
 	* @see module:enyo/RelationalModel~toMany#options
 	* @type module:enyo/RelationalModel~RelationOptions
-	* @property {module:enyo/Relation} inverseType=module:enyo/RelationalModel~manyToMany - This is
+	* @property {module:enyo/Relation~Relation} inverseType=module:enyo/RelationalModel~manyToMany - This is
 	*	the **required** type.
 	* @public
 	*/
