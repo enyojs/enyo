@@ -34,7 +34,8 @@ var UiComponent = module.exports = kind(
 	*/
 	kind: Component,
 
-	statics: {
+	statics:
+		/** @lends module:enyo/UiComponent~UiComponent */ {
 
 		/**
 		* The default set of keys which are effectively "ignored" when determining whether or not

@@ -355,7 +355,13 @@ var Ajax = module.exports = kind(
 	/**
 	* @private
 	*/
-	statics: {
+	statics: /** @lends module:enyo/Ajax~Ajax */ {
+		/**
+		* Takes an object and converts it to an encoded URI string. NOTE: It does not traverse into
+		* objects or arrays, so nested objects will be rendered as the string 'object Object', which
+		* is not terribly useful.
+		* @public
+		*/
 		objectToQuery: function (/*Object*/ map) {
 			var enc = encodeURIComponent;
 			var pairs = [];
