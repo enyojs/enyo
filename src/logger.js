@@ -12,7 +12,7 @@ var
 * * ios
 * * webos
 *
-* @private
+* @ignore
 */
 var dumbConsole = Boolean(platform.android || platform.ios || platform.webos);
 

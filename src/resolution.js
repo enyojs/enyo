@@ -37,7 +37,9 @@ var ri = module.exports = {
 	* Executing this method also initializes the rest of the resolution-independence code.
 	*
 	* ```
-	* ri.defineScreenTypes([
+	* var resolution = require('enyo/resolution');
+	*
+	* resolution.defineScreenTypes([
 	* 	{name: 'vga',     pxPerRem: 8,  width: 640,  height: 480,  aspectRatioName: 'standard'},
 	* 	{name: 'xga',     pxPerRem: 16, width: 1024, height: 768,  aspectRatioName: 'standard'},
 	* 	{name: 'hd',      pxPerRem: 16, width: 1280, height: 720,  aspectRatioName: 'hdtv'},
@@ -182,14 +184,12 @@ var ri = module.exports = {
 	},
 
 	/**
-	* The default configurable [options]{@link ri.selectSrc#options}.
+	* The default configurable [options]{@link module:enyo/resolution.selectSrc#options}.
 	*
-	* @typedef {Object} ri.selectSrc~src
+	* @typedef {Object} module:enyo/resolution.selectSrcSrc
 	* @property {String} hd - HD / 720p Resolution image asset source URI/URL
 	* @property {String} fhd - FHD / 1080p Resolution image asset source URI/URL
 	* @property {String} uhd - UHD / 4K Resolution image asset source URI/URL
-	*
-	* @typedef {String} ri.selectSrc~src - Image asset source URI/URL
 	*/
 
 	/**
@@ -217,7 +217,7 @@ var ri = module.exports = {
 	* {kind: Image, src: http://lorempixel.com/128/128/city/1/', alt: 'Large'},
 	* ```
 	*
-	* @param {(String|module:enyo/resolution#selectSrc~src)} src - A string containing
+	* @param {(String|module:enyo/resolution~selectSrcSrc)} src - A string containing
 	* a single image source or a key/value hash/object containing keys representing screen
 	* types (`'hd'`, `'fhd'`, `'uhd'`, etc.) and values containing the asset source for
 	* that target screen resolution.

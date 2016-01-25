@@ -295,9 +295,13 @@ var Scroller = module.exports = kind(
 	classes: 'enyo-scroller',
 
 	/**
+	* @lends module:enyo/Scroller~Scroller
 	* @private
 	*/
 	statics: {
+		/**
+		* @private
+		*/
 		osInfo: [
 			{os: 'android', version: 3},
 			{os: 'androidChrome', version: 18},
@@ -308,7 +312,7 @@ var Scroller = module.exports = kind(
 			{os: 'blackberry', version:1e9},
 			{os: 'tizen', version: 2}
 		],
-		//* Returns true if platform should have touch events.
+		/** Returns true if platform should have touch events. */
 		hasTouchScrolling: function() {
 			for (var i=0, t; (t=this.osInfo[i]); i++) {
 				if (platform[t.os]) {
@@ -321,8 +325,8 @@ var Scroller = module.exports = kind(
 			}
 		},
 		/**
-			Returns true if the platform has native div scrollers (desktop
-			browsers always have them).
+		* Returns true if the platform has native div scrollers (desktop
+		* browsers always have them).
 		*/
 		hasNativeScrolling: function() {
 			for (var i=0, t; (t=this.osInfo[i]); i++) {
@@ -332,6 +336,9 @@ var Scroller = module.exports = kind(
 			}
 			return true;
 		},
+		/**
+		* @private
+		*/
 		getTouchStrategy: function() {
 			return (platform.androidChrome >= 27) || (platform.android >= 3) || (platform.windowsPhone === 8) || (platform.webos >= 4)
 				? TranslateScrollStrategy

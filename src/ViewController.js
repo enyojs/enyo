@@ -81,10 +81,10 @@ module.exports = kind(
 	* string consisting of either `'document.body'` (the default) or the DOM id
 	* of a node (either inserted by an {@link module:enyo/Control~Control} or static HTML
 	* already in the `document.body`). If the controller has a parent (because
-	* it was instantiated as a component in an `enyo.Control`, this property
+	* it was instantiated as a component in an `enyo/Control`, this property
 	* will be ignored and the view will instead be rendered in the parent. This
 	* will not happen if the controller is a component of {@link module:enyo/Component~Component}
-	* or is set as the `controller` property of an `enyo.Control`.
+	* or is set as the `controller` property of an `enyo/Control`.
 	*
 	* @type {String}
 	* @default 'document.body'

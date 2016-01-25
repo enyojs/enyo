@@ -19,14 +19,14 @@ var
 /**
 * The type of change to apply. Possible values are `'move'` and `'extend'`.
 *
-* @typedef {String} enyo.RichText~ModifyType
+* @typedef {String} module:enyo/RichText~RichText~ModifyType
 */
 
 /**
 * The direction in which to apply the change. Possible values include: `'forward'`,
 * `'backward'`, `'left'`, and `'right'`.
 *
-* @typedef {String} enyo.RichText~ModifyDirection
+* @typedef {String} module:enyo/RichText~RichText~ModifyDirection
 */
 
 /**
@@ -34,7 +34,7 @@ var
 * `'sentence'`, `'line'`, `'paragraph'`, `'lineboundary'`, `'sentenceboundary'`,
 * `'paragraphboundary'`, and `'documentboundary'`.
 *
-* @typedef {String} enyo.RichText~ModifyAmount
+* @typedef {String} module:enyo/RichText~RichText~ModifyAmount
 */
 
 /**

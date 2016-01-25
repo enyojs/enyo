@@ -93,12 +93,12 @@ module.exports = kind(
 	* @private
 	*/
 	published: {
+		/** @lends module:enyo/WebService~WebService.prototype */
 		
 		/**
 		* Indicates whether or not to use the [JSONP]{@glossary JSONP} protocol (and
 		* {@link module:enyo/Jsonp~JsonpRequest} instead of {@link module:enyo/Ajax~Ajax}).
 		*
-		* @memberof enyo.WebService.prototype
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -111,7 +111,6 @@ module.exports = kind(
 		* parameter. Enyo will create an internal callback function as necessary.
 		*
 		* @see module:enyo/WebService~WebService.jsonp
-		* @memberof enyo.WebService.prototype
 		* @type {String}
 		* @default 'callback'
 		* @public
@@ -123,7 +122,6 @@ module.exports = kind(
 		* interpret the return data.
 		*
 		* @see module:enyo/WebService~WebService.jsonp
-		* @memberof enyo.WebService.prototype
 		* @type {String}
 		* @default null
 		* @public
@@ -135,7 +133,6 @@ module.exports = kind(
 		* [send()]{@link module:enyo/WebService~WebService#send} call before failing with a timeout
 		* error.
 		*
-		* @memberof enyo.WebService.prototype
 		* @type {Number}
 		* @default 0
 		* @public
