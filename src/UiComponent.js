@@ -37,10 +37,11 @@ var UiComponent = module.exports = kind(
 	statics: {
 
 		/**
-		* The default set of keys which are effectively "ignored" when determining whether or not the
-		* this control has changed in such a way that warrants a complete re-render. When
-		* {@link enyo.UIComponent#updateComponents} is invoked on a parent component, this set of
-		* stateful keys is utilized by default, if no stateful keys are provided by us.
+		* The default set of keys which are effectively "ignored" when determining whether or not
+		* the this control has changed in such a way that warrants a complete re-render. When
+		* {@link module:enyo/UiComponent~UiComponent#updateComponents} is invoked on a parent
+		* component, this set of stateful keys is utilized by default, if no stateful keys are
+		* provided by us.
 		*
 		* @type {String[]}
 		* @default ['content', active', 'disabled']
@@ -689,7 +690,7 @@ var UiComponent = module.exports = kind(
 			);
 		}
 	},
-	
+
 	/**
 	* @method
 	* @private

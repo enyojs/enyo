@@ -369,7 +369,8 @@ exports.asyncMethod = function (scope, method) {
 * arguments `args` ([Array]{@glossary Array}), if the object and method exist.
 *
 * @example
-* 	enyo.call(myWorkObject, 'doWork', [3, 'foo']);
+* 	utils = require('enyo/utils');
+* 	utils.call(myWorkObject, 'doWork', [3, 'foo']);
 *
 * @param {Object} scope - The `this` context for the method.
 * @param {(Function|String)} method - A Function or the name of a method to bind.
