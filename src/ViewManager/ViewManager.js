@@ -1058,7 +1058,11 @@ var ViewMgr = kind(
 			this.flicked = false;
 			event.preventTap();
 
+			this.dragView = null;
 			return true;
+		} else {
+			this.set('dragging', false);
+			this.dragView = null;
 		}
 	},
 
