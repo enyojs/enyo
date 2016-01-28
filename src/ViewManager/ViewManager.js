@@ -114,7 +114,7 @@ var viewCount = 0;
 *
 * ```
 * module.exports = kind({
-*	kind: ViewMgr,
+*	kind: ViewManager,
 *	classes: 'contacts',
 *
 *	// All the views are declared in the common components block
@@ -139,7 +139,7 @@ var viewCount = 0;
 *	// Child ViewManagers are declared within a new managers block
 *	managers: [
 *		{name: 'add', kind: AddContact},
-*		{name: 'inline', kind: ViewMgr, floating: true, components: [
+*		{name: 'inline', kind: ViewManager, floating: true, components: [
 *			{content: 'view1', style: 'background: #424242; color: #fff;', ontap: 'nextInline'},
 *			{content: 'view2', style: 'background: #424242; color: #fff;', ontap: 'nextInline'},
 *			{content: 'view3', style: 'background: #424242; color: #fff;', ontap: 'dismissInline'}
@@ -147,7 +147,7 @@ var viewCount = 0;
 *	],
 *
 *	create: function () {
-*		ViewMgr.prototype.create.apply(this, arguments);
+*		ViewManager.prototype.create.apply(this, arguments);
 *
 *		function log (sender, name, event) {
 *			console.log('Event', name,
@@ -334,7 +334,7 @@ var ViewMgr = kind(
 	/**
 	* Active view
 	*
-	* @type {Control}
+	* @type {module:enyo/Control~Control}
 	* @private
 	*/
 	active: null,
@@ -388,10 +388,8 @@ var ViewMgr = kind(
 	dragView: null,
 
 	/**
-	 * 
-	 *
-	 * @type {Boolean}
-	 */
+	* @type {Boolean}
+	*/
 	flicked: false,
 
 	/**
@@ -1144,4 +1142,10 @@ var ViewMgr = kind(
 });
 
 module.exports = ViewMgr;
+
+/**
+* The {@link module:enyo/ViewManager~ScrimSupport} mixin
+*
+* @private
+*/
 module.exports.ScrimSupport = ScrimSupport;

@@ -1,5 +1,6 @@
-
 /**
+* Exports the {@link module:enyo/ViewLayout~ViewLayout} kind.
+*
 * @module enyo/ViewLayout
 * @wip
 */
@@ -38,12 +39,13 @@ var ViewLayoutSupport = {
 *    Called twice, once for the becoming-active view and once for the becoming-inactive view.
 *    Removes the `transitioning` class and deactivates the now inactive view.
 *
-* @class enyo.ViewLayout
+* @class ViewLayout
+* @extends module:enyo/Layout~Layout
 * @public
 * @wip
 */
 module.exports = kind(
-	/** @lends enyo.ViewLayout.prototype */ {
+	/** @lends module:enyo/ViewLayout~ViewLayout.prototype */ {
 
 	/**
 	* @private

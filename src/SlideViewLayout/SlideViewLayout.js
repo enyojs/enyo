@@ -1,3 +1,10 @@
+/**
+* Exports the {@link module:enyo/SlideViewLayout~SlideViewLayout} kind.
+*
+* @module enyo/SlideViewLayout
+* @wip
+*/
+
 var
 	dom = require('enyo/dom'),
 	kind = require('enyo/kind');
@@ -23,10 +30,12 @@ var
 *    Removes the directional classes and resets the `dragDuration`
 *
 * @class SlideViewLayout
-* @extends enyo/TransitionViewLayout~TransitionViewLayout
+* @extends module:enyo/TransitionViewLayout~TransitionViewLayout
+* @wip
 * @public
 */
-module.exports = kind({
+module.exports = kind(
+	/** @lends module:enyo/SlideViewLayout~SlideViewLayout.prototype */ {
 	/**
 	* @private
 	*/
