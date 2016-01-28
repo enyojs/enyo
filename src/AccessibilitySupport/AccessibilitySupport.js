@@ -22,7 +22,7 @@ var defaultObservers = [
 		var role = this.accessibilityAlert && 'alert' || this.accessibilityRole || null;
 		this.setAriaAttribute('role', role);
 	}},
-	{path: ['content', 'accessibilityHint', 'accessibilityLabel', 'tabIndex'], method: function () {
+	{path: ['content', 'accessibilityHint', 'accessibilityLabel', 'tabIndex', 'disabled'], method: function () {
 		var focusable = this.accessibilityLabel || this.content || this.accessibilityHint || false,
 			prefix = this.accessibilityLabel || this.content || null,
 			label = this.accessibilityHint && prefix && (prefix + ' ' + this.accessibilityHint) ||
@@ -33,12 +33,12 @@ var defaultObservers = [
 		this.setAriaAttribute('aria-label', label);
 
 		// A truthy or zero tabindex will be set directly
-		if (this.tabIndex || this.tabIndex === 0) {
+		if (!this.disabled && (this.tabIndex || this.tabIndex === 0)) {
 			this.setAriaAttribute('tabindex', this.tabIndex);
 		}
 		// The webOS browser will only read nodes with a non-null tabindex so if the node has
 		// readable content, make it programmably focusable.
-		else if (focusable && this.tabIndex === undefined && platform.webos) {
+		else if (!this.disabled && focusable && this.tabIndex === undefined && platform.webos) {
 			this.setAriaAttribute('tabindex', -1);
 		}
 		// Otherwise, remove it
