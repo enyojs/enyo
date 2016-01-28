@@ -105,9 +105,9 @@ module.exports = {
     },
 
     shot: function(actor, ts) {
-        var v1, s, a, v,
+        var v1, s, a, v = 0,
             t = ts,
-            dt = actor._eventCache,
+            dt = actor.getAnimationDelta(),
             dir = this.angle(actor.direction),
             v0 = dt.velocity || 0;
         
@@ -124,8 +124,8 @@ module.exports = {
                 dt[dir] = 0;
             }
             dt.velocity = v1;
-            this.take(actor, dt[dir] > 0 ? v : -v);
-        }   
+        }
+        return dt[dir] > 0 ? v : -v;
     },
 
     angle: function (direction) {

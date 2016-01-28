@@ -36,7 +36,7 @@ var Scene = module.exports = function(props) {
  * (To used for runtime creation of animations)
  */
 Scene.create = function() {
-	return new sceneConstructor("@"+ utils.perfNow());
+	return new sceneConstructor(utils.uid("@"));
 };
 
 
@@ -288,6 +288,7 @@ var SceneAction = {
 					actors[i],
 					tm - past,
 					pose.span - past);
+				
 			}
 		}
 		return pose;
