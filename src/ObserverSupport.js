@@ -373,7 +373,7 @@ var ObserverSupport = {
 			if (path) {
 				loc[path] = null;
 			} else {
-				observerTable[euid] = null;
+				delete observerTable[euid];
 			}
 		}
 		
