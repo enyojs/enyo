@@ -201,7 +201,7 @@ var EventEmitter = {
 					return ln.event != e;
 				});
 			} else {
-				eventTable[euid] = null;
+				delete eventTable[euid];
 			}
 		}
 
