@@ -95,7 +95,7 @@ var OwnerProxy = kind(
 * 	Repeater = require('enyo/Repeater');
 *
 * {kind: Repeater, count: 2, onSetupItem: 'setImageSource', components: [
-* 	{kind: 'Image'}
+* 	{kind: Image}
 * ]}
 *
 * setImageSource: function(inSender, inEvent) {
