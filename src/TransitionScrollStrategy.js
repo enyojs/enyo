@@ -2,6 +2,7 @@ require('enyo');
 
 /**
 * Contains the declaration for the {@link module:enyo/TransitionScrollStrategy~TransitionScrollStrategy} kind.
+* @wip
 * @module enyo/TransitionScrollStrategy
 */
 
@@ -60,6 +61,7 @@ var
 *
 * @class TransitionScrollStrategy
 * @extends module:enyo/TouchScrollStrategy~TouchScrollStrategy
+* @wip
 * @protected
 */
 var TransitionScrollStrategy = module.exports = kind(
