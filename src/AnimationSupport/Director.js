@@ -41,7 +41,6 @@ module.exports = {
         if (tm <= dur) {
             pose = scene.action(ts, pose);
             //TODO: Use Event Delegator to emit this event.
-            scene.step && scene.step(pose);
         } else {
             scene.timeline = dur;
             scene.animating = false;

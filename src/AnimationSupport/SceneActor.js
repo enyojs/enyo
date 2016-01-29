@@ -26,6 +26,8 @@ var CharacterAction = {
 				past = index ? this.getAnimation(index - 1).span : 0;
 				director.action(pose, actor, tm - past, pose.span - past);
 
+				this.step && this.step(actor);
+
 				if(actor.timeline === dur) {
 					this.actorCompleted && this.actorCompleted(actor);
 				}
