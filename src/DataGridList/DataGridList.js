@@ -80,7 +80,7 @@ var DataGridList = module.exports = kind(
 	* @method
 	* @private
 	*/
-	constructor: kind.inherit(function (sup) {
+	create: kind.inherit(function (sup) {
 		return function () {
 			var o = this.orientation;
 			// this will only remap _vertical_ and _horizontal_ meaning it is still possible to

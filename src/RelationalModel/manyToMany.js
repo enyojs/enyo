@@ -19,30 +19,31 @@ var
 */
 var manyToMany = module.exports = kind(
 	/** @lends module:enyo/RelationalModel~manyToMany.prototype */ {
-	
+
 	/**
 	* @private
 	*/
 	kind: toMany,
-	
+
 	/**
 	* @private
 	*/
 	name: 'enyo.manyToMany',
-	
+
 	/**
 	* The default [options]{@link module:enyo/RelationalModel~RelationOptions} overloaded for this
 	* [kind]{@glossary kind}.
 	*
 	* @see module:enyo/RelationalModel~toMany#options
 	* @type module:enyo/RelationalModel~RelationOptions
-	* @property {String} inverseType=enyo.manyToMany - This is the **required** type.
+	* @property {module:enyo/Relation~Relation} inverseType=module:enyo/RelationalModel~manyToMany - This is
+	*	the **required** type.
 	* @public
 	*/
 	options: {
 		inverseType: null // set after the fact
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -55,10 +56,10 @@ var manyToMany = module.exports = kind(
 			rel = model.getRelation(inverseKey),
 			// id = inst.get(inst.primaryKey),
 			isOwner = this.isOwner;
-		
+
 		if (related && related.has(inst)) {
 		// if (related && (related.has(inst) || related.find(function (model) { return model.attributes[model.primaryKey] == id; }))) {
-			
+
 			// if the relation isn't found it probably wasn't defined and we need
 			// to automatically generate it based on what we know
 			if (!rel) {
@@ -72,15 +73,15 @@ var manyToMany = module.exports = kind(
 					related: inst
 				})));
 			}
-			
+
 			// if (rel.related !== inst) rel.setRelated(inst);
 			// if (!rel.related.has(inst)) rel.related.add(inst);
 			return true;
 		}
-		
+
 		return false;
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -92,12 +93,12 @@ var manyToMany = module.exports = kind(
 				isOwner = this.isOwner,
 				model,
 				i;
-			
+
 			// this is a very tricky scenario that we need to be very careful about to try
 			// and avoid unnecessary work (when possible) and to keep out of an infinite
 			// loop of notifications
 			if (sender === related) {
-				
+
 				// we are attempting to distinguish between the occassions we can encounter
 				// this method here if our related collection emits an add, remove or change
 				// event -- if it is change we know it stemmed from a model already
@@ -116,7 +117,7 @@ var manyToMany = module.exports = kind(
 					// in this case we removed a/some model/models that should probably be
 					// updated to know about the removal as well
 					for (i = 0; (model = props.models[i]); ++i) {
-						
+
 						// this event will be caught in the event that the model was destroyed
 						// but should that happen the other collections will also have done
 						// this already (or will do it) but if the model is already destroyed
@@ -125,7 +126,7 @@ var manyToMany = module.exports = kind(
 						if (!model.destroyed) model.get(inverseKey).remove(inst);
 					}
 				}
-				
+
 				// manyToMany is a special case that requires us to propagate the changes from
 				// either end as changes to the parent model unlike toMany and toOne that
 				// exclusively rely on the isOwner field and safely assuming uni-directional
@@ -142,7 +143,7 @@ var manyToMany = module.exports = kind(
 					// return it to whatever it was originally
 					this.isOwner = isOwner;
 				}
-				
+
 			} else sup.apply(this, arguments);
 		};
 	})

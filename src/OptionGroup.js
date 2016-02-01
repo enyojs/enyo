@@ -40,12 +40,13 @@ module.exports = kind(
 	* @private
 	*/
 	published: {
+		/** @lends module:enyo/OptionGroup~OptionGroup.prototype */
+
 		/**
 		* The name for this [option group]{@link module:enyo/OptionGroup~OptionGroup}.
 		* 
 		* @type {String}
 		* @default ''
-		* @memberof enyo.OptionGroup.prototype
 		* @public
 		*/
 		label: ''

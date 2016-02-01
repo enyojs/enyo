@@ -34,10 +34,6 @@ var
 /**
 * @private
 */
-
-/**
-* @private
-*/
 var dispatcher = module.exports = dispatcher = {
 
 	$: {},
@@ -196,6 +192,9 @@ var dispatcher = module.exports = dispatcher = {
 /**
 * Called in the context of an event.
 *
+* @name module:enyo/dispatcher.iePreventDefault
+* @static
+* @method
 * @private
 */
 dispatcher.iePreventDefault = function() {
@@ -215,6 +214,9 @@ function dispatch (inEvent) {
 }
 
 /**
+* @name module:enyo/dispatcher.bubble
+* @static
+* @method
 * @private
 */
 dispatcher.bubble = function(inEvent) {
@@ -237,7 +239,7 @@ dispatcher.bubbler = "enyo.bubble(arguments[0])";
 // The code below helps make Enyo compatible with Google Packaged Apps
 // Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html),
 // which, among other things, forbids the use of inline scripts.
-// We replace online scripting with equivalent means, leaving enyo.bubbler
+// We replace online scripting with equivalent means, leaving dispatcher.bubbler
 // for backward compatibility.
 (function() {
 	var bubbleUp = function() {
@@ -247,6 +249,8 @@ dispatcher.bubbler = "enyo.bubble(arguments[0])";
 	/**
 	* Makes given events bubble on a specified Enyo control.
 	*
+	* @name: module:enyo/dispatcher.makeBubble
+	* @method
 	* @private
 	*/
 	dispatcher.makeBubble = function() {
@@ -264,8 +268,10 @@ dispatcher.bubbler = "enyo.bubble(arguments[0])";
 
 	/**
 	* Removes the event listening and bubbling initiated by
-	* [enyo.makeBubble()]{@link enyo.makeBubble} on a specific control.
+	* [makeBubble()]{@link module:enyo/dispatcher.makeBubble} on a specific control.
 	*
+	* @name: module:enyo/dispatcher.unmakeBubble
+	* @method
 	* @private
 	*/
 	dispatcher.unmakeBubble = function() {
@@ -364,13 +370,13 @@ dispatcher.getPosition = function () {
 /**
 * Key mapping feature: Adds a `keySymbol` property to key [events]{@glossary event},
 * based on a global key mapping. Use
-* [enyo.dispatcher.registerKeyMap()]{@link enyo.dispatcher.registerKeyMap} to add
+* [registerKeyMap()]{@link module:enyo/dispatcher.registerKeyMap} to add
 * keyCode-to-keySymbol mappings via a simple hash. This method may be called
 * multiple times from different libraries to mix different maps into the global
 * mapping table; if conflicts arise, the last-in wins.
 *
 * ```
-* enyo.dispatcher.registerKeyMap({
+* dispatcher.registerKeyMap({
 * 	415 : 'play',
 * 	413 : 'stop',
 * 	19  : 'pause',
@@ -402,8 +408,8 @@ utils.mixin(dispatcher, {
 
 /**
 * Event modal capture feature. Capture events to a specific control via
-* [enyo.dispatcher.capture(inControl, inShouldForward)]{@linkcode enyo.dispatcher.capture};
-* release events via [enyo.dispatcher.release()]{@link enyo.dispatcher.release}.
+* [capture(inControl, inShouldForward)]{@linkcode module:enyo/dispatcher.capture};
+* release events via [release()]{@link module:enyo/dispatcher.release}.
 *
 * @private
 */
@@ -427,7 +433,7 @@ dispatcher.features.push(function(e) {
 
 //
 //        NOTE: This object is a plug-in; these methods should
-//        be called on `enyo.dispatcher`, and not on the plug-in itself.
+//        be called on `enyo/dispatcher`, and not on the plug-in itself.
 //
 utils.mixin(dispatcher, {
 
@@ -491,24 +497,19 @@ utils.mixin(dispatcher, {
 	* Allows {@link module:enyo/Control~Control} ancestors of the {@glossary event} target
 	* a chance (eldest first) to react by implementing `previewDomEvent`.
 	*
+	* @todo Revisit how/if we document this
 	* @private
 	*/
 	var fn = 'previewDomEvent';
-	var preview = 
-		/** @lends enyo.dispatcher.features */ {
+	var preview = {
 
-		/**
-		* @private
-		*/
 		feature: function(e) {
 			preview.dispatch(e, e.dispatchTarget);
 		},
 
-		/**
+		/*
 		* @returns {(Boolean|undefined)} Handlers return `true` to abort preview and prevent default
 		*	event processing.
-		*
-		* @private
 		*/
 		dispatch: function(evt, control) {
 			var i, l,
@@ -521,12 +522,10 @@ utils.mixin(dispatcher, {
 			}
 		},
 
-		/**
+		/*
 		* We ascend, making a list of Enyo [controls]{@link module:enyo/Control~Control}.
 		*
 		* Note that a control is considered to be its own ancestor.
-		*
-		* @private
 		*/
 		buildLineage: function(control) {
 			var lineage = [],

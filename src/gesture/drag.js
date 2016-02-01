@@ -586,7 +586,7 @@ module.exports = {
 			}
 			this._pulsing = true;
 			dispatcher.dispatch(e);
-			n = this._next = this._unsent.shift();
+			n = this._next = this._unsent && this._unsent.shift();
 		}
 	},
 

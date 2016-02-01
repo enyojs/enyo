@@ -10,6 +10,7 @@ var utils = require('./utils');
 * * androidChrome (Chrome on Android, standard starting in 4.1)
 * * androidFirefox
 * * ie
+* * edge
 * * ios
 * * webos
 * * windowsPhone
@@ -35,24 +36,35 @@ var utils = require('./utils');
 *
 * @module enyo/platform
 */
-exports = module.exports = 
-	/** @lends module:enyo/platform~platform */ {
-	//* `true` if the platform has native single-finger [events]{@glossary event}.
+exports = module.exports = {
+	/**
+	* `true` if the platform has native single-finger [events]{@glossary event}.
+	* @public
+	*/
 	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints),
-	//* `true` if the platform has native double-finger [events]{@glossary event}.
+	/**
+	* `true` if the platform has native double-finger [events]{@glossary event}.
+	* @public
+	*/
 	gesture: Boolean(('ongesturestart' in window) || window.navigator.msMaxTouchPoints)
+
+	/**
+	* The name of the platform that was detected or `undefined` if the platform
+	* was unrecognized. This value is the key name for the major version of the
+	* platform on the exported object.
+	* @member {String} platformName
+	* @public
+	*/
+
 };
 
-/**
-* @private
-*/
 var ua = navigator.userAgent;
 var ep = exports;
 var platforms = [
 	// Android 4+ using Chrome
 	{platform: 'androidChrome', regex: /Android .* Chrome\/(\d+)[.\d]+/},
 	// Android 2 - 4
-	{platform: 'android', regex: /Android (\d+)/},
+	{platform: 'android', regex: /Android(?:\s|\/)(\d+)/},
 	// Kindle Fire
 	// Force version to 2, (desktop mode does not list android version)
 	{platform: 'android', regex: /Silk\/1./, forceVersion: 2, extra: {silk: 1}},
@@ -66,6 +78,8 @@ var platforms = [
 	{platform: 'ie', regex: /MSIE (\d+)/},
 	// IE 11
 	{platform: 'ie', regex: /Trident\/.*; rv:(\d+)/},
+	// Edge
+	{platform: 'edge', regex: /Edge\/(\d+)/},
 	// iOS 3 - 5
 	// Apple likes to make this complicated
 	{platform: 'ios', regex: /iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/},

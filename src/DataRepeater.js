@@ -769,19 +769,36 @@ var DataRepeater = module.exports = kind(
 	childMixins: [RepeaterChildSupport],
 
 	/**
-	* @private
-	*/
-	controlParentName: 'container',
-
-	/**
-	* @private
+	* The name of the container specified in
+	* [containerOptions]{@link module:enyo/DataRepeater~DataRepeater#containerOptions}. This may or
+	* may not have the same value as
+	* [controlParentName]{@link module:enyo/DataRepeater~DataRepeater#controlParentName}.
+	*
+	* @type {String}
+	* @default 'container'
+	* @public
 	*/
 	containerName: 'container',
 
 	/**
-	* @private
+	* A [Kind]{@glossary Kind} definition that will be used as the chrome for the container
+	*  of the DataRepeater. When specifying a custom definition be sure to include a container
+	*  component that has the name specified in
+	*  [controlParentName]{@link module:enyo/DataRepeater~DataRepeater#controlParentName}.
+	*
+	* @type {Object}
+	* @default {name: 'container', classes: 'enyo-fill enyo-data-repeater-container'}
+	* @public
 	*/
 	containerOptions: {name: 'container', classes: 'enyo-fill enyo-data-repeater-container'},
+
+	/**
+	* See {@link module:enyo/UiComponent~UiComponent#controlParentName}
+	* @type {String}
+	* @default 'container'
+	* @public
+	*/
+	controlParentName: 'container',
 
 	/**
 	* @private

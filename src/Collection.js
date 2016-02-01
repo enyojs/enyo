@@ -727,6 +727,18 @@ exports = module.exports = kind(
 	},
 	
 	/**
+	* @see {@glossary Array.findIndex}
+	* @public
+	*/
+	findIndex: function (fn, ctx) {
+		
+		// ensure that this is an immutable reference to the models such that changes will
+		// not affect the entire loop - e.g. calling destroy on models won't keep this from
+		// completing
+		return this.models.slice().findIndex(fn, ctx || this);
+	},
+	
+	/**
 	* @see {@glossary Array.map}
 	* @public
 	*/

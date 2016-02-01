@@ -312,6 +312,9 @@ var RelationalModel = module.exports = kind(
 /**
 * Defines a named relation type
 *
+* @name module:enyo/RelationalModel~RelationalModel.defineRelationType
+* @static
+* @method
 * @param  {String}  name      Name of relation type
 * @param  {Relation}  type    Relation kind constructor
 * @param  {Boolean} isDefault `true` if this type should be the default for type-less relations
@@ -326,8 +329,9 @@ RelationalModel.defineRelationType = function (name, type, isDefault) {
 /**
 * Ensures that we concatenate (sanely) the relations for any subkinds.
 * 
-* @name enyo.RelationalModel.concat
+* @name module:enyo/RelationalModel~RelationalModel.concat
 * @static
+* @method
 * @private
 */
 RelationalModel.concat = function (ctor, props) {

@@ -95,8 +95,13 @@ function ready (binding) {
 	/*jshint +W093 */
 }
 
+
+/**
+* @class PassiveBinding
+* @public
+*/
 var PassiveBinding = kind(
-	/** @lends enyo.PassiveBinding.prototype */ {
+	/** @lends module:enyo/Binding~PassiveBinding.prototype */ {
 	
 	name: 'enyo.PassiveBinding',
 	
@@ -680,4 +685,8 @@ exports.DIRTY_TO = DIRTY_TO;
 */
 exports.defaultBindingKind = exports;
 
+/**
+* The kind declaration for the [PassiveBinding]{@link module:Binding~PassiveBinding} kind
+* @public
+*/
 exports.PassiveBinding = PassiveBinding;

@@ -12,22 +12,22 @@ var
 * * ios
 * * webos
 *
-* @private
+* @ignore
 */
 var dumbConsole = Boolean(platform.android || platform.ios || platform.webos);
 
 /**
 * Internally used methods and properties associated with logging.
 *
-* @module enyo/logging
+* @module enyo/logger
 * @public
 */
 exports = module.exports = {
-	
+
 	/**
 	* The log level to use. Can be a value from -1 to 99, where -1 disables all
 	* logging, 0 is 'error', 10 is 'warn', and 20 is 'log'. It is preferred that
-	* this value be set using the [setLogLevel()]{@link module:enyo/logging#setLogLevel}
+	* this value be set using the [setLogLevel()]{@link module:enyo/logger#setLogLevel}
 	* method.
 	*
 	* @type {Number}
@@ -35,14 +35,14 @@ exports = module.exports = {
 	* @public
 	*/
 	level: 99,
-	
+
 	/**
 	* The known levels.
 	*
 	* @private
 	*/
 	levels: {log: 20, warn: 10, error: 0},
-	
+
 	/**
 	* @private
 	*/
@@ -50,7 +50,7 @@ exports = module.exports = {
 		var ll = parseInt(this.levels[fn], 0);
 		return (ll <= this.level);
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -66,7 +66,7 @@ exports = module.exports = {
 			}
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -99,7 +99,7 @@ exports = module.exports = {
 			console.log(a$.join(' '));
 		}
 	},
-	
+
 	/**
 	* This is exposed elsewhere.
 	*
@@ -125,12 +125,12 @@ exports = module.exports = {
 * Sets the log level to the given value. This will restrict the amount of output depending on
 * the settings. The higher the value, the more output that will be allowed. The default is
 * 99. The value, -1, would silence all logging, even 'error' (0).
-* Without the 'see': {@link module:enyo/logging#log}.
+* Without the 'see': {@link module:enyo/logger#log}.
 *
-* @see module:enyo/logging#level
-* @see module:enyo/logging#log
-* @see module:enyo/logging#warn
-* @see module:enyo/logging#error
+* @see module:enyo/logger#level
+* @see module:enyo/logger#log
+* @see module:enyo/logger#warn
+* @see module:enyo/logger#error
 * @param {Number} level - The level to set logging to.
 */
 exports.setLogLevel = function (level) {
@@ -143,7 +143,7 @@ exports.setLogLevel = function (level) {
 /**
 * A wrapper for [console.log()]{@glossary console.log}, compatible
 * across supported platforms. Will output only if the current
-* [log level]{@link module:enyo/logging#level} allows it. [Object]{@glossary Object}
+* [log level]{@link module:enyo/logger#level} allows it. [Object]{@glossary Object}
 * parameters will be serialized via [JSON.stringify()]{@glossary JSON.stringify}
 * automatically.
 *
@@ -156,7 +156,7 @@ exports.setLogLevel = function (level) {
 /**
 * A wrapper for [console.warn()]{@glossary console.warn}, compatible
 * across supported platforms. Will output only if the current
-* [log level]{@link module:enyo/logging#level} allows it. [Object]{@glossary Object}
+* [log level]{@link module:enyo/logger#level} allows it. [Object]{@glossary Object}
 * parameters will be serialized via [JSON.stringify()]{@glossary JSON.stringify}
 * automatically.
 *
@@ -172,7 +172,7 @@ exports.warn = function () {
 /**
 * A wrapper for [console.error()]{@glossary console.error}, compatible
 * across supported platforms. Will output only if the current
-* [log level]{@link module:enyo/logging#level} allows it. [Object]{@glossary Object}
+* [log level]{@link module:enyo/logger#level} allows it. [Object]{@glossary Object}
 * parameters will be serialized via [JSON.stringify()]{@glossary JSON.stringify}
 * automatically.
 *
