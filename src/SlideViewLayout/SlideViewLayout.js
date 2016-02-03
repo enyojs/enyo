@@ -1,3 +1,10 @@
+/**
+* Exports the {@link module:enyo/SlideViewLayout~SlideViewLayout} kind.
+*
+* @module enyo/SlideViewLayout
+* @wip
+*/
+
 var
 	dom = require('enyo/dom'),
 	kind = require('enyo/kind');
@@ -23,10 +30,12 @@ var
 *    Removes the directional classes and resets the `dragDuration`
 *
 * @class SlideViewLayout
-* @extends enyo/TransitionViewLayout~TransitionViewLayout
+* @extends module:enyo/TransitionViewLayout~TransitionViewLayout
+* @wip
 * @public
 */
-module.exports = kind({
+module.exports = kind(
+	/** @lends module:enyo/SlideViewLayout~SlideViewLayout.prototype */ {
 	/**
 	* @private
 	*/
@@ -57,28 +66,14 @@ module.exports = kind({
 	/**
 	* @private
 	*/
-	transform: function (view, px) {
-		var v,
-			isHorizontal = this.container.orientation == 'horizontal';
-
-		if (px === null) {
-			v = null;
-		} else {
-			v = isHorizontal ? px + 'px, 0, 0' : '0, ' + px + 'px, 0';
-		}
-		dom.transformValue(view, 'translate3d', v);
-	},
-
-	/**
-	* @private
-	*/
 	drag: function (event) {
 		var px,
 			c = this.container,
 			bounds = c.dragBounds,
 			isHorizontal = c.orientation == 'horizontal',
 			size = isHorizontal ? bounds.width : bounds.height,
-			delta = event.delta;
+			delta = event.delta,
+			transform = isHorizontal ? 'translateX' : 'translateY';
 
 		if (event.delta < 0 && event.delta < -size) {
 			this.overDrag = true;
@@ -93,10 +88,10 @@ module.exports = kind({
 		}
 
 		TransitionViewLayout.prototype.drag.apply(this, arguments);
-		this.transform(c.active, delta);
+		dom.transformValue(c.active, transform,  delta + 'px');
 		if (c.dragView) {
 			px = this.container.layoutCover ? 0 : size * event.direction + delta;
-			this.transform(c.dragView, px);
+			dom.transformValue(c.dragView, transform,  px + 'px');
 		}
 	},
 
@@ -124,15 +119,16 @@ module.exports = kind({
 	* @private
 	*/
 	transition: function (was, is) {
-		var dir;
+		var dir,
+			transform = this.container.orientation == 'horizontal' ? 'translateX' : 'translateY';
 
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
 		if (was && was != this.dragView) {
-			this.transform(was, null);
+			dom.transformValue(was, transform, null);
 		}
 		if (is) {
 			this.addRemoveDirection(is, false);
-			if (is != this.dragView) this.transform(is, null);
+			if (is != this.dragView) dom.transformValue(is, transform, null);
 		}
 
 		// If the user drags the entire view off screen, it won't animate so we won't see the CSS

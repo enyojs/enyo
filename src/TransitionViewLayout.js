@@ -1,3 +1,8 @@
+/**
+* @module enyo/TransitionViewLayout
+* @wip
+*/
+
 var
 	kind = require('enyo/kind');
 
@@ -22,9 +27,13 @@ var
 *  * `completeTransition()`
 *    Removes the directional classes and resets the `dragDuration`
 *
-* @class enyo.SlideViewLayout
+* @class TransitionViewLayout
+* @extends module:enyo/ViewLayout~ViewLayout
+* @public
+* @wip
 */
-module.exports = kind({
+module.exports = kind(
+	/** @lends module:enyo/TransitionViewLayout~TransitionViewLayout.prototype */ {
 	/**
 	* @private
 	*/
