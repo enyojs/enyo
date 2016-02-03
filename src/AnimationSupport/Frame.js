@@ -3,6 +3,7 @@ require('enyo');
 var 
 	Dom = require('../dom'),
 	Vector = require('./Vector'),
+	utils =  require('../utils'),
 	Matrix = require('./Matrix');
 
 var
@@ -282,7 +283,8 @@ var frame = module.exports = {
 		} else {
 			val = val[0] + 'px';
 		}
-		ele.style[prop] =  val;
+		if(ele)
+			ele.style[prop] =  val;
 	},
 
 	/**
@@ -309,7 +311,7 @@ var frame = module.exports = {
 		if(!node) return;
 
 		var eP = {},
-			sP = initial ? this.copy(initial) : {},
+			sP = initial ? utils.mixin({}, initial) : {},
 			tP = {},
 			dP = {},
 			m, k, v,
@@ -330,7 +332,7 @@ var frame = module.exports = {
 
 		if (initial) {
 			dP.translate = initial.translate;
-			dP.rotate = initial.rotate;
+			dP.rotate = initial.rotate.length < 4 ? Vector.toQuant(initial.rotate) : initial.rotate;
 			dP.scale = initial.scale;
 			dP.skew = initial.skew;
 			dP.perspective = initial.perspective;

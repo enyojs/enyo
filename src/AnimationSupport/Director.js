@@ -20,8 +20,8 @@ module.exports = {
 
         for (var i = 0; i < l; i++) {
             actor = actors[i];
-            if(actor.generated && !actor._initialPose) {
-                this.firstShot(actor);
+            if(actor.generated) {
+                this.firstShot(scene, actor);
                 active = false;
             }
         }
@@ -66,7 +66,7 @@ module.exports = {
     cast: function (actors, scene) {
         var acts = utils.isArray(actors) ? actors : [actors],
             id = scene.getID(),
-            rolePlays = scene.rolePlays || [];
+            rolePlays = scene.rolePlays || {};
 
         if (!rolePlays[id]) {
             rolePlays[id] = acts;
@@ -94,13 +94,23 @@ module.exports = {
         scene.rolePlays = rolePlays;
     },
 
-    firstShot: function (actor) {
+    firstShot: function (scene, actor) {
         var dom = actor.hasNode(),
-            pose = frame.getComputedProperty(dom, undefined);
-        pose.span = 0;
-        actor._initialPose = pose;
-        actor.currentState = pose.currentState;
+            l = scene.length(),
+            oldPose = frame.getComputedProperty(dom, undefined),
+            pose;
+        oldPose.span = 0;
+        actor._initialPose = oldPose;
+        actor.currentState = oldPose.currentState;
         // frame.accelerate(dom, pose.matrix);
+        
+
+        for(var i=0; i < l; i++) {
+            pose = scene.getAnimation(i);
+            utils.mixin(pose, frame.getComputedProperty(actor.hasNode(), pose.animate, oldPose._endAnim));
+            scene.setAnimation(i, pose);
+            oldPose = pose;
+        }
     },
 
     shot: function(actor, ts) {

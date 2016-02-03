@@ -16,13 +16,14 @@ var CharacterAction = {
 				if (!actor._frameSpeed) {
 					actor._frameSpeed = this._frameSpeed;
 				}
-				tm = this.rolePlay(ts, actor);	
+				
+				tm = this.rolePlay(ts, actor);
 				if (isNaN(tm) || tm < 0) continue;
 				if (tm > dur) {
 					actor.timeline = dur;
 				}
 				index = this.animateAtTime(tm);
-				pose = pose || this.getAnimation(index);
+				pose = this.getAnimation(index);
 				past = index ? this.getAnimation(index - 1).span : 0;
 				director.action(pose, actor, tm - past, pose.span - past);
 

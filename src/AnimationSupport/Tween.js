@@ -24,7 +24,7 @@ module.exports = {
     step: function(actor, pose, t, d) {
         var k, fn, state, ease, points, path;
 
-        node = actor.node;
+        node = actor.hasNode();
         state = actor.currentState = actor.currentState || pose.currentState || {};
         points = pose.controlPoints = pose.controlPoints || {};
         ease = pose.animate && pose.animate.ease ? pose.animate.ease : this.ease;
@@ -63,6 +63,7 @@ module.exports = {
                 }
                 
                 if (!frame.isTransform(k)) {
+                    
                     frame.setProperty(node, k, cState);
                 }
                 state[k] = cState;
