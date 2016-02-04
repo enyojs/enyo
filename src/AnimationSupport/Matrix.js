@@ -1,56 +1,81 @@
 require('enyo');
 
 /**
-* Matrix module for matrix related calculation
-*
-* @module enyo/AnimationSupport/Matrix
-*/
+ * Matrix module for matrix related calculation
+ * 
+ * @module enyo/AnimationSupport/Matrix
+ */
 module.exports = {
 	/**
-	* @public
-	*/
+	 * To create Identity Matrix3d (4X4 order).
+	 * @public
+	 * @return {Number[]} Identity Matrix3d
+	 */
 	identity: function() {
 		return [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
 	},
 
 	/**
-	* @public
-	*/
+	 * To translate in any dimension based on co-ordinates.
+	 * @public
+	 * @param  {Number}   x Translate value in X axis
+	 * @param  {Number}   y Translate value in Y axis
+	 * @param  {Number}   z Translate value in Z axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	translate: function (x, y, z) {
 		return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y ? y : 0, z ? z : 0, 1];
 	},
 
 	/**
-	* @public
-	*/
+	 * To translate in x dimension
+	 * @public
+	 * @param  {Number}   x Translate value in X axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	translateX: function (x) {
 		return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x ? x : 0, 0, 0, 1];
 	},
 
 	/**
-	* @public
-	*/
+	 * To translate in y dimension
+	 * @public
+	 * @param  {Number}   y Translate value in Y axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	translateY: function (y) {
 		return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, y ? y : 0, 0, 1];
 	},
 
 	/**
-	* @public
-	*/
+	 * To translate in z dimension
+	 * @public
+	 * @param  {Number}   z Translate value in Z axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	translateZ: function (z) {
 		return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, z ? z : 0, 1];
 	},
 
 	/**
-	* @public
-	*/
+	 * To scale in any dimension
+	 * @public
+	 * @param  {Number}   x Scale value in X axis
+	 * @param  {Number}   y Scale value in Y axis
+	 * @param  {Number}   z Scale value in Z axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	scale: function (x, y, z) {
 		return [x, 0, 0, 0, 0, y ? y : 1, 0, 0, 0, 0, z ? z : 1, 0, 0, 0, 0, 1];
 	},
 
 	/**
-	* @public
-	*/
+	 * To skew in any dimension (skew can only happen in 2d)
+	 * @public
+	 * @param  {Number}   a Skew value in X axis
+	 * @param  {Number}   b Skew value in Y axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	skew: function (a, b) {
 		a = a ? Math.tan(a * Math.PI / 180): 0;
 		b = b ? Math.tan(b * Math.PI / 180): 0;
@@ -58,8 +83,11 @@ module.exports = {
 	},
 
 	/**
-	* @public
-	*/
+	 * To rotate in x-axis
+	 * @public
+	 * @param  {Number}   a Rotate value in X axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	rotateX: function (a) {
 		var cosa, sina;
 		a = a * Math.PI / 180;
@@ -69,8 +97,11 @@ module.exports = {
 	},
 
 	/**
-	* @public
-	*/
+	 * To rotate in y-axis
+	 * @public
+	 * @param  {Number}   b Rotate value in Y axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	rotateY: function (b) {
 		var cosb, sinb;
 		b = b * Math.PI / 180;
@@ -80,8 +111,11 @@ module.exports = {
 	},
 
 	/**
-	* @public
-	*/
+	 * To rotate in z-axis
+	 * @public
+	 * @param  {Number}   g Rotate value in Z axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	rotateZ: function (g) {
 		var cosg, sing;
 		g = g * Math.PI / 180;
@@ -91,8 +125,13 @@ module.exports = {
 	},
 
 	/**
-	* @public
-	*/
+	 * To rotate in any dimension
+	 * @public
+	 * @param  {Number}   a Rotate value in X axis
+	 * @param  {Number}   b Rotate value in Y axis
+	 * @param  {Number}   g Rotate value in Z axis
+	 * @return {Number[]}   Matrix3d
+	 */
 	rotate: function (a, b, g) {
 		a = a * Math.PI / 180;
 		b = b * Math.PI / 180;
@@ -122,8 +161,12 @@ module.exports = {
 	},
 
 	/**
-	* @public
-	*/
+	 * To multiply 2 Martix3d (4x4 order)
+	 * @public
+	 * @param  {Number[]} m1 1st Matrix3d
+	 * @param  {Number[]} m2 2nd Matrix3d
+	 * @return {Number[]}    Resultant Matrix3d
+	 */
 	multiply: function(m1, m2) {
 		return [
 			m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2],
@@ -146,8 +189,12 @@ module.exports = {
 	},
 
 	/**
-	* @public
-	*/
+	 * To multiply 2 matrices (NxN order)
+	 * @public
+	 * @param  {Number[]} m1 1st Matrix of order N
+	 * @param  {Number[]} m2 2nd Matrix of order N
+	 * @return {Number[]}    Resultant Matrix of order N
+	 */
 	multiplyN: function(m1, m2) {
 		var i, j, sum,
 			m = [],
@@ -165,8 +212,12 @@ module.exports = {
 	},
 
 	/**
-	* @public
-	*/
+	 * To inverse matrix of order N
+	 * @public
+	 * @param  {Number[]} matrix Matrix (NxN order)
+	 * @param  {Number}   n      Order of the matrix
+	 * @return {Number[]}        Inverted Matrix
+	 */
 	inverseN: function(matrix, n) {
 		var i, j, k, r, t,
 			precision = 100000,
@@ -212,8 +263,11 @@ module.exports = {
 	},
 
 	/**
-	* @public
-	*/
+	 * Convert Matrix3d array to Matrix3d String
+	 * @public
+	 * @param  {Number[]} m Matrix3d Array
+	 * @return {String}     Matrix3d String
+	 */
 	toString: function (m) {
 		var ms = 'matrix3d(';
 		for (var i = 0; i < 15; i++) {

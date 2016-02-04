@@ -1,3 +1,4 @@
+/*jslint white: true*/
 require('enyo');
 
 var 
@@ -7,29 +8,31 @@ var
 	Matrix = require('./Matrix');
 
 var
-	COLOR = {"color": 1, "backgroundColor": 1},
-	TRANSFORM = {"translate": 1, "translateX": 1, "translateY": 1, "translateZ": 1, "rotateX": 1, "rotateY": 1, "rotateZ": 1, "rotate": 1, "skew": 1, "scale": 1, "perspective": 1};
+	COLOR = {color: 1, backgroundColor: 1},
+	TRANSFORM = {translate: 1, translateX: 1, translateY: 1, translateZ: 1, rotateX: 1, rotateY: 1, rotateZ: 1, rotate: 1, skew: 1, scale: 1, perspective: 1};
 
 /**
-* Frame is a module responsible for providing animation features required for a frame.
-* This module exposes bunch of animation API's like  matrix calculation,
-* fetching inital DOM properties and also applying style updates to DOM.
-* 
-* These methods need to be merged with DOM API's of enyo.
-*
-* @module enyo/AnimationSupport/Frame
-*/
+ * Frame is a module responsible for providing animation features required for a frame.
+ * This module exposes bunch of animation API's like  matrix calculation,
+ * fetching initial DOM properties and also applying style updates to DOM.
+ * 
+ * These methods need to be merged with DOM API's of enyo.
+ * 
+ * @module enyo/AnimationSupport/Frame
+ */
 var frame = module.exports = {
 	/**
-	* @public
-	* Creates a matrix based on transformation vectors.
-	* @param:	trns- translate vector
-	*			rot	- rotate quaternion vector
-	*			sc	- scale vector
-	*			sq	- sqew vector
-	*			per	- perspective vector
-	*/
-	recomposeMatrix: function(trns, rot, sc, sq, per) {
+	 * Calculate matrix3d of a frame based on transformation vectors.
+	 * @public
+	 * @param  {Number[]} trns Translate vector
+	 * @param  {Number[]} rot  Rotate quaternion vector
+	 * @param  {Number[]} sc   Scale vector
+	 * @param  {Number[]} sq   Skew vector
+	 * @param  {Number[]} per  Perspective vector
+	 * @return {Number[]}      Final Matrix3d for particular frame
+	 */
+	recomposeMatrix: function (trns, rot, sc, sq, per) {
+		"use strict";
 		var i,
 			x = rot[0],
 			y = rot[1],
@@ -92,13 +95,14 @@ var frame = module.exports = {
 	},
 
 	/**
-	* @public
-	* Get transformation vectors out of matrix
-	* @param	matrix	- Transformation matrix
-	*			ret		- Return object which holds translate,
-	*					rotate, scale, sqew & perspective.
-	*/
-	decomposeMatrix: function(matrix, ret) {
+	 * Decompose transformation vectors into various properties out of matrix3d.
+	 * @public
+	 * @param  {Number[]} matrix Matrix3d
+	 * @param  {Object}   ret    To store various transformation properties like translate, rotate, scale, skew and perspective.
+	 * @return {Boolean}         true, if matrix exists else false.
+	 */
+	decomposeMatrix: function (matrix, ret) {
+		"use strict";
 		var i,
 			tV = [],
 			rV = [],
@@ -136,7 +140,7 @@ var frame = module.exports = {
 		row[1] = Vector.normalize(row[1]);
 		skV[0] /= scV[1];
 
-		// Compute XZ and YZ shears, orthogonalize 3rd row
+		// Compute XZ and YZ shears, orthogonalized 3rd row
 		skV[1] = Vector.dot(row[0], row[2]);
 		row[2] = Vector.combine(row[2], row[0], 1.0, -skV[1]);
 		skV[2] = Vector.dot(row[1], row[2]);
@@ -176,34 +180,43 @@ var frame = module.exports = {
 	},
 
 	/**
-	* Clones an array based on offset value.
-	* @public
-	*/
-	copy: function(v, offset) {
+	 * Clones an array based on offset value.
+	 * @public
+	 * @param  {Object} v      Object with transformation properties like translate, rotate, scale, skew and perspective.
+	 * @param  {Number} offset Determine how many Object to copy.
+	 * @return {Number[]}      Array with sliced value based on offset.
+	 */
+	copy: function (v, offset) {
 		return Array.prototype.slice.call(v, offset || 0);
 	},
 
 	/**
-	* Validates if property is a transform property.
-	* @public
-	*/
-	isTransform: function(transform) {
+	 * Validates if property is a transform property.
+	 * @public
+	 * @param  {String} transform Any transform property, for which we want to identify whether or not the property is transform.
+	 * @return {Number}           Value of the required transform property.
+	 */
+	isTransform: function (transform) {
 		return TRANSFORM[transform];
 	},
 
 	/**
-	* Applies trasnformation to DOM element with the matrix values.
-	* @public
-	*/
+	 * Applies transformation to DOM element with the Matrix3d values.
+	 * @public
+	 * @param  {HTMLElement} ele Element which is going to animate.
+	 * @param  {Number[]}    m   Matrix3d
+	 */
 	accelerate: function (ele, m) {
 		m = m ? m : Matrix.identity();
 		frame.setTransformProperty(ele, m);
 	},
 
 	/**
-	* Reform matrix 2D to 3D
-	* @public
-	*/
+	 * Reform matrix 2D to 3D
+	 * @public
+	 * @param  {Number[]} v Matrix(2d)
+	 * @return {Number[]}   Matrix3d
+	 */
 	parseMatrix: function (v) {
 		var m = Matrix.identity();
 		v = v.replace(/^\w*\(/, '').replace(')', '');
@@ -222,9 +235,11 @@ var frame = module.exports = {
 	},
 
 	/**
-	* Converts comma seperated values to array.
-	* @public
-	*/
+	 * Converts comma separated values to array.
+	 * @public
+	 * @param  {String}   val Value of required animation in any property.
+	 * @return {Number[]}     Create array from val.
+	 */
 	parseValue: function (val) {
 		return val.toString().split(",").map(function(v) {
 			return parseFloat(v, 10);
@@ -232,9 +247,11 @@ var frame = module.exports = {
 	},
 
 	/**
-	* Gets a matrix for DOM element.
-	* @public
-	*/
+	 * Gets a matrix for DOM element.
+	 * @public
+	 * @param  {HTMLElement} style CSS style declaration.
+	 * @return {Number[]}          Matrix3d
+	 */
 	getMatrix: function (style) {
 		var m = style.getPropertyValue('transform') ||
 				style.getPropertyValue('-moz-transform') ||
@@ -248,11 +265,12 @@ var frame = module.exports = {
 	},
 
 	/**
-	* Gets a style property applied from the DOM element.
-	* @param:	style - Computed style of a DOM.
-	*			key - property name for which style has to be fetched.
-	* @public
-	*/
+	 * Gets a style property applied from the DOM element.
+	 * @public
+	 * @param  {HTMLElement}  style Computed style of a DOM.
+	 * @param  {String}       key   Property name for which style has to be fetched.
+	 * @return {Number|HTMLElement} 
+	 */
 	getStyleValue: function (style, key) {
 		var v = style.getPropertyValue(key) || style[key];
 		if (v === undefined || v === null || v == "auto") {
@@ -268,11 +286,13 @@ var frame = module.exports = {
 		return v;
 	},
 
-
 	/**
-	* Applies style property to DOM element.
-	* @public
-	*/
+	 * Applies style property to DOM element.
+	 * @public
+	 * @param {HTMLElement} ele  DOM element to be animated.
+	 * @param {String}      prop CSS property to be applied.
+	 * @param {Number}      val  Value of the property applied.
+	 */
 	setProperty: function (ele, prop, val) {
 		if (COLOR[prop]) {
 			val = val.map(function(v) { return parseInt(v, 10);});
@@ -283,14 +303,17 @@ var frame = module.exports = {
 		} else {
 			val = val[0] + 'px';
 		}
-		if(ele)
+		if (ele) {
 			ele.style[prop] =  val;
+		}
 	},
 
 	/**
-	* Applies transform property to DOM element.
-	* @public
-	*/
+	 * Applies transform property to DOM element.
+	 * @public
+	 * @param {HTMLElement} element HTML element which is going to animate.
+	 * @param {Number[]}    matrix  Matrix3d
+	 */
 	setTransformProperty: function (element, matrix) {
 		var mat = Matrix.toString(matrix);
 		element.style.transform = mat;
@@ -301,12 +324,13 @@ var frame = module.exports = {
 	},
 
 	/**
-	* Get DOM node animation properties.
-	* @param:	node-	DOM node
-	*			props-	Properties to fetch from DOM.
-	*			initial-Default properties to be applied.
-	* @public
-	*/
+	 * Get DOM node animation properties.
+	 * @public
+	 * @param  {HTMLElement} node    DOM node
+	 * @param  {Object}      props   Properties to fetch from DOM.
+	 * @param  {Object}      initial Default properties to be applied.
+	 * @return {Object}              Object with various animation properties.
+	 */     
 	getComputedProperty: function (node, props, initial) {
 		if(!node) return;
 
@@ -348,10 +372,18 @@ var frame = module.exports = {
 		return {_startAnim: sP, _endAnim: eP, _transform: dP, currentState: dP, matrix: m, props: props};
 	},
 
+	/**
+	 * Get DOM node animation distance.
+	 * @public
+	 * @param  {HTMLElement} prop       DOM node properties.
+	 * @param  {Object}      initalProp Initial properties to fetch from DOM.
+	 * @param  {Object}      finalProp  Final properties to be applied.
+	 * @return {Object}                 Total computed distance to animate.
+	 */
 	getComputedDistance: function (prop, initalProp, finalProp) {
 		var k, sV, eV, dst, tot = 0;
 		for (k in prop) {
-			sV = k==='rotate' ? Vector.quantToVector(initalProp[k]) : initalProp[k];
+			sV = (k === 'rotate' ? Vector.quantToVector(initalProp[k]) : initalProp[k]);
 			eV = finalProp[k];
 			dst = Vector.distance(eV, sV);
 			tot += dst;
