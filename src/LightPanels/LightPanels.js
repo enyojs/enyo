@@ -338,13 +338,15 @@ module.exports = kind(
 	* Animates to the specified panel index.
 	*
 	* @param {Number} index - The index of the panel we wish to animate a transition to.
+	* @return {Boolean} If `true`, the index to animate to was successful; `false` otherwise (i.e.
+	*	if the index is invalid, or another animation is already in progress).
 	* @public
 	*/
 	animateTo: function (index) {
 		var from = this.index;
 		this.index = index;
 		this.notifyObservers('index');
-		this.setupTransitions(from, true);
+		return this.setupTransitions(from, true);
 	},
 
 	/**
@@ -392,7 +394,8 @@ module.exports = kind(
 	* @param {Object} moreInfo - Additional properties to be applied (defaults).
 	* @param {module:enyo/LightPanels~PushPanelOptions} opts - Additional options to be used during
 	*	panel pushing.
-	* @return {Object} The instance of the panel that was created on top of the stack.
+	* @return {Object|undefined} The instance of the panel that was created; if
+	*	`undefined`, the panel could not be pushed (i.e. we are currently transitioning).
 	* @public
 	*/
 	pushPanel: function (info, moreInfo, opts) {
@@ -431,12 +434,12 @@ module.exports = kind(
 	* @param {Object} moreInfo - Additional properties to be applied (defaults).
 	* @param {module:enyo/LightPanels~PushPanelOptions} opts - Additional options to be used when
 	*	pushing multiple panels.
-	* @return {null|Object[]} Array of the panels that were created on top of the stack, or
-	*	`null` if panels could not be created.
+	* @return {Object[]|undefined} Array of the panels that were created on top of the stack; if
+	*	`undefined`, the panels could not be pushed (i.e. we are currently transitioning).
 	* @public
 	*/
 	pushPanels: function (info, moreInfo, opts) {
-		if (this.transitioning) return true;
+		if (this.transitioning) return;
 
 		if (opts && opts.purge) {
 			this.purge();
@@ -526,11 +529,16 @@ module.exports = kind(
 	* @param {Number} count - The number of panels we wish to replace.
 	* @param {Object|Object[]} info - The component definition (or array of component definitions)
 	*	for the replacement panel(s).
+	* @return {Object|Object[]|undefined} The panel or array of the panels that were pushed; if
+	*	`undefined`, the replacement could not be processed (i.e. we are currently transitioning).
 	* @public
 	*/
 	replaceAt: function (start, count, info) {
-		var panels = this.getPanels(),
-			insertBefore, commonInfo, end, idx;
+		var panels, insertBefore, commonInfo, end, idx;
+
+		if (this.transitioning) return;
+
+		panels = this.getPanels();
 
 		start = start < 0 ? panels.length + start : start;
 		end = start + count;
@@ -543,8 +551,8 @@ module.exports = kind(
 		}
 
 		// add replacement panels
-		if (utils.isArray(info)) this.pushPanels(info, commonInfo, {direct: true, force: true});
-		else this.pushPanel(info, commonInfo, {direct: true, force: true});
+		if (utils.isArray(info)) return this.pushPanels(info, commonInfo, {direct: true, force: true});
+		else return this.pushPanel(info, commonInfo, {direct: true, force: true});
 	},
 
 
@@ -723,25 +731,29 @@ module.exports = kind(
 	* @param {Number} [previousIndex] - The index of the panel we are transitioning from.
 	* @param {Boolean} [animate] - Whether or not there should be a visible animation when
 	*	transitioning between the current and next panel.
+	* @return {Boolean} If `true`, the transition was setup successfully, otherwise it was not (i.e.
+	*	we are currently transitioning or there is no "next" panel to transition to).
 	* @private
 	*/
 	setupTransitions: function (previousIndex, animate) {
-		var panels = this.getPanels(),
-			nextPanel = panels[this.index],
-			currPanel = this._currentPanel,
-			shiftCurrent, fnInitiateTransition;
+		var panels, nextPanel, currPanel, shiftCurrent, fnInitiateTransition;
 
-		this._indexDirection = 0;
+		if (this.transitioning) return;
 
-		// handle the wrapping case
-		if (this.wrap) {
-			if (this.index === 0 && previousIndex == panels.length - 1) this._indexDirection = 1;
-			else if (this.index === panels.length - 1 && previousIndex === 0) this._indexDirection = -1;
-		}
-		if (this._indexDirection === 0 && previousIndex != -1) this._indexDirection = this.index - previousIndex;
+		panels = this.getPanels();
+		nextPanel = panels[this.index];
+		currPanel = this._currentPanel;
 
 		if (nextPanel) {
 			this.transitioning = true;
+			this._indexDirection = 0;
+
+			// handle the wrapping case
+			if (this.wrap) {
+				if (this.index === 0 && previousIndex == panels.length - 1) this._indexDirection = 1;
+				else if (this.index === panels.length - 1 && previousIndex === 0) this._indexDirection = -1;
+			}
+			if (this._indexDirection === 0 && previousIndex != -1) this._indexDirection = this.index - previousIndex;
 
 			// prepare the panel that will be deactivated
 			if (currPanel) {
@@ -772,6 +784,8 @@ module.exports = kind(
 
 			if (!this.generated || !animate) fnInitiateTransition();
 			else animation.requestAnimationFrame(fnInitiateTransition);
+
+			return true;
 		}
 	},
 
