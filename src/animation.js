@@ -33,8 +33,8 @@ var _cancelFrame = function(inId) {
 };
 
 for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
-	// if we're on ios 6 just use setTimeout, requestAnimationFrame has some kinks currently
-	if (platform.ios >= 6) {
+	// if we're on ios 6 just use setTimeout, requestAnimationFrame has some kinks
+	if (platform.ios < 7) {
 		break;
 	}
 
