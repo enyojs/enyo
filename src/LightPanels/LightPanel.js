@@ -1,7 +1,7 @@
 /**
-* Contains the declaration for the {@link module:enyo/LightPanels~LightPanel} kind.
+* Contains the declaration for the {@link module:enyo/LightPanels/LightPanel~LightPanel} kind.
 * @wip
-* @module enyo/LightPanels
+* @module enyo/LightPanels/LightPanel
 */
 
 require('enyo');
@@ -14,7 +14,7 @@ var
 
 /**
 * @enum {Number}
-* @memberof module:enyo/LightPanels~LightPanel
+* @memberof module:enyo/LightPanels/LightPanel~LightPanel
 * @public
 */
 var States = {
@@ -35,7 +35,7 @@ var States = {
 * @public
 */
 module.exports = kind(
-	/** @lends module:enyo/LightPanels~LightPanel.prototype */ {
+	/** @lends module:enyo/LightPanels/LightPanel~LightPanel.prototype */ {
 
 	/**
 	* @private
@@ -48,9 +48,9 @@ module.exports = kind(
 	kind: Control,
 
 	/**
-	* The current [state]{@link module:enyo/LightPanels~LightPanel#States}.
+	* The current [state]{@link module:enyo/LightPanels/LightPanel~LightPanel#States}.
 	*
-	* @type {module:enyo/LightPanels~LightPanel#States}
+	* @type {module:enyo/LightPanels/LightPanel~LightPanel#States}
 	* @default null
 	* @public
 	*/
