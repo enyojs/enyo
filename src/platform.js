@@ -46,7 +46,7 @@ exports = module.exports = {
 	* `true` if the platform has native double-finger [events]{@glossary event}.
 	* @public
 	*/
-	gesture: Boolean(('ongesturestart' in window) || window.navigator.msMaxTouchPoints || window.navigator.maxTouchPoints)
+	gesture: Boolean(('ongesturestart' in window) || (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1) || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 1))
 
 	/**
 	* The name of the platform that was detected or `undefined` if the platform
