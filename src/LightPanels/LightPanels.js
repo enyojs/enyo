@@ -195,6 +195,11 @@ module.exports = kind(
 	/**
 	* @private
 	*/
+	transitioning: false,
+
+	/**
+	* @private
+	*/
 	tools: [
 		{kind: Control, name: 'client', classes: 'panels-container', ontransitionend: 'transitionFinished', onwebkitTransitionEnd: 'transitionFinished'}
 	],
@@ -324,6 +329,16 @@ module.exports = kind(
 	getPanels: function () {
 		/*jshint -W093 */
 		return (this._panels = this._panels || (this.controlParent || this).children);
+	},
+
+	/**
+	* Whether or not we are currently in the midst of a panel transition.
+	*
+	* @return {Boolean} If `true`, we are currently transitioning; otherwise, `false`.
+	* @public
+	*/
+	isTransitioning: function () {
+		return this.transitioning;
 	},
 
 
