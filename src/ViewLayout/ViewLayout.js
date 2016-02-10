@@ -208,6 +208,13 @@ module.exports = kind(
 	*/
 	registerTransition: function (was, is) {
 		var t = this._transitioning;
+
+		// if there is an active transition, we need to complete it so things aren't left hanging
+		// short circuiting isTransitioning to optimize and since we have intimate knowledge here as
+		// part of the transition registration API.
+		if (!t.to.complete) this.setTransitionComplete('to');
+		if (!t.from.complete) this.setTransitionComplete('from');
+
 		t.from.view = was;
 		t.from.complete = !was;
 		t.to.view = is;
