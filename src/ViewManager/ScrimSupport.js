@@ -2,7 +2,19 @@ var
 	kind = require('../kind'),
 	utils = require('enyo/utils');
 
-module.exports = {
+
+/** 
+* A mixin for use by ViewManager. Applies a user-defined `scrimConfig` if present.
+*
+* @name module:enyo/ViewManager~ScrimSupport
+* @mixin
+* @wip
+* @protected
+*/
+var ScrimSupport = {
+	/**
+	* @private
+	*/ 
 	initComponents: kind.inherit(function (sup) {
 		return function () {
 			var config = {name: 'scrim', classes: 'enyo-viewmanager-scrim enyo-fit'};
@@ -23,3 +35,5 @@ module.exports = {
 		};
 	})
 };
+
+module.exports = ScrimSupport;
