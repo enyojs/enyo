@@ -60,36 +60,36 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Checkbox~Checkbox.prototype */ {
-		
+
 		/**
 		* Value of the checkbox; will be `true` if checked.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		checked: false,
-		
+
 		/**
 		* A [Group API]{@link module:enyo/Group~Group} requirement for determining the selected item.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		active: false,
-		
+
 		/**
 		* @private
 		*/
 		type: 'checkbox'
 	},
-	
+
 	/**
 	* Disable classes inherited from {@link module:enyo/Input~Input}.
-	* 
+	*
 	* @private
 	*/
 	kindClasses: "",
@@ -129,7 +129,7 @@ module.exports = kind(
 	* The [active]{@link module:enyo/Checkbox~Checkbox#active} property and `onActivate`
 	* {@glossary event} are part of the [GroupItem]{@link module:enyo/GroupItem~GroupItem}
 	* interface supported by this [object]{@glossary Object}.
-	* 
+	*
 	* @private
 	*/
 	activeChanged: function () {
@@ -139,7 +139,7 @@ module.exports = kind(
 	},
 
 	/**
-	* All [input]{@link module:enyo/Input~Input} type [controls]{@link module:enyo/Control~Control} support the 
+	* All [input]{@link module:enyo/Input~Input} type [controls]{@link module:enyo/Control~Control} support the
 	* [value]{@link module:enyo/Input~Input#value} property.
 	*
 	* @param {Boolean} val - Whether or not the [checkbox]{@link module:enyo/Checkbox~Checkbox} should
@@ -167,14 +167,14 @@ module.exports = kind(
 	* @private
 	*/
 	valueChanged: function () {
+		// inherited behavior is to set "value" attribute and node-property
+		// which does not apply to checkbox (uses "checked") so
+		// we squelch the inherited method
+	},
 
 	/**
 	* @private
 	*/
-	// inherited behavior is to set "value" attribute and node-property
-	// which does not apply to checkbox (uses "checked") so
-	// we squelch the inherited method
-	},
 	change: function () {
 		var nodeChecked = utils.isTrue(this.getNodeProperty('checked'));
 		this.setActive(nodeChecked);

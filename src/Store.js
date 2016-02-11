@@ -30,7 +30,7 @@ var BaseStore = kind({
 * should be included in the filtered set for the [find()]{@link module:enyo/Store~Store#find}
 * method.
 * 
-* @callback enyo.Store~Filter
+* @callback module:enyo/Store~Store~Filter
 * @param {module:enyo/Model~Model} model - The [model]{@link module:enyo/Model~Model} to filter.
 * @returns {Boolean} `true` if the model meets the filter requirements;
 * otherwise, `false`.
@@ -39,7 +39,7 @@ var BaseStore = kind({
 /**
 * The configuration options for the [find()]{@link module:enyo/Store~Store#find} method.
 * 
-* @typedef {Object} enyo.Store~FindOptions
+* @typedef {Object} module:enyo/Store~Store~FindOptions
 * @property {Boolean} all=true - Whether or not to include more than one match for the
 *	filter method. If `true`, an array of matches is returned; otherwise, a single match.
 * @property {Object} context - If provided, it will be used as the `this` (context) of
@@ -304,8 +304,7 @@ var Store = kind(
 * @see module:enyo/Model~Model
 * @see module:enyo/Collection~Collection
 * @see module:enyo/RelationalModel~RelationalModel
-* @type enyo.Store
-* @memberof enyo
+* @type module:enyo/Store~Store
 * @public
 */
 module.exports = new Store();

@@ -245,6 +245,16 @@ module.exports = {
 
 	showingChangedHandler: kind.inherit(function (sup) {
 		return function (sender, event) {
+			// Calculate boundaries when shown, just in case
+			// anything has happened (like scroller contents changing)
+			// while we were hidden. We do this unconditionally since
+			// it's cheap to do it now and we avoid a lot of extra
+			// complexity by not trying to track whether we need it.
+			// May need to revisit this decision if related issues
+			// arise.
+			if (event.showing) {
+				this.calcBoundaries();
+			}
 			sup.apply(this, arguments);
 			if (!event.showing && this._suppressing) {
 				this._resumeMouseEvents();

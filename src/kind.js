@@ -137,6 +137,8 @@ exports.singleton = function (conf) {
 };
 
 /**
+* @name module:enyo/kind.makeCtor
+* @method
 * @private
 */
 kind.makeCtor = function () {
@@ -165,15 +167,9 @@ kind.makeCtor = function () {
 };
 
 /**
-* Classes referenced by name may omit this namespace (e.g., "Button" instead of "enyo.Button")
-*
-* @private
-*/
-kind.defaultNamespace = 'enyo';
-
-/**
 * Feature hooks for the oop system
 *
+* @name module:enyo/kind.features
 * @private
 */
 kind.features = [];
@@ -184,6 +180,8 @@ kind.features = [];
 * [constructor]{@glossary constructor}, a [prototype]{@glossary Object.prototype}, or an
 * instance.
 *
+* @name module:enyo/kind.extendMethods
+* @method
 * @private
 */
 kind.extendMethods = function (ctor, props, add) {
@@ -233,6 +231,8 @@ kind.features.push(kind.extendMethods);
 * `this.inherited(arguments)` from within a kind method. This can only be done
 * safely when there is known to be a super class with the same method.
 *
+* @name module:enyo/kind.inherited
+* @method
 * @private
 */
 kind.inherited = function (originals, replacements) {
@@ -268,9 +268,6 @@ kind.inherited = function (originals, replacements) {
 
 // dcl inspired super-inheritance
 
-/**
-* @private
-*/
 var Inherited = function (fn) {
 	this.fn = fn;
 };
@@ -344,10 +341,11 @@ kind.statics = {
 	* it is subclassed, the constructor and properties will be passed through
 	* this method for special handling of important features.
 	*
+	* @name module:enyo/kind.subclass
+	* @method
 	* @param {Function} ctor - The [constructor]{@glossary constructor} of the
 	*	[kind]{@glossary kind} being subclassed.
 	* @param {Object} props - The properties of the kind being subclassed.
-	* @memberof enyo.kind
 	* @public
 	*/
 	subclass: function (ctor, props) {},
@@ -358,8 +356,10 @@ kind.statics = {
 	* [constructors]{@glossary constructor}, although calling it on a
 	* [deferred]{@glossary deferred} constructor will force it to be
 	* resolved at that time. This method does not re-run the
-	* {@link module:enyo/kind~kind.features} against the constructor or instance.
+	* {@link module:enyo/kind.features} against the constructor or instance.
 	*
+	* @name module:enyo/kind.extend
+	* @method
 	* @param {Object|Object[]} props A [hash]{@glossary Object} or [array]{@glossary Array}
 	*	of [hashes]{@glossary Object}. Properties will override
 	*	[prototype]{@glossary Object.prototype} properties. If a
@@ -374,7 +374,6 @@ kind.statics = {
 	*	be extended.
 	* @returns {Object} The constructor of the class, or specific
 	*	instance, that has been extended.
-	* @memberof enyo.kind
 	* @public
 	*/
 	extend: function (props, target) {
@@ -399,10 +398,11 @@ kind.statics = {
 	/**
 	* Creates a new sub-[kind]{@glossary kind} of the current kind.
 	*
+	* @name module:enyo/kind.kind
+	* @method
 	* @param  {Object} props A [hash]{@glossary Object} of properties used to define and create
 	*	the [kind]{@glossary kind}
 	* @return {Function} Constructor of the new kind
-	* @memberof enyo.kind
 	* @public
 	*/
 	kind: function (props) {
@@ -416,6 +416,7 @@ kind.statics = {
 };
 
 /**
+* @method
 * @private
 */
 exports.concatHandler = function (ctor, props, instance) {
@@ -428,14 +429,18 @@ exports.concatHandler = function (ctor, props, instance) {
 	}
 };
 
+var kindCtors =
 /**
 * Factory for [kinds]{@glossary kind} identified by [strings]{@glossary String}.
 *
+* @type Object
+* @deprecated Since 2.6.0
 * @private
 */
-var kindCtors = exports._kindCtors = {};
+	exports._kindCtors = {};
 
 /**
+* @method
 * @private
 */
 var constructorForKind = exports.constructorForKind = function (kind) {
@@ -475,11 +480,14 @@ var constructorForKind = exports.constructorForKind = function (kind) {
 * Namespace for current theme (`enyo.Theme.Button` references the Button specialization for the
 * current theme).
 *
+* @deprecated Since 2.6.0
 * @private
 */
 var Theme = exports.Theme = {};
 
 /**
+* @method
+* @deprecated Since 2.6.0
 * @private
 */
 exports.registerTheme = function (ns) {
@@ -487,6 +495,7 @@ exports.registerTheme = function (ns) {
 };
 
 /**
+* @method
 * @private
 */
 exports.createFromKind = function (nom, param) {

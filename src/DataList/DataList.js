@@ -643,7 +643,12 @@ var DataList = module.exports = kind(
 	*
 	* @private
 	*/
-	statics: {delegates: {vertical: VerticalDelegate, horizontal: HorizontalDelegate}},
+	statics: /** @lends module:enyo/DataList~DataList */ {
+		/**
+		* @private
+		*/
+		delegates: {vertical: VerticalDelegate, horizontal: HorizontalDelegate}
+	},
 
 	/**
 	* An [array]{@glossary Array} of the actual page references for easier access.

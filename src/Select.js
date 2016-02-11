@@ -38,7 +38,7 @@ var
 * 	}
 * }
 * ```
-* 
+*
 * Note: This uses the [&lt;select&gt;]{@glossary select} tag, which isn't implemented for
 * native webOS applications, although it does work in the webOS Web browser.
 *
@@ -63,12 +63,12 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Select~Select.prototype */ {
-		
+
 		/**
 		* The index of the selected [option]{@link module:enyo/Option~Option} in the list.
-		* 
+		*
 		* @type {Number}
 		* @default null
 		* @public
@@ -77,7 +77,7 @@ module.exports = kind(
 
 		/**
 		* The value of the selected [option]{@link module:enyo/Option~Option}.
-		* 
+		*
 		* @type {Object}
 		* @default null
 		* @public
@@ -86,7 +86,7 @@ module.exports = kind(
 
 		/**
 		* The size of the select box in rows.
-		* 
+		*
 		* @type {Number}
 		* @default 0
 		* @public
@@ -94,8 +94,8 @@ module.exports = kind(
 		size: 0,
 
 		/**
-		* Sets whether the enyo.Select can select multiple options
-		* 
+		* Sets whether the enyo/Select can select multiple options
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -103,15 +103,15 @@ module.exports = kind(
 		multiple: false,
 
 		/**
-		* Sets whether the enyo.Select is disabled, or not
-		* 
+		* Sets whether the enyo/Select is disabled, or not
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		disabled: false
 	},
-	
+
 	/**
 	* @private
 	*/

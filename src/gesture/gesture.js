@@ -1,7 +1,6 @@
-require('enyo');
 /**
- * @module enyo/gesture
- */
+* @module enyo/gesture
+*/
 
 
 var

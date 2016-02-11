@@ -36,12 +36,13 @@ module.exports = kind(
 	* @private
 	*/
 	published: {
+		/** @lends module:enyo/Option~Option.prototype */
+
 		/**
 		* Value of the [option]{@link module:enyo/Option~Option}.
 		* 
 		* @type {String}
 		* @default ''
-		* @memberof enyo.Option.prototype
 		* @public
 		*/
 		value: '',
@@ -51,7 +52,6 @@ module.exports = kind(
 		* 
 		* @type {Boolean}
 		* @default false
-		* @memberof enyo.Option.prototype
 		* @public
 		*/
 		selected: false

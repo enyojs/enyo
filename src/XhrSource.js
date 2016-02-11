@@ -166,7 +166,7 @@ var XhrSource = module.exports = kind(
 });
 
 /**
-* @name enyo.XhrSource.concat
+* @name module:enyo/XhrSource~XhrSource.concat
 * @static
 * @private
 */

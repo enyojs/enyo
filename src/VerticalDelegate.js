@@ -905,7 +905,7 @@ module.exports = {
 	* are within the scroller but precede the pages.
 	*
 	* @method
-	* @param  {module:enyo/DataList~DataList} list - The instance of enyo.DataList
+	* @param  {module:enyo/DataList~DataList} list - The instance of enyo/DataList
 	* @private
 	*/
 	calcScrollOffset: function (list) {
