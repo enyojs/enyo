@@ -153,6 +153,7 @@ var ViewPreloadSupport = {
 	* Pops the specified view that was previously cached.
 	*
 	* @param {String} id - The unique identifier for the cached view that is being popped.
+	* @return {Object} The popped view.
 	* @public
 	*/
 	popView: function (id) {

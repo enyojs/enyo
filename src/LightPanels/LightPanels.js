@@ -483,16 +483,15 @@ module.exports = kind(
 	*/
 	replaceAt: function (start, count, info) {
 		var panels = this.getPanels(),
-			queue = this.popQueue,
-			insertBefore, commonInfo, end;
+			panelsToPop, insertBefore, commonInfo, end;
 
 		start = start < 0 ? panels.length + start : start;
 		end = start + count;
 		insertBefore = panels[end];
 		commonInfo = {addBefore: insertBefore};
-		queue = queue || [];
 
-		queue = queue.concat(panels.splice(start, end - start));
+		panelsToPop = panels.splice(start, end - start);
+		this.popQueue = (this.popQueue && this.popQueue.concat(panelsToPop)) || panelsToPop;
 
 		// add replacement panels
 		if (utils.isArray(info)) this.pushPanels(info, commonInfo, {direct: true, force: true});
