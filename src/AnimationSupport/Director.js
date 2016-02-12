@@ -1,10 +1,9 @@
 require('enyo');
 
-var frame = require('./Frame'),
-	tween = require('./Tween'),
+var tween = require('./Tween'),
     utils =  require('../utils');
 
-//var rolePlays = {};
+var pose, dur, tm, t;
 
 /**
 * This modules exposes the features to support 'Director' approach.
@@ -21,7 +20,7 @@ module.exports = {
         for (var i = 0; i < l; i++) {
             actor = actors[i];
             if(actor.generated) {
-                this.firstShot(scene, actor);
+                tween.init(actor);
                 active = false;
             }
         }
@@ -29,18 +28,12 @@ module.exports = {
     },
 
     take: function (scene, ts) {
-        var pose, 
-            dur = scene.span,
-            tm = scene.timeline;
+        dur = scene.span;
+        tm = scene.timeline;
 
-        //TODO: need to find the right spot for capturing inital pose.
-        if (!scene.active) {
-            this.roll(scene);
-        }
         if (isNaN(tm) || tm < 0) return;
         if (tm <= dur) {
             pose = scene.action(ts, pose);
-            //TODO: Use Event Delegator to emit this event.
         } else {
             scene.timeline = dur;
             scene.animating = false;
@@ -48,12 +41,8 @@ module.exports = {
     },
 
     action: function (pose, actor, since, dur) {
-        var t;
+        if (!pose._startAnim) tween.init(actor, pose);
 
-        if (!pose._startAnim) {
-            utils.mixin(pose,
-                frame.getComputedProperty(actor.hasNode(), pose.animate, actor.currentState));
-        }
         if (since < 0) since = 0;
         if (since <= dur && dur !== 0) {
             t = since / dur;
@@ -92,25 +81,6 @@ module.exports = {
             }, rolePlays[id]);
         }
         scene.rolePlays = rolePlays;
-    },
-
-    firstShot: function (scene, actor) {
-        var dom = actor.hasNode(),
-            l = scene.length(),
-            oldPose = frame.getComputedProperty(dom, undefined),
-            pose;
-        oldPose.span = 0;
-        actor._initialPose = oldPose;
-        actor.currentState = oldPose.currentState;
-        // frame.accelerate(dom, pose.matrix);
-        
-
-        for(var i=0; i < l; i++) {
-            pose = scene.getAnimation(i);
-            utils.mixin(pose, frame.getComputedProperty(actor.hasNode(), pose.animate, oldPose._endAnim));
-            scene.setAnimation(i, pose);
-            oldPose = pose;
-        }
     },
 
     shot: function(actor, ts) {

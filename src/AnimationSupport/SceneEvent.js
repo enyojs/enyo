@@ -22,10 +22,10 @@ var eventsMap = {
 * If the character has opted to have animations handled by animation framework,
 * then it can add "handleAnimationEvents" as true as its property.
 * The character can also mention which events he wants to be handled by the framework by
-* providing list of animation events in "animationEvents" block like;
+* providing list of animation events in "handlers" block like;
 * { 
 *	name: "myKind",
-*	animationEvents: [
+*	handlers: [
 *		"scroll",
 *		"mousewheel",
 *		"touchstart",
@@ -35,11 +35,6 @@ var eventsMap = {
 * }
 *
 * By default these events are handled within the framework(others for now have to be handled by the application).
-* 
-* This module is here temporarily, need to have a proper mechanism 
-* like dispatcher to handle animation related events along with application events.
-* 
-* @module enyo/AnimationSupport/EventDelegator
 */
 var EventDelegator = {
 
@@ -170,6 +165,7 @@ var sup,
 	 * @private
 	 */
 	_triggerer = '';
+	
 var EventAction = {
 
 	eventOriginator: undefined,
@@ -177,6 +173,7 @@ var EventAction = {
 	/**
 	 * Sets the delta values of x, y and z for events
 	 * @param {Object} obj - Object contains dX, dY and dZ as keys
+	 * @memberOf module:enyo/AnimationSupport/SceneEvent
 	 * @public
 	 */
 	setAnimationDelta: function(ev) {
@@ -190,7 +187,9 @@ var EventAction = {
 	},
 
 	/**
-	 * Gets the delta values of x, y and z for events
+	 * To get event changes captured, for delta values of x, y and z.
+     * @return {Object}  delta    - pose
+     * @memberOf module:enyo/AnimationSupport/SceneEvent
 	 * @public
 	 */
 	getAnimationDelta: function() {
@@ -198,7 +197,9 @@ var EventAction = {
 	},
 
 	/**
-	 * Trigger the registered event to all the listeners
+	 * To be when an virtual event has to be triggered for the last event captured.
+     * @return {void}
+     * @memberOf module:enyo/AnimationSupport/SceneEvent
 	 * @public
 	 */
 	triggerEvent: function() {
@@ -207,7 +208,12 @@ var EventAction = {
 	},
 
 	/**
-	 * Activates handles for generated actors
+	 * To be used when an actor is registerd for event tracking.
+	 * Its keeps track of only on actor which is refered as
+	 * the originator.
+     * @param  {Object} actor - Component on which events will be captured.
+     * @return {void}
+     * @memberOf module:enyo/AnimationSupport/SceneEvent
 	 * @public
 	 */
 	register: function (actor) {
@@ -217,6 +223,16 @@ var EventAction = {
 		}
 	},
 
+	/**
+     * Overridden function initiates action on the animation
+     * for the given scene event.
+     * @param  {number} ts   - timespan
+     * @param  {Object} pose - pose from the animation list
+     * @return {Object}      - pose
+     * @memberOf module:enyo/AnimationSupport/SceneEvent
+     * @private
+     * @override
+     */
 	action: function (ts, pose) {
 		if (_isTriggered && _triggerer && this.handlers && this.handlers[_triggerer] !== undefined) {
 			if (this.handlers[_triggerer] === "") {
@@ -233,7 +249,22 @@ var EventAction = {
 
 
 /**
- * Scene is used to generate animation structure.
+ * Scene Event A child entity of Scene which helps 
+ * to perform user interaction based animations. <br>
+ * This Scene can register virtual events for actors 
+ * to enhance performance of delegation of events. <br>
+ * SceneEvent can hold many actors on which animation has 
+ * to performed, however only one actor{originator} can be
+ * registered for event tracking. <br>
+ * To capture events which are tracked by SceneEvent,
+ * handlers could be added within the scene block with there
+ * respective call backs.<br><br>
+ * Usage -  var sceneInstance = SceneEvent({
+ *				animation: [{ rotate: "180,0,0"}],
+ *				handlers: {vmousewheel: ""},
+ *			});
+ *			sceneInstance.register(eventActor);
+ *			sceneInstance.play();
  * @module enyo/AnimationSupport/SceneEvent
  */
 module.exports = function(props) {

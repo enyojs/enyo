@@ -3,45 +3,59 @@ var
 	director = require('./Director'),
 	utils = require('../utils');
 
-var CharacterAction = {
-	action: function (ts, pose) {
-		var i, actor, tm, past, index,
-			dur = this.span,
-			actors = this.rolePlays[this.getID()],
-			l = actors.length;
+var 
+	tm, actor, actors, len, dur;
 
-		for (i = 0; i < l; i++) {
-			actor = actors[i];
-			if (actor.generated) {
-				if (!actor._frameSpeed) {
-					actor._frameSpeed = this._frameSpeed;
-				}
-				
+var CharacterAction = {
+	/**
+     * Overridden function initiates action on the animation
+     * for the given scene actor.
+     * @param  {number} ts   - timespan
+     * @param  {Object} pose - pose from the animation list
+     * @return {Object}      - pose
+     * @memberOf module:enyo/AnimationSupport/SceneActor
+     * @private
+     * @override
+     */
+	action: function (ts, pose) {
+		var i, past, index;
+		
+		actors = this.rolePlays[this.getID()];
+		len = actors.length;
+		dur = this.span;
+		for (i = 0; (actor = actors[i]); i++) {
+			//give priority to individual actor than scene.
+			if (!actor._frameSpeed) {
+				actor._frameSpeed = this._frameSpeed;
+			}
+
+			if (actor.generated && actor._frameSpeed) {
 				tm = this.rolePlay(ts, actor);
 				if (isNaN(tm) || tm < 0) continue;
-				if (tm > dur) {
+				else if (tm <= dur) {
+					index = this.animateAtTime(tm);
+					pose = this.getAnimation(index);
+					past = index ? this.getAnimation(index - 1).span : 0;
+					director.action(pose, actor, tm - past, pose.span - past);
+					this.step && this.step(actor);
+				} else {
 					actor.timeline = dur;
-				}
-				index = this.animateAtTime(tm);
-				pose = this.getAnimation(index);
-				past = index ? this.getAnimation(index - 1).span : 0;
-				director.action(pose, actor, tm - past, pose.span - past);
-
-				this.step && this.step(actor);
-
-				if(actor.timeline === dur) {
-					this.actorCompleted && this.actorCompleted(actor);
+					actor._frameSpeed = 0;
+					this.actorCompleted && this.actorCompleted(actor);	
 				}
 			}
 		}
-
-		//TODO: return list of actors working in this sceen
 		return pose;
 	}
 };
 
 /**
- * Scene is used to generate animation structure.
+ * Scene Actor is used to individually manage all the actors <br><br>
+ * The Scene Actor is similar to Scene but can receive
+ * an actor for playing the animation.<br>
+ * Scene Actor's play when called without the actor,
+ * it works same as Scene playing all the actors.<br><br>
+ * Usage - SceneActorInstance.play(actor)
  * @module enyo/AnimationSupport/SceneActor
  */
 module.exports = function(props) {

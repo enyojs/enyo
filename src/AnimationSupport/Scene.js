@@ -356,8 +356,8 @@ var SceneAction = {
      */
     action: function(ts, pose) {
         var past,
-            actors,
-            l, i,
+            actor,
+            actors,i,
             tm = this.rolePlay(ts),
             index = this.animateAtTime(tm);
 
@@ -373,13 +373,14 @@ var SceneAction = {
         } else {
             past = index ? this.getAnimation(index - 1).span : 0;
             actors = this.rolePlays[this.getID()];
-            l = actors.length;
-            for (i = 0; i < l; i++) {
-                director.action(pose,
-                    actors[i],
-                    tm - past,
-                    pose.span - past);
-                this.step && this.step(actors[i]);
+            for (i = 0; (actor = actors[i]); i++) {
+                if (actor.generated) {
+                    director.action(pose,
+                        actors[i],
+                        tm - past,
+                        pose.span - past);
+                    this.step && this.step(actor);
+                }
             }
         }
         return pose;

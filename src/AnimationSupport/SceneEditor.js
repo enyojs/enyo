@@ -9,7 +9,6 @@ module.exports = {
 	timeline: 0,
 	_cachedValue: 0,
 	_frameSpeed: 0,
-	_startTime: 0,
 
 	cache: function(actor) {
 		actor = actor || this;
@@ -22,7 +21,6 @@ module.exports = {
 	play: function (actor) {
 		actor = actor || this;
 		actor._frameSpeed = 1;
-		actor._startTime = (actor.delay || 0);
 		if (isNaN(actor.timeline) || !actor.timeline) {
 			actor.timeline = 0;
 		}
@@ -83,7 +81,6 @@ module.exports = {
 			actor.timeline = 0;
 		
 		if(actor.delay > 0) {
-			console.log(actor.name, actor.delay);
 			actor.delay -= _rolePlay(t, actor._frameSpeed);
 		} else {
 			actor.timeline += _rolePlay(t, actor._frameSpeed);

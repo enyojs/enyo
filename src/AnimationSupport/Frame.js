@@ -9,6 +9,7 @@ var
 
 var
 	COLOR = {color: 1, backgroundColor: 1},
+	INT_UNIT = {zIndex: 1},
 	TRANSFORM = {translate: 1, translateX: 1, translateY: 1, translateZ: 1, rotateX: 1, rotateY: 1, rotateZ: 1, rotate: 1, skew: 1, scale: 1, perspective: 1};
 
 /**
@@ -297,6 +298,8 @@ var frame = module.exports = {
 		if (COLOR[prop]) {
 			val = val.map(function(v) { return parseInt(v, 10);});
 			val =  'rgb('+ val + ')';
+		} else if(INT_UNIT[prop]) {
+			val = parseInt(val[0], 10);
 		} else if (prop == 'opacity') {
 			val = val[0].toFixed(6);
 			val = (val <= 0) ? '0.000001' : val;

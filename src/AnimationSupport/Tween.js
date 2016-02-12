@@ -7,7 +7,7 @@ var
     Matrix = require('./Matrix'),
     utils = require('../utils');
 
-var oldState, newState, node, matrix, cState = [];
+var fn, state, ease, points, path, oldState, newState, node, matrix, cState = [];
 /**
  * Tween is a module responsible for creating intermediate frames for an animation.
  * The responsibilities of this module is to;
@@ -21,8 +21,21 @@ module.exports = {
     /**
      * @private
      */
+    init: function (actor, pose, initial) {
+        node = actor.hasNode();
+        if (pose && pose.animate) {
+            utils.mixin(pose,
+                frame.getComputedProperty(node, pose.animate, initial || actor.currentState));
+            actor.currentState = pose.currentState;
+        }
+        return pose;
+    },
+
+    /**
+     * @private
+     */
     step: function(actor, pose, t, d) {
-        var k, fn, state, ease, points, path;
+        var k;
 
         node = actor.hasNode();
         state = actor.currentState = actor.currentState || pose.currentState || {};
@@ -88,7 +101,6 @@ module.exports = {
         state.matrix = matrix;
         pose.currentState = state;
     },
-
 
     /**
      * @private
