@@ -1,11 +1,11 @@
 /**
- * Contains the declaration for the {@link module:enyo/RelationalModel/RelationalModel~RelationalModel} kind.
- *
- * NOTE: Do not require this module for use in applications. Require
- * {@link module:enyo/RelationalModel} instead.
- *
- * @module enyo/RelationalModel/RelationalModel
- */
+* Contains the declaration for the {@link module:enyo/RelationalModel~RelationalModel} kind.
+*
+* NOTE: Do not require this module for use in applications. Require
+* {@link module:enyo/RelationalModel} instead.
+* @module enyo/RelationalModel/Model
+* @private
+*/
 
 var
 	kind = require('../kind'),
@@ -14,7 +14,7 @@ var
 var
 	Model = require('../Model'),
 	Store = require('../Store'),
-	Relation = require('../Relation');
+	Relation = require('./Relation');
 
 var
 	defaultRelationType;
@@ -22,15 +22,16 @@ var
 /**
 * A type of {@link module:enyo/Model~Model} extended to automatically understand relationships with
 * other models. You may define these relationship via the
-* [relations]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel#relations} property. These relationships allow
+* [relations]{@link module:enyo/RelationalModel~RelationalModel#relations} property. These relationships allow
 * individual models to exist separately, but be treated as a single entity.
 *
 * @class RelationalModel
+* @name module:enyo/RelationalModel~RelationalModel
 * @extends module:enyo/Model~Model
 * @public
 */
 var RelationalModel = module.exports = kind(
-	/** @lends module:enyo/RelationalModel/RelationalModel~RelationalModel.prototype */ {
+	/** @lends module:enyo/RelationalModel~RelationalModel.prototype */ {
 	
 	name: 'enyo.RelationalModel',
 	
@@ -38,20 +39,15 @@ var RelationalModel = module.exports = kind(
 	* @private
 	*/
 	kind: Model,
-	
-	/**
-	* @private
-	*/
 
-	
 	/**
 	* An [array]{@glossary Array} declaring relationships of this
-	* [model]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel} to other models.
+	* [model]{@link module:enyo/RelationalModel~RelationalModel} to other models.
 	* These are [hashes]{@glossary Object} of corresponding
-	* [properties]{@link module:enyo/Relation~RelationOptions} used to define
+	* [properties]{@link module:enyo/RelationalModel~RelationOptions} used to define
 	* and configure individual relations. Relations may be of the type
-	* {@link module:enyo/RelationalModel/toOne~toOne}, {@link module:enyo/RelationalModel/toMany~toMany},
-	* or {@link module:enyo/RelationalModel/manyToMany~manyToMany}. Each relation must include a
+	* {@link module:enyo/RelationalModel~toOne}, {@link module:enyo/RelationalModel~toMany},
+	* or {@link module:enyo/RelationalModel~manyToMany}. Each relation must include a
 	* `key` property that is the name of the local
 	* [attribute]{@link module:enyo/Model~Model#attributes}. For example:
 	*
@@ -86,8 +82,8 @@ var RelationalModel = module.exports = kind(
 	* ([attribute]{@link module:enyo/Model~Model#attributes}).
 	*
 	* @param {String} key - The key as defined in the
-	*	[relations]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel#relations} property.
-	* @returns {(Relation|undefined)} The correct relation instance, or
+	*	[relations]{@link module:enyo/RelationalModel~RelationalModel#relations} property.
+	* @returns {(module:enyo/RelationalModel~Relation|undefined)} The correct relation instance, or
 	* `undefined` if not found.
 	* @public
 	*/
@@ -101,8 +97,8 @@ var RelationalModel = module.exports = kind(
 	* Determines whether the requested key is the name of a relation.
 	*
 	* @param {String} key - The key as defined in the
-	*	[relations]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel#relations} property.
-	* @returns {(Relation|undefined)} The correct relation instance, or
+	*	[relations]{@link module:enyo/RelationalModel~RelationalModel#relations} property.
+	* @returns {(module:enyo/RelationalModel~Relation|undefined)} The correct relation instance, or
 	* `undefined` if not found.
 	* @public
 	*/
@@ -111,8 +107,8 @@ var RelationalModel = module.exports = kind(
 	},
 	
 	/**
-	* Overloaded version of [get]{@link module:enyo/Model~Model#get} to be able to use a _path_ through
-	* relations.
+	* Overloaded version of [get]{@link module:enyo/Model~Model#get} to be able to use a _path_
+	* through relations.
 	*
 	* @method
 	* @private
@@ -138,7 +134,7 @@ var RelationalModel = module.exports = kind(
 	
 	/**
 	* Overloaded version of [set()]{@link module:enyo/Model~Model#set} with the ability to
-	* set values for related [models]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel} as well.
+	* set values for related [models]{@link module:enyo/RelationalModel~RelationalModel} as well.
 	*
 	* @private
 	*/
@@ -316,7 +312,7 @@ var RelationalModel = module.exports = kind(
 /**
 * Defines a named relation type
 *
-* @name module:enyo/RelationalModel/RelationalModel~RelationalModel.defineRelationType
+* @name module:enyo/RelationalModel~RelationalModel.defineRelationType
 * @static
 * @method
 * @param  {String}  name      Name of relation type
@@ -333,7 +329,7 @@ RelationalModel.defineRelationType = function (name, type, isDefault) {
 /**
 * Ensures that we concatenate (sanely) the relations for any subkinds.
 * 
-* @name module:enyo/RelationalModel/RelationalModel~RelationalModel.concat
+* @name module:enyo/RelationalModel~RelationalModel.concat
 * @static
 * @method
 * @private
@@ -359,5 +355,3 @@ RelationalModel.concat = function (ctor, props) {
 	// apply our modified relations array to the prototype
 	proto.relations = rels;
 };
-
-Relation.relationDefaults.model = RelationalModel;
