@@ -1,5 +1,8 @@
 /**
 * Contains the declaration for the {@link module:enyo/LightPanels/LightPanel~LightPanel} kind.
+*
+* Note: LightPanel is exported from {@link module:enyo/LightPanels}. This module should not be
+* required directly.
 * @wip
 * @module enyo/LightPanels/LightPanel
 */
