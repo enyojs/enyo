@@ -297,6 +297,16 @@ module.exports = kind(
 		}
 	},
 
+	/**
+	* @private
+	*/
+	showingChangedHandler: function (sender, ev) {
+		Control.prototype.showingChangedHandler.apply(this, arguments);
+		if (this.transitioning && !ev.showing) {
+			this.transitionFinished(null, null, true);
+		}
+	},
+
 
 
 	/*
