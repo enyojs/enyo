@@ -32,8 +32,14 @@ module.exports = {
     },
 
     /**
-     * @private
-     */
+	 * Step represents state of the actor at any point of time in the animation.
+	 * @param  {Object} actor - Element to be animated
+	 * @param  {Object} pose - Current behavior in the animation (at a given time)
+	 * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
+	 * @param  {Number} d - Duration of the current pose
+	 * @memberOf module:enyo/AnimationSupport/Tween
+	 * @private
+	 */
     step: function(actor, pose, t, d) {
         var k;
 
@@ -103,12 +109,27 @@ module.exports = {
     },
 
     /**
+     * Overridden function for applying the default ease.
+     * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
+     * @return {Number} t
+     * @memberOf module:enyo/AnimationSupport/Tween
      * @private
+     * @override
      */
     ease: function(t) {
         return t;
     },
-    
+
+    /**
+     * Draws linear interpolation between two values.
+     * @param  {Number[]} vA - origin vector
+     * @param  {Number[]} vB - Destination vector
+     * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
+     * @param  {Number[]} vR - Resultant vector
+     * @return {Number[]} vR
+     * @memberOf module:enyo/AnimationSupport/Tween
+     * @private
+     */
     lerp: function(vA, vB, t, vR) {
         if (!vR) vR = [];
         var i, l = vA.length;
@@ -119,6 +140,16 @@ module.exports = {
         return vR;
     },
 
+	/**
+     * Draws sperical linear interpolation between two values.
+     * @param  {Number[]} qA Quaternion origin
+     * @param  {Number[]} qB - Quaternion destination
+     * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
+     * @param  {Number[]} qR - Resultant quaternion
+     * @return {Number[]} qR
+     * @memberOf module:enyo/AnimationSupport/Tween
+     * @private
+     */
     slerp: function(qA, qB, t, qR) {
         if (!qR) qR = [];
         var a,
@@ -142,8 +173,12 @@ module.exports = {
     },
 
     /**
-     * @public
-     * @params t: time, points: knot and control points, vR: resulting point
+     * Creates bezier curve path for animation.
+     * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
+     * @param  {Number[]} points - knot and control points
+     * @param  {Number[]} vR - Resulting points
+     * @return {Number[]} vR
+     * @memberOf module:enyo/AnimationSupport/Tween
      */
     bezier: function(t, points, vR) {
 
@@ -170,6 +205,15 @@ module.exports = {
         return vR;
     },
 
+	/**
+     * Returns the control points for bezier curve.
+     * @param  {Object} easeObj- The easing object with values.
+     * @param  {Number[]} startPoint - Starting point of the curve
+     * @param  {Number[]} endPoint - End point of the curve
+     * @param  {Number[]} points - control points
+     * @return {Number[]} points
+     * @memberOf module:enyo/AnimationSupport/Tween
+     */
     bezierPoints: function(easeObj, startPoint, endPoint, points) {
         var order = (easeObj && Object.keys(easeObj).length) ? (Object.keys(easeObj).length + 1) : 0;
         var bValues = [],
@@ -201,6 +245,14 @@ module.exports = {
         return points;
     },
 
+    /**
+     * Traverses the path of the animation
+     * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
+     * @param  {Number[]} path - Array of  points
+     * @param  {Number[]} vR Resulatant Array
+     * @return {Number[]} vR
+     * @memberOf module:enyo/AnimationSupport/Tween
+     */
     traversePath: function (t, path, vR) {
         if (!vR) vR = [];
 
@@ -219,7 +271,16 @@ module.exports = {
         return vR;
     },
 
-    //With control points
+	/**
+     * Returns the control points for bezier spline.
+     * @param  {Object} ease- The easing object with values.
+     * @param  {Number[]} startQuat - Quaternion origin
+     * @param  {Number[]} endQuat - Quaternion destination
+     * @param  {Number[]} endPoint - Final Destination point
+     * @param  {Number[]} splinePoints - spline control points
+     * @return {Number[]} splinePoints
+     * @memberOf module:enyo/AnimationSupport/Tween
+     */
     bezierSPoints: function(ease, startQuat, endQuat, endPoint, splinePoints) {
         var time = [0],
             quats = [startQuat];
@@ -262,7 +323,14 @@ module.exports = {
         return splinePoints;
     },
 
-    //With control points
+	/**
+     * Creates bezier spline path for animation.
+     * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
+     * @param  {Number[]} points - knot and control points
+     * @param  {Number[]} vR - Resulting points
+     * @return {Number[]} vR
+     * @memberOf module:enyo/AnimationSupport/Tween
+     */
     bezierSpline: function(t, points, vR) {
         if (!vR) vR = [];
         var Q0, Q1, Q2, R0, R1;
