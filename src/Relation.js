@@ -13,10 +13,10 @@ var
 	Store = require('./Store');
 
 /**
-* The default options for [relations]{@link module:enyo/RelationalModel~RelationalModel#relations}.
+* The default options for [relations]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel#relations}.
 * These may vary depending on the individual [kind]{@glossary kind} of relation.
 *
-* @typedef {Object} module:enyo/RelationalModel~RelationOptions
+* @typedef {Object} module:enyo/Relation~RelationOptions
 * @property {String} type=toOne - The [kind]{@glossary kind} of relation being declared.
 *	Can be the name of the relation type or a reference to the constructor.
 * @property {String} key=null - The [attribute]{@link module:enyo/Model~Model#attributes} name for the
@@ -25,7 +25,7 @@ var
 *	the instance of the related kind.
 * @property {Boolean} parse=false - Whether or not the relation should call the
 *	[parse()]{@link module:enyo/Model~Model#parse} method on incoming data before
-*	[setting]{@link module:enyo/Model~Model#set} it on the [model]{@link module:enyo/RelationalModel~RelationalModel}.
+*	[setting]{@link module:enyo/Model~Model#set} it on the [model]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel}.
 * @property {String} model=enyo/RelationalModel~RelationModel - The kind of the
 *	reverse of the relation. This will vary depending on the type of relation being declared.
 * @property {Boolean} fetch=false - Whether or not to automatically call

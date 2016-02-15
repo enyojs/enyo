@@ -865,6 +865,10 @@ module.exports = kind(
 	}
 });
 
+/**
+* The {@link module:enyo/LightPanels~LightPanel} kind export.
+* @public
+*/
 module.exports.Panel = LightPanel;
 module.exports.Direction = Direction;
 module.exports.Orientation = Orientation;

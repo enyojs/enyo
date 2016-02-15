@@ -686,7 +686,7 @@ exports.DIRTY_TO = DIRTY_TO;
 exports.defaultBindingKind = exports;
 
 /**
-* The kind declaration for the [PassiveBinding]{@link module:Binding~PassiveBinding} kind
+* The kind declaration for the [PassiveBinding]{@link module:enyo/Binding~PassiveBinding} kind
 * @public
 */
 exports.PassiveBinding = PassiveBinding;

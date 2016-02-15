@@ -1,6 +1,6 @@
 /**
- * Contains the declaration for the {@link module:enyo/RelationalModel~toMany} kind.
- * @module enyo/RelationalModel
+ * Contains the declaration for the {@link module:enyo/RelationalModel/toMany~toMany} kind.
+ * @module enyo/RelationalModel/toMany
  */
 
 var
@@ -23,7 +23,7 @@ var
 * @protected
 */
 var toMany = module.exports = kind(
-	/** @lends module:enyo/RelationalModel~toMany.prototype */ {
+	/** @lends module:enyo/RelationalModel/toMany~toMany.prototype */ {
 	
 	/**
 	* @private
@@ -36,13 +36,13 @@ var toMany = module.exports = kind(
 	name: 'enyo.toMany',
 	
 	/**
-	* The default [options]{@link module:enyo/RelationalModel~RelationOptions} overloaded for this
+	* The default [options]{@link module:enyo/Relation~RelationOptions} overloaded for this
 	* [kind]{@glossary kind}.
 	*
-	* @type module:enyo/RelationalModel~RelationOptions
+	* @type module:enyo/Relation~RelationOptions
 	* @property {Boolean} create=true - By default, the relation should create the
 	*	[collection]{@link module:enyo/Collection~Collection} automatically.
-	* @property {module:enyo/Collection~Collection} collection=module:enyo/RelationalModel~RelationalCollection - The
+	* @property {module:enyo/Collection~Collection} collection=module:enyo/RelationalModel/RelationalCollection~RelationalCollection - The
 	*	[kind]{@glossary kind} of collection to use; can be the kind name or a
 	*	reference to the constructor.
 	* @property {Object} collectionOptions - An options hash to pass to the
