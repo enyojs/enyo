@@ -83,7 +83,7 @@ module.exports = {
                 
                 if (!frame.isTransform(k)) {
                     
-                    frame.setProperty(node, k, cState);
+                    frame.setProperty(actor, k, cState);
                 }
                 state[k] = cState;
             }
@@ -103,7 +103,7 @@ module.exports = {
             state.skew,
             state.perspective
         );
-        frame.accelerate(node, matrix);
+        frame.accelerate(actor, matrix);
         state.matrix = matrix;
         pose.currentState = state;
     },

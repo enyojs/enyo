@@ -33,7 +33,6 @@ var frame = module.exports = {
 	 * @return {Number[]}      Final Matrix3d for particular frame
 	 */
 	recomposeMatrix: function (trns, rot, sc, sq, per) {
-		"use strict";
 		var i,
 			x = rot[0],
 			y = rot[1],
@@ -103,7 +102,6 @@ var frame = module.exports = {
 	 * @return {Boolean}         true, if matrix exists else false.
 	 */
 	decomposeMatrix: function (matrix, ret) {
-		"use strict";
 		var i,
 			tV = [],
 			rV = [],
@@ -204,12 +202,12 @@ var frame = module.exports = {
 	/**
 	 * Applies transformation to DOM element with the Matrix3d values.
 	 * @public
-	 * @param  {HTMLElement} ele Element which is going to animate.
+	 * @param  {enyo.Component} actor	Component to be animated.
 	 * @param  {Number[]}    m   Matrix3d
 	 */
-	accelerate: function (ele, m) {
+	accelerate: function (actor, m) {
 		m = m ? m : Matrix.identity();
-		frame.setTransformProperty(ele, m);
+		frame.setTransformProperty(actor, m);
 	},
 
 	/**
@@ -290,11 +288,11 @@ var frame = module.exports = {
 	/**
 	 * Applies style property to DOM element.
 	 * @public
-	 * @param {HTMLElement} ele  DOM element to be animated.
-	 * @param {String}      prop CSS property to be applied.
+	 * @param {enyo.Component} 	actor	Component to be animated.
+	 * @param {String}      	prop 	CSS property to be applied.
 	 * @param {Number}      val  Value of the property applied.
 	 */
-	setProperty: function (ele, prop, val) {
+	setProperty: function (actor, prop, val) {
 		if (COLOR[prop]) {
 			val = val.map(function(v) { return parseInt(v, 10);});
 			val =  'rgb('+ val + ')';
@@ -306,24 +304,28 @@ var frame = module.exports = {
 		} else {
 			val = val[0] + 'px';
 		}
-		if (ele) {
-			ele.style[prop] =  val;
-		}
+		
+		actor.addStyles(prop + ':' + val + ';');
 	},
 
 	/**
 	 * Applies transform property to DOM element.
 	 * @public
-	 * @param {HTMLElement} element HTML element which is going to animate.
-	 * @param {Number[]}    matrix  Matrix3d
+	 * @param {enyo.Component} 	actor 	Component to be animated.
+	 * @param {Number[]}    	matrix		Matrix3d
 	 */
-	setTransformProperty: function (element, matrix) {
+	setTransformProperty: function (actor, matrix) {
 		var mat = Matrix.toString(matrix);
-		element.style.transform = mat;
+		/*element.style.transform = mat;
 		element.style.webkitTransform = mat;
 		element.style.MozTransform = mat;
 		element.style.msTransform = mat;
-		element.style.OTransform = mat;
+		element.style.OTransform = mat;*/
+		actor.addStyles('transform:' + mat + ';'
+		      + 'webkitTransform:' + mat + ';'
+		      + 'MozTransform:' + mat + ';'
+		      + 'msTransform' + mat + ';'
+		      + 'OTransform' + mat + ';');
 	},
 
 	/**
