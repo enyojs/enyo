@@ -12,7 +12,7 @@ var
 	ObserverChain = require('./ObserverChain');
 
 var observerTable = {};
-	
+
 kind.concatenated.push("observers");
 
 /**
@@ -33,30 +33,30 @@ kind.concatenated.push("observers");
 */
 
 function addObserver (path, fn, ctx, opts) {
-	
+
 	var observers = this.getObservers(),
 		chains = this.getChains(),
 		parts = path.split('.'),
 		prio = opts && opts.priority,
 		entries,
 		noChain;
-		
+
 	noChain = (opts && opts.noChain) ||
 			chains[path] ||
 			parts.length < 2 ||
 			(parts.length === 2 && path[0] == '$');
-	
+
 	if (observers[path] && !observers.hasOwnProperty(path)) {
 		observers[path] = observers[path].slice();
 	}
-	
+
 	entries = observers[path] || (observers[path] = []);
 	entries[prio ? 'unshift' : 'push']({method: fn, ctx: ctx || this});
-	
+
 	if (!noChain) {
 		this.getChains()[path] = new ObserverChain(path, this);
 	}
-	
+
 	return this;
 }
 
@@ -64,25 +64,25 @@ function removeObserver (obj, path, fn, ctx) {
 	var observers = obj.getObservers(path)
 		, chains = obj.getChains()
 		, idx, chain;
-		
+
 	if (observers && observers.length) {
 		idx = observers.findIndex(function (ln) {
 			return ln.method === fn && (ctx? ln.ctx === ctx: true);
 		});
 		idx > -1 && observers.splice(idx, 1);
 	}
-	
+
 	if ((chain = chains[path]) && !observers.length) {
 		chain.destroy();
 	}
-	
+
 	return obj;
 }
 
 function notifyObservers (obj, path, was, is, opts) {
 	if (obj.isObserving()) {
 		var observers = obj.getObservers(path);
-		
+
 		if (observers && observers.length) {
 			for (var i=0, ln; (ln=observers[i]); ++i) {
 				if (typeof ln.method == "string") obj[ln.method](was, is, path, opts);
@@ -90,7 +90,7 @@ function notifyObservers (obj, path, was, is, opts) {
 			}
 		}
 	} else enqueue(obj, path, was, is, opts);
-	
+
 	return obj;
 }
 
@@ -98,7 +98,7 @@ function enqueue (obj, path, was, is, opts) {
 	if (obj._notificationQueueEnabled) {
 		var queue = obj._notificationQueue || (obj._notificationQueue = {})
 			, ln = queue[path] || (queue[path] = {});
-	
+
 		ln.was = was;
 		ln.is = is;
 		ln.opts = opts;
@@ -108,17 +108,17 @@ function enqueue (obj, path, was, is, opts) {
 function flushQueue (obj) {
 	var queue = obj._notificationQueue
 		, path, ln;
-	
+
 	if (queue) {
 		obj._notificationQueue = null;
-		
+
 		for (path in queue) {
 			ln = queue[path];
 			obj.notify(path, ln.was, ln.is, ln.opts);
 		}
 	}
 }
-	
+
 /**
 * Adds support for notifications on property changes. Most
 * [kinds]{@glossary kind} (including all kinds that inherit from
@@ -218,32 +218,32 @@ function flushQueue (obj) {
 * @public
 */
 var ObserverSupport = {
-	
+
 	/**
 	* @private
 	*/
 	name: "ObserverSupport",
-	
+
 	/**
 	* @private
 	*/
 	_observing: true,
-	
+
 	/**
 	* @private
 	*/
 	_observeCount: 0,
-	
+
 	/**
 	* @private
 	*/
 	_notificationQueue: null,
-	
+
 	/**
 	* @private
 	*/
 	_notificationQueueEnabled: true,
-	
+
 	/**
 	* Determines whether `_observing` is enabled. If
 	* [stopNotifications()]{@link module:enyo/ObserverSupport~ObserverSupport#stopNotifications} has
@@ -256,7 +256,7 @@ var ObserverSupport = {
 	isObserving: function () {
 		return this._observing;
 	},
-	
+
 	/**
 	* Returns an immutable list of [observers]{@link module:enyo/ObserverSupport~ObserverSupport~Observer}
 	* for the given `path`, or all observers for the callee.
@@ -273,27 +273,27 @@ var ObserverSupport = {
 		var euid = this.euid || (this.euid = utils.uid('o')),
 			ret,
 			loc;
-			
+
 		loc = observerTable[euid] || (observerTable[euid] = (
 			this._observers? Object.create(this._observers): {}
 		));
-		
+
 		if (!path) return loc;
-		
+
 		ret = loc[path];
-		
+
 		// if the special property exists...
 		if (loc['*']) ret = ret ? ret.concat(loc['*']) : loc['*'].slice();
 		return ret;
 	},
-	
+
 	/**
 	* @private
 	*/
 	getChains: function () {
 		return this._observerChains || (this._observerChains = {});
 	},
-	
+
 	/**
 	* @deprecated
 	* @alias {@link module:enyo/ObserverSupport~ObserverSupport#observe}
@@ -303,7 +303,7 @@ var ObserverSupport = {
 		// @NOTE: In this case we use apply because of internal variable use of parameters
 		return addObserver.apply(this, arguments);
 	},
-	
+
 	/**
 	* Registers an [observer]{@link module:enyo/ObserverSupport~ObserverSupport~Observer} to be
 	* [notified]{@link module:enyo/ObserverSupport~ObserverSupport#notify} when the given property has
@@ -328,7 +328,7 @@ var ObserverSupport = {
 		// @NOTE: In this case we use apply because of internal variable use of parameters
 		return addObserver.apply(this, arguments);
 	},
-	
+
 	/**
 	* @deprecated
 	* @alias {@link module:enyo/ObserverSupport~ObserverSupport#unobserve}
@@ -337,7 +337,7 @@ var ObserverSupport = {
 	removeObserver: function (path, fn, ctx) {
 		return removeObserver(this, path, fn);
 	},
-	
+
 	/**
 	* Unregisters an [observer]{@link module:enyo/ObserverSupport~ObserverSupport~Observer}. If a `ctx`
 	* (context) was supplied to [observe()]{@link module:enyo/ObserverSupport~ObserverSupport#observe},
@@ -355,7 +355,7 @@ var ObserverSupport = {
 	unobserve: function (path, fn, ctx) {
 		return removeObserver(this, path, fn, ctx);
 	},
-	
+
 	/**
 	* Removes all [observers]{@link module:enyo/ObserverSupport~ObserverSupport~Observer} from the
 	* callee. If a `path` parameter is provided, observers will only be removed
@@ -368,18 +368,18 @@ var ObserverSupport = {
 	removeAllObservers: function (path) {
 		var euid = this.euid
 			, loc = euid && observerTable[euid];
-		
+
 		if (loc) {
 			if (path) {
 				loc[path] = null;
 			} else {
-				observerTable[euid] = null;
+				delete observerTable[euid];
 			}
 		}
-		
+
 		return this;
 	},
-	
+
 	/**
 	* @deprecated
 	* @alias module:enyo/ObserverSupport~ObserverSupport#notify
@@ -388,7 +388,7 @@ var ObserverSupport = {
 	notifyObservers: function (path, was, is, opts) {
 		return notifyObservers(this, path, was, is, opts);
 	},
-	
+
 	/**
 	* Triggers any [observers]{@link module:enyo/ObserverSupport~ObserverSupport~Observer} for the
 	* given `path`. The previous and current values must be supplied. This
@@ -404,7 +404,7 @@ var ObserverSupport = {
 	notify: function (path, was, is, opts) {
 		return notifyObservers(this, path, was, is, opts);
 	},
-	
+
 	/**
 	* Stops all [notifications]{@link module:enyo/ObserverSupport~ObserverSupport#notify} from
 	* propagating. By default, all notifications will be queued and flushed once
@@ -428,7 +428,7 @@ var ObserverSupport = {
 		noQueue && this.disableNotificationQueue();
 		return this;
 	},
-	
+
 	/**
 	* Starts [notifications]{@link module:enyo/ObserverSupport~ObserverSupport#notify} if they have
 	* been [disabled]{@link module:enyo/ObserverSupport~ObserverSupport#stopNotifications}. If the
@@ -452,7 +452,7 @@ var ObserverSupport = {
 		this.isObserving() && flushQueue(this);
 		return this;
 	},
-	
+
 	/**
 	* Re-enables the notification queue, if it was disabled.
 	*
@@ -463,7 +463,7 @@ var ObserverSupport = {
 		this._notificationQueueEnabled = true;
 		return this;
 	},
-	
+
 	/**
 	* If the notification queue is enabled (the default), it will be disabled
 	* and any notifications in the queue will be removed.
@@ -476,14 +476,14 @@ var ObserverSupport = {
 		this._notificationQueue = null;
 		return this;
 	},
-	
+
 	/**
 	* @private
 	*/
 	constructor: kind.inherit(function (sup) {
 		return function () {
 			var chains, chain, path, entries, i;
-			
+
 			// if there are any observers that need to create dynamic chains
 			// we look for and instance those now
 			if (this._observerChains) {
@@ -494,11 +494,11 @@ var ObserverSupport = {
 					for (i = 0; (chain = entries[i]); ++i) this.observe(path, chain.method);
 				}
 			}
-			
+
 			sup.apply(this, arguments);
 		};
 	}),
-	
+
 	/**
 	* @private
 	*/
@@ -507,20 +507,21 @@ var ObserverSupport = {
 			var chains = this._observerChains,
 				path,
 				chain;
-			
+
 			sup.apply(this, arguments);
 			
+			this.removeAllObservers();
 			if (chains) {
 				for (path in chains) {
 					chain = chains[path];
 					chain.destroy();
 				}
-				
+
 				this._observerChains = null;
 			}
 		};
 	})
-	
+
 };
 
 module.exports = ObserverSupport;
@@ -537,21 +538,21 @@ var sup = kind.concatHandler;
 
 /** @private */
 kind.concatHandler = function (ctor, props, instance) {
-	
+
 	sup.call(this, ctor, props, instance);
-	
+
 	if (props === ObserverSupport) return;
 
 	var proto = ctor.prototype || ctor
 		, observers = proto._observers? Object.create(proto._observers): null
 		, incoming = props.observers
 		, chains = proto._observerChains && Object.create(proto._observerChains);
-		
+
 	if (!observers) {
 		if (proto.kindName) observers = {};
 		else return;
 	}
-		
+
 	if (incoming && !(incoming instanceof Array)) {
 		(function () {
 			var tmp = [], deps, name;
@@ -567,7 +568,7 @@ kind.concatHandler = function (ctor, props, instance) {
 		// we need to ensure we don't modify the fixed array of a mixin or reused object
 		// because it could wind up inadvertantly adding the same entry multiple times
 	} else if (incoming) incoming = incoming.slice();
-	
+
 	// this scan is required to figure out what auto-observers might be present
 	for (var key in props) {
 		if (key.slice(-7) == "Changed") {
@@ -575,7 +576,7 @@ kind.concatHandler = function (ctor, props, instance) {
 			incoming.push({method: key, path: key.slice(0, -7)});
 		}
 	}
-	
+
 	var addObserverEntry = function (path, method) {
 		var obs;
 		// we have to make sure that the path isn't a chain because if it is we add it
@@ -590,7 +591,7 @@ kind.concatHandler = function (ctor, props, instance) {
 			if (!obs.find(function (ln) { return ln.method == method; })) obs.push({method: method});
 		}
 	};
-	
+
 	if (incoming) {
 		incoming.forEach(function (ln) {
 			// first we determine if the path itself is an array of paths to observe
@@ -598,7 +599,7 @@ kind.concatHandler = function (ctor, props, instance) {
 			else addObserverEntry(ln.path, ln.method);
 		});
 	}
-	
+
 	// we clear the key so it will not be added to the prototype
 	// delete props.observers;
 	// we update the properties to whatever their new values may be
