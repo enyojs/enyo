@@ -637,13 +637,17 @@ module.exports = kind(
 	*
 	* @param {Object} sender - The event sender.
 	* @param {Object} ev - The event object.
-	* @param {Boolean} [direct] - If `true`, this was a non-animated (direct) transition.
 	* @private
 	*/
-	transitionFinished: function (sender, ev, direct) {
+	transitionFinished: function (sender, ev) {
 		var prevPanel, currPanel;
 
-		if (this.transitioning && ((ev && ev.originator === this.$.client) || direct)) {
+		if (this.transitioning && (!ev || ev.originator === this.$.client)) {
+			if (this._fallbackTimeout) {
+				global.clearTimeout(this._fallbackTimeout);
+				this._fallbackTimeout = null;
+			}
+
 			prevPanel = this._previousPanel;
 			currPanel = this._currentPanel;
 
@@ -770,7 +774,8 @@ module.exports = kind(
 		this._currentPanel = nextPanel;
 
 		// ensure that `transitionFinished` is called in the case where we are not animating
-		if (!this.shouldAnimate() || !animate) this.transitionFinished(null, null, true);
+		if (!this.shouldAnimate() || !animate) this.transitionFinished();
+		else this.setupFallback();
 	},
 
 	/**
@@ -886,6 +891,13 @@ module.exports = kind(
 		for (var idx = 0; idx < viewProps.length; idx++) {
 			this.removeTask(this.getViewId(viewProps[idx]));
 		}
+	},
+
+	/**
+	* @private
+	*/
+	setupFallback: function () {
+		this._fallbackTimeout = global.setTimeout(this.bindSafely('transitionFinished'), this.duration + 100);
 	}
 });
 
