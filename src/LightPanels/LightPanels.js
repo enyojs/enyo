@@ -886,6 +886,13 @@ module.exports = kind(
 		for (var idx = 0; idx < viewProps.length; idx++) {
 			this.removeTask(this.getViewId(viewProps[idx]));
 		}
+	},
+
+	/**
+	* @private
+	*/
+	setupFallback: function () {
+		this._fallbackTimeout = global.setTimeout(this.bindSafely('transitionFinished'), this.duration);
 	}
 });
 
