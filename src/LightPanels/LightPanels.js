@@ -897,7 +897,7 @@ module.exports = kind(
 	* @private
 	*/
 	setupFallback: function () {
-		this._fallbackTimeout = global.setTimeout(this.bindSafely('transitionFinished'), this.duration + 100);
+		this._fallbackTimeout = global.setTimeout(this.bindSafely('transitionFinished'), this.duration);
 	}
 });
 
