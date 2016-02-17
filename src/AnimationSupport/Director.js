@@ -1,105 +1,137 @@
 require('enyo');
 
-var frame = require('./Frame'),
-	tween = require('./Tween'),
+var tween = require('./Tween'),
     utils =  require('../utils');
 
+var pose, dur, tm, t;
+
 /**
-* This module returns the Loop singleton
-* Core module is responsible for handling all animations happening in Enyo.
-* The responsibilities of this module is to;
-* - Trigger vendor specific rAF.
-* - Knowing all elements which have requested for animation.
-* - Tween animation frames for each characters.
-* 
-* @module enyo/Core
+* Contains the declaration for the {@link module:enyo/AnimationSupport/Director} module.
+* This modules exposes the features to support 'Director' approach.
+* @module enyo/AnimationSupport/Director
 */
 module.exports = {
-/**
-     * Tweens public API which notifies to change current state of 
-     * a character. This method is normally trigger by the Animation Core to
-     * update the animating characters state based on the current timestamp.
-     *
-     * As of now this method is provided as an interface for application 
-     * to directly trigger an animation. However, this will be later made private
-     * and will be accessible only by the interfaces exposed by framework.
-     * @parameter chrac-        Animating character
-     *          ts-         DOMHighResTimeStamp
-     *
-     * @public
+
+    /**
+     * This method checks if all the actors of the given {@link @module enyo/AnimationSupport/Scene} object
+     * is rendered. If the actors are rendered then all them are initialized and prepared to be ready for animation.
+     * @param  {@link @module enyo/AnimationSupport/Scene}     scene    Scene which contains actors to be prepared for animation.
+     * @return {boolean}            Returns <code>true</code> if all the actors
+     *                                      of the scene is active and ready for action,
+     *                                      otherwise <code>false</code>
      */
-    
-    take: function(actor, ts) {
-        var dur = actor.totalDuration,
-            tm = actor.rolePlay(ts);
-        
-        if (tm < 0) return;
-        if (tm < dur) {
-            this.action(actor, tm);
-        } else {
-            this.action(actor, tm);
-            this.cut(actor);
-        }
-    },
+    roll: function (scene) {
+        var actor,
+            actors = scene.rolePlays ? scene.rolePlays[scene.getID()]: [],
+            l = actors ? actors.length: 0,
+            active = true;
 
-    cut: function (actor) {
-        actor.animating = false;
-        actor.timeline = 0;
-        actor.completed(actor);
-        actor.set('animationState', 'completed');
-        if (!actor.active) {
-            // this.remove(actor);
-        }
-    },
-
-    action: function(actor, since) {
-        var pose, t,
-            index = this.poseByTime(actor._animPose, since),
-            props = actor._animPose[index],
-            prevDur = actor._animPose[(index - 1) < 0 ? 0 : (index - 1)].duration,
-            currentAnimSince = since - prevDur,
-            runningDur = props.duration - prevDur;
-        if (!props._startAnim) {
-            pose = frame.getComputedProperty(actor.hasNode(), props.animate, actor.currentState);
-            utils.mixin(props, pose);
-        }
-
-        if (currentAnimSince < 0) return;
-        if (currentAnimSince <= runningDur && runningDur !== 0) {
-            t = currentAnimSince / runningDur;
-            tween.step(actor, props, ( t > 0.98) ?  t = 1 : t, runningDur);
-        } else {
-            tween.step(actor, props, 1, runningDur);
-        }
-    },
-
-    poseByTime: function(arr, duration) {
-        var startIndex = 0,
-            stopIndex = arr.length - 1,
-            middle = Math.floor((stopIndex + startIndex) / 2);
-
-        if(duration === 0) {
-            return startIndex;
-        }
-
-        while (arr[middle].duration != duration && startIndex < stopIndex) {
-            if (duration < arr[middle].duration) {
-                stopIndex = middle;
-            } else if (duration > arr[middle].duration) {
-                startIndex = middle + 1;
+        for (var i = 0; i < l; i++) {
+            actor = actors[i];
+            if(actor.generated) {
+                tween.init(actor);
+                active = false;
             }
-
-            middle = Math.floor((stopIndex + startIndex) / 2);
         }
-
-        return (arr[middle].duration != duration) ? startIndex : middle;
+        scene.active = active;
     },
 
-    shot: function(chrac, ts) {
-        var v1, s, a, v,
+    /**
+     * <code>take</code> method is invloved in time based animation. This method will
+     * be executed continuously in order tween the actor for every frame until the animation
+     * is completed (i.e. until elapsed time is equal to the duration).
+     * be animated based on the delta and the acceleration.
+     * @param  {@link @module enyo/AnimationSupport/Scene} scene     Scene on which the animation will be performed
+     * @param  {Number} ts      Elapsed time since the animation of this pose has started (ratio in factor of 1)
+     */
+    take: function (scene, ts) {
+        dur = scene.span;
+        tm = scene.timeline;
+
+        if (isNaN(tm) || tm < 0) return;
+        if (tm <= dur) {
+            pose = scene.action(ts, pose);
+        } else {
+            scene.timeline = dur;
+            scene.animating = false;
+        }
+    },
+
+    /**
+     * <code>action</code> is the primary method which triggers the animation of the actor for every frame.
+     * This method calculates the start and end animation positions and the elapsed time since the animation
+     * has started and tweens the actor based on the these values.
+     * @param  {Object} pose  Animation poses
+     * @param  {@link module:enyo/Component~Component} actor <code>Component</code> on which the animation should be performed
+     * @param  {Number} since Elapsed time since the animation of this pose has started
+     * @param  {Number} dur   Total duration of this pose
+     */
+    action: function (pose, actor, since, dur) {
+        if (!pose._startAnim) tween.init(actor, pose);
+
+        if (since < 0) since = 0;
+        if (since <= dur && dur !== 0) {
+            t = since / dur;
+            tween.step(actor, pose, ( t > 0.98) ? 1 : t, dur);
+        } else {
+            tween.step(actor, pose, 1, dur);
+        }
+    },
+ 
+    /**
+     * Casts an actor or all the actors in the array to the given scene.
+     * @param  {@link module:enyo/Component~Component} actors actor or Array of actors which needs to be casted in the scene.
+     * @param  {@link @module enyo/AnimationSupport/Scene} scene  Scene to which the actors has to be connected.
+     */
+    cast: function (actors, scene) {
+        var acts = utils.isArray(actors) ? actors : [actors],
+            id = scene.getID(),
+            rolePlays = scene.rolePlays || {};
+
+        if (!rolePlays[id]) {
+            rolePlays[id] = acts;
+        } else {
+            rolePlays[id] = acts.reduce(function(actors, actor) {
+                actors.push( actor );
+                return actors;
+            }, rolePlays[id]);
+        }
+        scene.rolePlays = rolePlays;
+    },
+
+    /**
+     * Disconnects actor or Array of actors from the scene
+     * @param  {Array.<Component>} actors   actor or Array of actors which needs to be casted in the scene.
+     * @param  {@link @module enyo/AnimationSupport/Scene} scene    Scene from which the actors has to be removed.
+     */
+    reject: function (scene, actors) {
+        var id = scene.getID(), acts,
+            rolePlays = scene.rolePlays || [];
+        actors = actors || rolePlays[id];
+        acts = utils.isArray(actors) ? actors : [actors];
+        if (rolePlays[id]) {
+            rolePlays[id] = acts.reduce(function(actors, actor) {
+                var i = actors.indexOf(actor);
+                if (i >= 0) actors.splice(i, 1);
+                return actors;
+            }, rolePlays[id]);
+        }
+        scene.rolePlays = rolePlays;
+    },
+
+    /**
+     * <code>shot</code> method is invloved in distance based animation in which the distance definite and 
+     * indefinite (Event based animations). This method calculates the distance to which the actor has to
+     * be animated based on the delta and the acceleration.
+     * @param  {@link module:enyo/Component~Component} actor <code>Component</code> on which the animation should be performed
+     * @param  {Number} ts    delta distance
+     * @return {Number}       The distance to which the actor has to be transformed
+     */
+    shot: function(actor, ts) {
+        var v1, s, a, v = 0,
             t = ts,
-            dt = chrac._eventCache,
-            dir = this.angle(chrac.direction),
+            dt = actor.getAnimationDelta(),
+            dir = this.angle(actor.direction),
             v0 = dt.velocity || 0;
         
         v1 = dt[dir] / t;
@@ -115,10 +147,13 @@ module.exports = {
                 dt[dir] = 0;
             }
             dt.velocity = v1;
-            this.take(chrac, dt[dir] > 0 ? v : -v);
-        }   
+        }
+        return dt[dir] > 0 ? v : -v;
     },
 
+    /**
+     * @private
+     */
     angle: function (direction) {
         switch(direction) {
         case "X" :

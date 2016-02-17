@@ -8,9 +8,7 @@ require('enyo');
 var
 	kind = require('./kind'),
 	utils = require('./utils'),
-	master = require('./master'),
-	AnimationSupport = require('./AnimationSupport/AnimationSupport'),
-	AnimationInterfaceSupport = require('./AnimationSupport/AnimationInterfaceSupport');
+	master = require('./master');
 
 var
 	Component = require('./Component');
@@ -130,12 +128,7 @@ var UiComponent = module.exports = kind(
 		onresize: 'handleResize'
 	},
 
-	/**
-	* Adding animation support for controls
-	* @private
-	*/
-	mixins: [AnimationSupport, AnimationInterfaceSupport],
-
+	
 	/**
 	* When set, provides a [control]{@link module:enyo/Control~Control} reference used to indicate where a
 	* newly-created [component]{@link module:enyo/Component~Component} should be added in the
