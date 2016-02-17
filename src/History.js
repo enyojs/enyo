@@ -227,7 +227,7 @@ var EnyoHistory = module.exports = kind.singleton(
 		_processing = true;
 		if (_queue.length) {
 			this.processQueue();
-		} else {
+		} else if (_history.length) {
 			this.processPopEntry(_history.pop());
 		}
 		_processing = false;
@@ -394,7 +394,7 @@ var EnyoHistory = module.exports = kind.singleton(
 	* @private
 	*/
 	handlePop: function (event) {
-		if (this.enabled && _history.length) {
+		if (this.enabled) {
 			this.processState(event.state);
 		}
 	},

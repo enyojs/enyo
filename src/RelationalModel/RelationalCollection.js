@@ -1,6 +1,6 @@
 /**
-* Contains the declaration for the {@link module:enyo/RelationalModel~RelationalCollection} kind.
-* @module enyo/RelationalModel
+* Contains the declaration for the {@link module:enyo/RelationalModel/RelationalCollection~RelationalCollection} kind.
+* @module enyo/RelationalModel/RelationalCollection
 */
 
 var
@@ -12,14 +12,14 @@ var
 
 /**
 * Private class for a collection with a default model kind of
-* {@link module:enyo/RelationalModel~RelationalModel} as opposed to {@link module:enyo/Model~Model}.
+* {@link module:enyo/RelationalModel/RelationalModel~RelationalModel} as opposed to {@link module:enyo/Model~Model}.
 * 
 * @class RelationalCollection
 * @extends module:enyo/Collection~Collection
 * @private
 */
 module.exports = kind(
-	/** @lends module:enyo/RelationalModel~RelationalCollection.prototype */ {
+	/** @lends module:enyo/RelationalModel/RelationalCollection~RelationalCollection.prototype */ {
 		
 	/**
 	* @private

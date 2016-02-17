@@ -1,7 +1,7 @@
 require('enyo');
 
 /**
-* Contains the declaration for the {@link module:enyo/RelationalModel~RelationalModel} kind.
+* Entry point for the {@link module:enyo/RelationalModel/RelationalModel~RelationalModel} kind.
 * @module enyo/RelationalModel
 */
 

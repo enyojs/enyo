@@ -66,14 +66,28 @@ module.exports = kind(
 	/**
 	* @private
 	*/
+	transform: function (view, px) {
+		var v,
+			isHorizontal = this.container.orientation == 'horizontal';
+
+		if (px === null) {
+			v = null;
+		} else {
+			v = isHorizontal ? px + 'px, 0, 0' : '0, ' + px + 'px, 0';
+		}
+		dom.transformValue(view, 'translate3d', v);
+	},
+
+	/**
+	* @private
+	*/
 	drag: function (event) {
 		var px,
 			c = this.container,
 			bounds = c.dragBounds,
 			isHorizontal = c.orientation == 'horizontal',
 			size = isHorizontal ? bounds.width : bounds.height,
-			delta = event.delta,
-			transform = isHorizontal ? 'translateX' : 'translateY';
+			delta = event.delta;
 
 		if (event.delta < 0 && event.delta < -size) {
 			this.overDrag = true;
@@ -88,10 +102,10 @@ module.exports = kind(
 		}
 
 		TransitionViewLayout.prototype.drag.apply(this, arguments);
-		dom.transformValue(c.active, transform,  delta + 'px');
+		this.transform(c.active, delta);
 		if (c.dragView) {
 			px = this.container.layoutCover ? 0 : size * event.direction + delta;
-			dom.transformValue(c.dragView, transform,  px + 'px');
+			this.transform(c.dragView, px);
 		}
 	},
 
@@ -119,16 +133,15 @@ module.exports = kind(
 	* @private
 	*/
 	transition: function (was, is) {
-		var dir,
-			transform = this.container.orientation == 'horizontal' ? 'translateX' : 'translateY';
+		var dir;
 
 		TransitionViewLayout.prototype.transition.apply(this, arguments);
 		if (was && was != this.dragView) {
-			dom.transformValue(was, transform, null);
+			this.transform(was, null);
 		}
 		if (is) {
 			this.addRemoveDirection(is, false);
-			if (is != this.dragView) dom.transformValue(is, transform, null);
+			if (is != this.dragView) this.transform(is, null);
 		}
 
 		// If the user drags the entire view off screen, it won't animate so we won't see the CSS

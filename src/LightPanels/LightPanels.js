@@ -134,13 +134,13 @@ module.exports = kind(
 	wrap: false,
 
 	/**
-	* When `true`, previous panels are automatically popped when moving backwards.
+	* When `true`, previous panels are destroyed when moving backwards.
 	*
 	* @type {Boolean}
-	* @default true
+	* @default false
 	* @public
 	*/
-	popOnBack: true,
+	popOnBack: false,
 
 	/**
 	* The amount of time, in milliseconds, to run the transition animation between panels.
@@ -191,6 +191,11 @@ module.exports = kind(
 	* @public
 	*/
 	reverseForRtl: false,
+
+	/**
+	* @private
+	*/
+	transitioning: false,
 
 	/**
 	* @private
@@ -324,6 +329,16 @@ module.exports = kind(
 	getPanels: function () {
 		/*jshint -W093 */
 		return (this._panels = this._panels || (this.controlParent || this).children);
+	},
+
+	/**
+	* Whether or not we are currently in the midst of a panel transition.
+	*
+	* @return {Boolean} If `true`, we are currently transitioning; otherwise, `false`.
+	* @public
+	*/
+	isTransitioning: function () {
+		return this.transitioning;
 	},
 
 
@@ -475,51 +490,6 @@ module.exports = kind(
 	},
 
 	/**
-	* Removes panels whose index is either greater than, or less than, the specified value,
-	* depending on the direction.
-	*
-	* @param {Number} index - Index at which to start removing panels.
-	* @param {Number} direction - The direction in which we are changing indices. A negative value
-	*	signifies that we are moving backwards, and want to remove panels whose indices are greater
-	*	than the current index. Conversely, a positive value signifies that we are moving forwards,
-	*	and panels whose indices are less than the current index should be removed.
-	* @public
-	*/
-	removePanels: function (index, direction) {
-		var panels = this.getPanels(),
-			i;
-
-		if (direction < 0) {
-			for (i = panels.length - 1; i > index; i--) {
-				this.removePanel(panels[i]);
-			}
-		} else {
-			for (i = 0; i < index; i++) {
-				this.removePanel(panels[i], true);
-			}
-		}
-	},
-
-	/**
-	* Removes the specified panel.
-	*
-	* @param {Object} panel - The panel to remove.
-	* @param {Boolean} [preserve] - If {@link module:enyo/LightPanels~LightPanels#cacheViews} is
-	*	`true`, this value is used to determine whether or not to preserve the current panel's
-	*	position in the component hierarchy and on the screen, when caching.
-	* @private
-	*/
-	removePanel: function (panel, preserve) {
-		if (panel) {
-			if (this.cacheViews) {
-				this.cacheView(panel, preserve);
-			} else {
-				panel.destroy();
-			}
-		}
-	},
-
-	/**
 	* Replaces the panel(s) at the specified index with panels that will be created via provided
 	* component definition(s).
 	*
@@ -534,21 +504,18 @@ module.exports = kind(
 	* @public
 	*/
 	replaceAt: function (start, count, info) {
-		var panels, insertBefore, commonInfo, end, idx;
+		var panels, panelsToPop, insertBefore, commonInfo, end;
 
 		if (this.transitioning) return;
 
 		panels = this.getPanels();
-
 		start = start < 0 ? panels.length + start : start;
 		end = start + count;
 		insertBefore = panels[end];
 		commonInfo = {addBefore: insertBefore};
 
-		// remove existing panels
-		for (idx = end - 1; idx >= start; idx--) {
-			this.removePanel(panels[idx]);
-		}
+		panelsToPop = panels.splice(start, end - start);
+		this.popQueue = (this.popQueue && this.popQueue.concat(panelsToPop)) || panelsToPop;
 
 		// add replacement panels
 		if (utils.isArray(info)) return this.pushPanels(info, commonInfo, {direct: true, force: true});
@@ -662,13 +629,7 @@ module.exports = kind(
 	cleanUpPanel: function (panel) {
 		if (panel) {
 			panel.set('state', panel === this._currentPanel ? States.ACTIVE : States.INACTIVE);
-			if (panel.postTransition) {
-				// Async'ing this as it seems to improve ending transition performance on the TV.
-				// Requires further investigation into its behavior.
-				utils.asyncMethod(this, function () {
-					panel.postTransition();
-				});
-			}
+			panel.postTransition && panel.postTransition();
 		}
 	},
 
@@ -687,21 +648,26 @@ module.exports = kind(
 			prevPanel = this._previousPanel;
 			currPanel = this._currentPanel;
 
-			if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews) && this.index < this.getPanels().length - 1) ||
-				(this._indexDirection > 0 && this.cacheViews && this.index > 0)) {
-				this.removePanels(this.index, this._indexDirection);
-			}
-
 			if (prevPanel) {
 				prevPanel.removeClass('shifted');
 				prevPanel.addClass('offscreen');
 			}
 
-			this.cleanUpPanel(prevPanel);
-			this.cleanUpPanel(currPanel);
-
 			this.removeClass('transitioning');
 			this.transitioning = false;
+
+			utils.asyncMethod(this, function () {
+				this.cleanUpPanel(prevPanel);
+				this.cleanUpPanel(currPanel);
+
+				if (this.popQueue && this.popQueue.length) {
+					this.finalizePurge();
+				} else if ((this._indexDirection < 0 && (this.popOnBack || this.cacheViews)
+					&& this.index < this.getPanels().length - 1)
+					|| (this._indexDirection > 0 && this.cacheViews && this.index > 0)) {
+					this.removePanels(this.index, this._indexDirection);
+				}
+			});
 		}
 	},
 
@@ -830,14 +796,75 @@ module.exports = kind(
 	},
 
 	/**
+	* Removes panels whose index is either greater than, or less than, the specified value,
+	* depending on the direction.
+	*
+	* @param {Number} index - Index at which to start removing panels.
+	* @param {Number} direction - The direction in which we are changing indices. A negative value
+	*	signifies that we are moving backwards, and want to remove panels whose indices are greater
+	*	than the current index. Conversely, a positive value signifies that we are moving forwards,
+	*	and panels whose indices are less than the current index should be removed.
+	* @private
+	*/
+	removePanels: function (index, direction) {
+		var panels = this.getPanels(),
+			i;
+
+		if (direction < 0) {
+			for (i = panels.length - 1; i > index; i--) {
+				this.removePanel(panels[i], this.cacheViews && !this.popOnBack);
+			}
+		} else {
+			for (i = 0; i < index; i++) {
+				this.removePanel(panels[i], this.cacheViews, true);
+			}
+		}
+	},
+
+	/**
+	* Removes the specified panel.
+	*
+	* @param {Object} panel - The panel to remove.
+	* @param {Boolean} cache - Whether or not the panel should be cached; if `false` or not
+	*	specified, the panel will instead be destroyed (this is the default behavior).
+	* @param {Boolean} [preserve] - If {@link module:enyo/LightPanels~LightPanels#cacheViews} is
+	*	`true`, this value is used to determine whether or not to preserve the current panel's
+	*	position in the component hierarchy and on the screen, when caching.
+	* @private
+	*/
+	removePanel: function (panel, cache, preserve) {
+		if (panel) {
+			if (cache) {
+				this.cacheView(panel, preserve);
+			} else {
+				if (this.cacheViews) {
+					this.popView(this.getViewId(panel));
+				}
+				panel.destroy();
+			}
+		}
+	},
+
+	/**
 	* Destroys all panels.
 	*
 	* @private
 	*/
 	purge: function () {
-		var panels = this.getPanels(),
-			panel;
+		var panels = this.getPanels();
+		this.popQueue = panels.slice();
+		panels.length = 0;
+		this.index = -1;
+	},
 
+	/**
+	* Clean-up any panels queued for destruction.
+	*
+	* @private
+	*/
+	finalizePurge: function () {
+		var panels = this.popQueue,
+			panel;
 		while (panels.length) {
 			panel = panels.pop();
 			if (this.cacheViews) {
@@ -847,8 +874,6 @@ module.exports = kind(
 				panel.destroy();
 			}
 		}
-
-		this.index = -1;
 	},
 
 	/**
@@ -865,6 +890,10 @@ module.exports = kind(
 	}
 });
 
+/**
+* The {@link module:enyo/LightPanels~LightPanel} kind export.
+* @public
+*/
 module.exports.Panel = LightPanel;
 module.exports.Direction = Direction;
 module.exports.Orientation = Orientation;
