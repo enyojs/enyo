@@ -9,6 +9,10 @@ require('enyo');
 module.exports = {
     /**
      * Divides vector with a scalar value.
+     * @param  {Number[]} v - vector
+     * @param  {Number} s - scalar value to divide
+     * @return {Number[]} resultant vector
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     divide: function (v, s) {
@@ -17,6 +21,10 @@ module.exports = {
 
     /**
      * Add vector/quant with a vector/quant.
+     * @param  {Number[]} q1 - vector/quant
+     * @param  {Number[]} q2 - vector/quant
+     * @return {Number[]} added vector/quant
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     add: function (q1, q2) {
@@ -30,6 +38,10 @@ module.exports = {
 
     /**
      * Sub vector/quant with a vector/quant.
+     * @param  {Number[]} q1 - vector/quant
+     * @param  {Number[]} q2 - vector/quant
+     * @return {Number[]} subracted vector/quant
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     subtract: function (q1, q2) {
@@ -43,6 +55,10 @@ module.exports = {
 
     /**
      * Multiply vector/quant with a vector/quant.
+     * @param  {Number[]} v - vector
+     * @param  {Number} s - scalar value to divide
+     * @return {Number[]} resultant vector
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     multiply: function (q, s) {
@@ -55,6 +71,11 @@ module.exports = {
 
     /**
      * Limits the vector/quant between a maximum and minimum value.
+     * @param  {Number[]} q - vector/quant
+     * @param  {Number} max - maximum range value
+     * @param  {Number} min - minimum range value
+     * @return {Number[]} resultant vector/quant
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     range: function (q, max, min) {
@@ -64,41 +85,13 @@ module.exports = {
     },
 
     /**
-     * Compares each vector/qunat with a scalar value to check if its equal.
-     * Returns true when all the vector/quant values are equal to this scalar value.
-     * @public
-     */
-    equalS: function (q1, s) {
-        return (q1.length > 0) && q1.every(function (e, i) {
-            return e === (s || 0);
-        });
-    },
-
-    /**
-     * Compares each vector/qunat with a scalar value to check if its greater.
-     * Returns true when all the vector/quant values are greater or equal to this scalar value.
-     * @public
-     */
-    greaterS: function (q1, s) {
-        return (q1.length > 0) && q1.every(function (e, i) {
-            return e >= (s || 0);
-        });
-    },
-
-    /**
-     * Compares each vector/qunat with a scalar value to check if its lesser.
-     * Returns true when all the vector/quant values are lesser or equal to this scalar value.
-     * @public
-     */
-    lesserS: function (q1, s) {
-        return (q1.length > 0) && q1.every(function (e, i) {
-            return e < (s || 0);
-        });
-    },
-
-    /**
      * Evaluates the gap between two vector values.
      * Returns the absolute distance between two vectors.
+     * @param  {Number[]} v1 - vector
+     * @param  {Number[]} v2 - vector
+     * @param  {Number} d - distance between vector
+     * @return {Number} distance between vector
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     distance: function (v1, v2, d) {
@@ -110,6 +103,11 @@ module.exports = {
     /**
      * Evaluates the gap between two quanterions values
      * Returns the absolute distance between two quanterions.
+     * @param  {Number[]} v1 - quant
+     * @param  {Number[]} v2 - quant
+     * @param  {Number} d - distance between quant
+     * @return {Number} distance between quant
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     quantDistance: function (q1, q2, d) {
@@ -121,6 +119,10 @@ module.exports = {
     /**
      * Gives the direction of motion from one vector to other.
      * Returns true if moving towards positive direction.
+     * @param  {Number[]} v1 - quant
+     * @param  {Number[]} v2 - quant
+     * @return {boolean} true if positive, false otherwise.
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     direction: function (q1, q2) {
@@ -129,6 +131,9 @@ module.exports = {
 
     /**
      * Retunns an inverse of a quanterion.
+     * @param  {Number[]} q - quant
+     * @return {Number[]} resultant quant
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     quantInverse: function (q) {
@@ -137,31 +142,34 @@ module.exports = {
     },
 
     /**
-     * Length of 3D vectors
+     * Length of a vector
+     * @param  {Number[]} v - vetor
+     * @return {Number} resultant length
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
-    sumS: function (q, s) {
-        return q[0] * s + q[1] * s + q[2] * s + q[3] !== undefined ? q[3] * s : 0;
-    },
-
-    /**
-     * Length of 3D vectors
-     * @public
-     */
-    len: function (q) {
-        return Math.sqrt(q[0] * q[0] + q[1] * q[1] + q[2] * q[2]);
+    len: function (v) {
+        return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     },
 
     /**
      * Dot product of 3D vectors
+     * @param  {Number[]} v1 - vetor
+     * @param  {Number[]} v2 - vetor
+     * @return {Number} resultant dot product
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
-    dot: function (q1, q2) {
-        return (q1[0] * q2[0]) + (q1[1] * q2[1]) + (q1[2] * q2[2]) + (q1[3] !== undefined && q2[3] !== undefined ? (q1[3] * q2[3]) : 0);
+    dot: function (v1, v2) {
+        return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]) + (v1[3] !== undefined && v2[3] !== undefined ? (v1[3] * v2[3]) : 0);
     },
 
     /**
-     * Dot product of 3D vectors
+     * Dot product of 3D quanterion
+     * @param  {Number[]} q1 - quanterion
+     * @param  {Number[]} q2 - quanterion
+     * @return {Number} resultant dot product
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     quantDot: function (q1, q2) {
@@ -169,7 +177,11 @@ module.exports = {
     },
 
     /**
-     * Quant Dot product of 3D vectors
+     * Quant Cross product of 3D quanterion
+     * @param  {Number[]} q1 - quanterion
+     * @param  {Number[]} q2 - quanterion
+     * @return {Number[]} resultant cross product
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     quantCross: function (q1, q2) {
@@ -183,19 +195,26 @@ module.exports = {
 
     /**
      * Cross product of two vectors
+     * @param  {Number[]} v1 - vetor
+     * @param  {Number[]} v2 - vetor
+     * @return {Number[]} resultant cross product
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
-    cross: function (q1, q2) {
+    cross: function (v1, v2) {
         return [
-            q1[1] * q2[2] - q1[2] * q2[1],
-            q1[2] * q2[0] - q1[0] * q2[2],
-            q1[0] * q2[1] - q1[1] * q2[0]
+            v1[1] * v2[2] - v1[2] * v2[1],
+            v1[2] * v2[0] - v1[0] * v2[2],
+            v1[0] * v2[1] - v1[1] * v2[0]
         ];
     },
 
     /**
      * Normalizing a vector is obtaining another unit vector in the same direction.
      * To normalize a vector, divide the vector by its magnitude.
+     * @param  {Number[]} q1 - quanterion
+     * @return {Number[]} resultant quanterion
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     normalize: function (q) {
@@ -205,6 +224,12 @@ module.exports = {
     /**
      * Combine scalar values with two vectors.
      * Required during parsing scaler values matrix.
+     * @param  {Number[]} a - first vector
+     * @param  {Number[]} b - second vector
+     * @param  {Number[]} ascl - first vector scalar
+     * @param  {Number[]} ascl - second vector scalar
+     * @return {Number[]} resultant vector
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     combine: function (a, b, ascl, bscl) {
@@ -215,6 +240,9 @@ module.exports = {
 
     /**
      * Converts a quaternion vector to a rotation vector.
+     * @param  {Number[]} rv - quanterion
+     * @return {Number[]} resultant rotation vector
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     toVector: function (rv) {
@@ -226,6 +254,9 @@ module.exports = {
 
     /**
      * Converts a rotation vector to a quaternion vector.
+     * @param  {Number[]} v - vector
+     * @return {Number[]} resultant quaternion
+     * @memberOf module:enyo/AnimationSupport/Vector
      * @public
      */
     toQuant: function (v) {
@@ -248,6 +279,13 @@ module.exports = {
         return q;
     },
 
+    /**
+     * Converts a quaternion vector vector to a rotation vector.
+     * @param  {Number[]} q - quaternion
+     * @return {Number[]} resultant vector
+     * @memberOf module:enyo/AnimationSupport/Vector
+     * @public
+     */
     quantToVector: function (q) {
         var vector = [], h, a, b,
             x2 = q[0] * q[0],

@@ -333,9 +333,8 @@ module.exports = {
      */
     bezierSpline: function(t, points, vR) {
         if (!vR) vR = [];
-        var Q0, Q1, Q2, R0, R1;
-
-        var p, key, pts;
+        var Q0, Q1, Q2, R0, R1,
+            p, key, pts;
         for (p in points) {
             if (p >= t) key = p;
         }
