@@ -22,12 +22,10 @@ module.exports = {
      * @private
      */
     init: function (actor, pose, initial) {
+        if (!(actor && pose && pose.animate)) return;
         node = actor.hasNode();
-        if (pose && pose.animate) {
-            utils.mixin(pose,
-                frame.getComputedProperty(node, pose.animate, initial || actor.currentState));
-            actor.currentState = pose.currentState;
-        }
+        utils.mixin(pose, frame.getComputedProperty(node, pose.animate, initial || actor.currentState));
+        actor.currentState = pose.currentState;
         return pose;
     },
 
@@ -41,8 +39,10 @@ module.exports = {
 	 * @private
 	 */
     step: function(actor, pose, t, d) {
+        if (!(actor && pose && pose.animate)) return;
+        if (t<0) t=0;
+        if (t>1) t=1;
         var k;
-
         node = actor.hasNode();
         state = actor.currentState = actor.currentState || pose.currentState || {};
         points = pose.controlPoints = pose.controlPoints || {};
@@ -131,6 +131,7 @@ module.exports = {
      * @private
      */
     lerp: function(vA, vB, t, vR) {
+        if (!vA) return;
         if (!vR) vR = [];
         var i, l = vA.length;
 
@@ -151,6 +152,7 @@ module.exports = {
      * @private
      */
     slerp: function(qA, qB, t, qR) {
+        if (!qA) return;
         if (!qR) qR = [];
         var a,
             b,
@@ -181,7 +183,7 @@ module.exports = {
      * @memberOf module:enyo/AnimationSupport/Tween
      */
     bezier: function(t, points, vR) {
-
+        if (!points) return;
         if (!vR) vR = [];
 
         var i, j,
@@ -215,6 +217,7 @@ module.exports = {
      * @memberOf module:enyo/AnimationSupport/Tween
      */
     bezierPoints: function(easeObj, startPoint, endPoint, points) {
+        if (!easeObj) return;
         var order = (easeObj && Object.keys(easeObj).length) ? (Object.keys(easeObj).length + 1) : 0;
         var bValues = [],
             m1 = [],
@@ -254,6 +257,7 @@ module.exports = {
      * @memberOf module:enyo/AnimationSupport/Tween
      */
     traversePath: function (t, path, vR) {
+        if (!path) return;
         if (!vR) vR = [];
 
         var i, j,
@@ -282,6 +286,7 @@ module.exports = {
      * @memberOf module:enyo/AnimationSupport/Tween
      */
     bezierSPoints: function(ease, startQuat, endQuat, endPoint, splinePoints) {
+        if (!ease) return;
         var time = [0],
             quats = [startQuat];
 
@@ -289,8 +294,9 @@ module.exports = {
             eD = frame.parseValue(endPoint);
 
         splinePoints = splinePoints || {};
-
-        if (ease && Object.keys(ease).length > 0) {
+        quats.push(startQuat);
+        time.push(0);
+        if (Object.keys(ease).length > 0) {
             for (var key in ease) {
                 t = parseFloat(key) / 100;
                 a = parseFloat(ease[key]);
@@ -302,8 +308,9 @@ module.exports = {
             }
             quats.push(endQuat);
             time.push(1);
-
             n = quats.length - 1;
+            ai = this.slerp(startQuat, endQuat, 0);
+            splinePoints[0] = [quats[0], aI, aI, quats[1]];
             for (var i = 0, j = 1; i < n; i++, j++) {
                 if (i === 0) {
                     aI = this.slerp(quats[0], this.slerp(quats[2], quats[1], 2.0), 1.0 / 3);
@@ -332,11 +339,15 @@ module.exports = {
      * @memberOf module:enyo/AnimationSupport/Tween
      */
     bezierSpline: function(t, points, vR) {
+        if (!points) return;
         if (!vR) vR = [];
         var Q0, Q1, Q2, R0, R1,
             p, key, pts;
         for (p in points) {
-            if (p >= t) key = p;
+            if (p >= t) {
+                key = p;
+                break;
+            }
         }
         pts = points[key];
 
