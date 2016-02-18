@@ -145,7 +145,7 @@ var ShowingTransitionSupport = {
 			this.hidingDuration  = (this.hidingDuration  === undefined) ? null      : this.hidingDuration;
 			this.shownMethod     = (this.shownMethod     === undefined) ? null      : this.shownMethod;
 			this.hiddenMethod    = (this.hiddenMethod    === undefined) ? null      : this.hiddenMethod;
-			this.shownClass      = (this.shownClass      === undefined) ? null      : this.shownClass;
+			this.shownClass      = (this.shownClass      === undefined) ? 'shown'   : this.shownClass;
 			this.hiddenClass     = (this.hiddenClass     === undefined) ? 'hidden'  : this.hiddenClass;
 			this.hidingClass     = (this.hidingClass     === undefined) ? 'hiding'  : this.hidingClass;
 			this.showingClass    = (this.showingClass    === undefined) ? 'showing' : this.showingClass;
