@@ -194,6 +194,7 @@ module.exports = {
 			view = page.children[i];
 			view.teardownRender();
 			view.canGenerate = false;
+			view.set('model', null);
 		}
 		// update the entire page at once - this removes old nodes and updates
 		// to the correct ones

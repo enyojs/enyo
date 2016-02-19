@@ -41,12 +41,12 @@ exports = module.exports = {
 	* `true` if the platform has native single-finger [events]{@glossary event}.
 	* @public
 	*/
-	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints),
+	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints || window.navigator.maxTouchPoints),
 	/**
 	* `true` if the platform has native double-finger [events]{@glossary event}.
 	* @public
 	*/
-	gesture: Boolean(('ongesturestart' in window) || window.navigator.msMaxTouchPoints)
+	gesture: Boolean(('ongesturestart' in window) || (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1) || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 1))
 
 	/**
 	* The name of the platform that was detected or `undefined` if the platform
@@ -61,6 +61,8 @@ exports = module.exports = {
 var ua = navigator.userAgent;
 var ep = exports;
 var platforms = [
+	// Windows Phone 7 - 10
+	{platform: 'windowsPhone', regex: /Windows Phone (?:OS )?(\d+)[.\d]+/},
 	// Android 4+ using Chrome
 	{platform: 'androidChrome', regex: /Android .* Chrome\/(\d+)[.\d]+/},
 	// Android 2 - 4
@@ -72,8 +74,6 @@ var platforms = [
 	// Force version to 4
 	{platform: 'android', regex: /Silk\/2./, forceVersion: 4, extra: {silk: 2}},
 	{platform: 'android', regex: /Silk\/3./, forceVersion: 4, extra: {silk: 3}},
-	// Windows Phone 7 - 8
-	{platform: 'windowsPhone', regex: /Windows Phone (?:OS )?(\d+)[.\d]+/},
 	// IE 8 - 10
 	{platform: 'ie', regex: /MSIE (\d+)/},
 	// IE 11

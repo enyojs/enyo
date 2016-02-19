@@ -1,6 +1,6 @@
 /**
-* Contains the declaration for the {@link module:enyo/RelationalModel~toOne} kind.
-* @module enyo/RelationalModel
+* Contains the declaration for the {@link module:enyo/RelationalModel/toOne~toOne} kind.
+* @module enyo/RelationalModel/toOne
 */
 
 var
@@ -19,7 +19,7 @@ var
 * @protected
 */
 var toOne = module.exports = kind(
-	/** @lends module:enyo/RelationalModel~toOne.prototype */ {
+	/** @lends module:enyo/RelationalModel/toOne~toOne.prototype */ {
 
 	/**
 	* @private
@@ -32,12 +32,12 @@ var toOne = module.exports = kind(
 	name: 'enyo.toOne',
 
 	/**
-	* The default [options]{@link module:enyo/RelationalModel~RelationOptions} overloaded for this
+	* The default [options]{@link module:enyo/Relation~RelationOptions} overloaded for this
 	* [kind]{@glossary kind}.
 	*
-	* @type module:enyo/RelationalModel~RelationOptions
-	* @property {module:enyo/Relation~Relation} inverseType=module:enyo/RelationalModel~toOne - This can be
-	*	{@link module:enyo/RelationalModel~toOne} or {@link module:enyo/RelationalModel~toMany}.
+	* @type module:enyo/Relation~RelationOptions
+	* @property {module:enyo/Relation~Relation} inverseType=module:enyo/RelationalModel/toOne~toOne - This can be
+	*	{@link module:enyo/RelationalModel/toOne~toOne} or {@link module:enyo/RelationalModel/toMany~toMany}.
 	* @property {Object} modelOptions - An options hash to pass to the related instance if
 	*	`create` is `true`.
 	* @public
