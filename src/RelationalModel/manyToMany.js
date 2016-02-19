@@ -1,6 +1,7 @@
 /**
-* Contains the declaration for the {@link module:enyo/RelationalModel/manyToMany~manyToMany} kind.
+* Contains the declaration for the {@link module:enyo/RelationalModel~manyToMany} kind.
 * @module enyo/RelationalModel/manyToMany
+* @private
 */
 
 var
@@ -14,11 +15,12 @@ var
 * models. This is an internally-used class.
 *
 * @class manyToMany
-* @extends module:enyo/RelationalModel/toMany~toMany
-* @protected
+* @name module:enyo/RelationalModel~manyToMany
+* @extends module:enyo/RelationalModel~toMany
+* @private
 */
 var manyToMany = module.exports = kind(
-	/** @lends module:enyo/RelationalModel/manyToMany~manyToMany.prototype */ {
+	/** @lends module:enyo/RelationalModel~manyToMany.prototype */ {
 
 	/**
 	* @private
@@ -31,13 +33,13 @@ var manyToMany = module.exports = kind(
 	name: 'enyo.manyToMany',
 
 	/**
-	* The default [options]{@link module:enyo/Relation~RelationOptions} overloaded for this
+	* The default [options]{@link module:enyo/RelationalModel~RelationOptions} overloaded for this
 	* [kind]{@glossary kind}.
 	*
-	* @see module:enyo/RelationalModel/toMany~toMany#options
-	* @type module:enyo/Relation~RelationOptions
-	* @property {module:enyo/Relation~Relation} inverseType=module:enyo/RelationalModel/manyToMany~manyToMany -
-	*	This is the **required** type.
+	* @see module:enyo/RelationalModel~toMany#options
+	* @type enyo/RelationalModel~RelationOptions
+	* @property {module:enyo/RelationalModel~Relation} inverseType=module:enyo/RelationalModel~manyToMany - This is
+	*	the **required** type.
 	* @public
 	*/
 	options: {
