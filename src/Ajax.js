@@ -184,7 +184,7 @@ var Ajax = module.exports = kind(
 		}
 		utils.mixin(xhr_headers, this.headers);
 		// don't pass in headers structure if there are no headers defined as this messes
-		// up CORS code for IE8-9
+		// up CORS code for IE9
 		if (utils.keys(xhr_headers).length === 0) {
 			xhr_headers = undefined;
 		}
@@ -278,7 +278,7 @@ var Ajax = module.exports = kind(
 				}
 			} else {
 				var text = '';
-				// work around IE8-9 bug where accessing responseText will thrown error
+				// work around IE9 bug where accessing responseText will thrown error
 				// for binary requests.
 				if (typeof inXhr.responseText === 'string') {
 					text = inXhr.responseText;
@@ -337,19 +337,15 @@ var Ajax = module.exports = kind(
 	* @private
 	*/
 	updateProgress: function (event) {
-		// IE8 doesn't properly support progress events and doesn't pass an object to the
-		// handlers so we'll check that before continuing.
-		if (event) {
-			// filter out 'input' as it causes exceptions on some Firefox versions
-			// due to unimplemented internal APIs
-			var ev = {};
-			for (var k in event) {
-				if (k !== 'input') {
-					ev[k] = event[k];
-				}
+		// filter out 'input' as it causes exceptions on some Firefox versions
+		// due to unimplemented internal APIs
+		var ev = {};
+		for (var k in event) {
+			if (k !== 'input') {
+				ev[k] = event[k];
 			}
-			this.sendProgress(event.loaded, 0, event.total, ev);
 		}
+		this.sendProgress(event.loaded, 0, event.total, ev);
 	},
 	
 	/**

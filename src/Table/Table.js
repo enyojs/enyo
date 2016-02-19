@@ -12,10 +12,7 @@ var
 	TableRow = require('../TableRow');
 
 /*
-* TODO: Won't work in IE8 because we can't set innerHTML on table elements. We'll need to fall 
-* back to divs with table display styles applied.
-* 
-* Should also facade certain useful table functionality (specific set TBD).
+* TODO: Should facade certain useful table functionality (specific set TBD).
 */
 
 /**

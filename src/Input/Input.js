@@ -198,14 +198,7 @@ module.exports = kind(
 	rendered: kind.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
-
 			dispatcher.makeBubble(this, 'focus', 'blur');
-
-			//Force onchange event to be bubbled inside Enyo for IE8
-			if(platform.ie == 8){
-				this.setAttribute('onchange', dispatcher.bubbler);
-			}
-
 			this.disabledChanged();
 			if (this.defaultFocus) {
 				this.focus();
@@ -264,8 +257,8 @@ module.exports = kind(
 	*/
 	iekeyup: function (sender, e) {
 		var ie = platform.ie, kc = e.keyCode;
-		// input event missing on ie 8, fails to fire on backspace and delete keys in ie 9
-		if (ie <= 8 || (ie == 9 && (kc == 8 || kc == 46))) {
+		// input event fails to fire on backspace and delete keys in ie 9
+		if (ie == 9 && (kc == 8 || kc == 46)) {
 			this.bubble('oninput', e);
 		}
 	},

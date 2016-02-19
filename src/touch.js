@@ -216,12 +216,8 @@ Dom.requiresWindow(function() {
 		*/
 		connect: function () {
 			utils.forEach(['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'], function(e) {
-				if(platform.ie < 9){
-					document['on' + e] = dispatch;
-				} else {
-					// on iOS7 document.ongesturechange is never called
-					document.addEventListener(e, dispatch, false);
-				}
+				// on iOS7 document.ongesturechange is never called
+				document.addEventListener(e, dispatch, false);
 			});
 
 			if (platform.androidChrome <= 18 || platform.silk === 2) {

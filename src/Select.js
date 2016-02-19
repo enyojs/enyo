@@ -7,8 +7,7 @@ require('enyo');
 
 var
 	kind = require('./kind'),
-	platform = require('./platform'),
-	dispatcher = require('./dispatcher');
+	platform = require('./platform');
 var
 	Control = require('./Control'),
 	/*jshint -W079*/
@@ -136,10 +135,6 @@ module.exports = kind(
 	rendered: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			//Trick to force IE8 onchange event bubble
-			if (platform.ie == 8) {
-				this.setAttribute('onchange', dispatcher.bubbler);
-			}
 			// This makes Select.selected a higher priority than Option.selected but ensures that
 			// the former works at create time
 			if (this.selected !== null) {

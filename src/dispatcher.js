@@ -8,8 +8,7 @@ require('enyo');
 var
 	logger = require('./logger'),
 	master = require('./master'),
-	utils = require('./utils'),
-	platform = require('./platform');
+	utils = require('./utils');
 
 var
 	Dom = require('./dom');
@@ -86,40 +85,14 @@ var dispatcher = module.exports = dispatcher = {
 	* @private
 	*/
 	listen: function(inListener, inEventName, inHandler) {
-		if (inListener.addEventListener) {
-			this.listen = function(inListener, inEventName, inHandler) {
-				inListener.addEventListener(inEventName, inHandler || dispatch, false);
-			};
-		} else {
-			//enyo.log("IE8 COMPAT: using 'attachEvent'");
-			this.listen = function(inListener, inEvent, inHandler) {
-				inListener.attachEvent("on" + inEvent, function(e) {
-					e.target = e.srcElement;
-					if (!e.preventDefault) {
-						e.preventDefault = this.iePreventDefault;
-					}
-					return (inHandler || dispatch)(e);
-				});
-			};
-		}
-		this.listen(inListener, inEventName, inHandler);
+		inListener.addEventListener(inEventName, inHandler || dispatch, false);
 	},
 
 	/**
 	* @private
 	*/
 	stopListening: function(inListener, inEventName, inHandler) {
-		if (inListener.addEventListener) {
-			this.stopListening = function(inListener, inEventName, inHandler) {
-				inListener.removeEventListener(inEventName, inHandler || dispatch, false);
-			};
-		} else {
-			//enyo.log("IE8 COMPAT: using 'detachEvent'");
-			this.stopListening = function(inListener, inEvent, inHandler) {
-				inListener.detachEvent("on" + inEvent, inHandler || dispatch);
-			};
-		}
-		this.stopListening(inListener, inEventName, inHandler);
+		inListener.removeEventListener(inEventName, inHandler || dispatch, false);
 	},
 
 	/**
@@ -220,14 +193,8 @@ function dispatch (inEvent) {
 * @private
 */
 dispatcher.bubble = function(inEvent) {
-	// '|| window.event' clause needed for IE8
-	var e = inEvent || global.event;
-	if (e) {
-		// We depend on e.target existing for event tracking and dispatching.
-		if (!e.target) {
-			e.target = e.srcElement;
-		}
-		dispatcher.dispatch(e);
+	if (inEvent) {
+		dispatcher.dispatch(inEvent);
 	}
 };
 
@@ -348,22 +315,14 @@ dispatcher.features.push(
 * `clientY`, `pageX`, `pageY`, `screenX`, and `screenY` properties. It is
 * important to note that IE8 and Opera have improper reporting for the
 * `screenX` and `screenY` properties (they both use CSS pixels as opposed to
-* device pixels) and IE8 has no support for the `pageX` and `pageY` properties,
-* so they are facaded.
+* device pixels).
 *
 * @returns {module:enyo/dispatcher~CursorCoordinates} An [object]{@glossary Object} describing the
 *	the last known coordinates of the cursor or user-interaction point in touch environments.
 * @public
 */
 dispatcher.getPosition = function () {
-	var p = utils.clone(_xy);
-	// if we are in ie8 we facade the _pageX, pageY_ properties
-	if (platform.ie < 9) {
-		var d = (document.documentElement || document.body.parentNode || document.body);
-		p.pageX = (p.clientX + d.scrollLeft);
-		p.pageY = (p.clientY + d.scrollTop);
-	}
-	return p;
+	return utils.clone(_xy);
 };
 
 
