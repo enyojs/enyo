@@ -92,9 +92,9 @@ var RelationalModel = module.exports = kind(
 	* @public
 	*/
 	getRelation: function (key) {
-		return this.relations.find(function (ln) {
+		return this.relations ? this.relations.find(function (ln) {
 			return ln instanceof Relation && ln.key == key;
-		});
+		}) : undefined;
 	},
 	
 	/**
