@@ -422,7 +422,7 @@ module.exports = kind(
 
 		var lastIndex = this.getPanels().length - 1,
 			nextPanel = this.createPanel(info, moreInfo),
-			newIndex = lastIndex + 1;
+			targetIndex = (opts && opts.targetIndex != null) ? opts.targetIndex : lastIndex + 1;
 		if (this.cacheViews) {
 			this.pruneQueue([info]);
 		}
@@ -433,8 +433,8 @@ module.exports = kind(
 			nextPanel.postTransition();
 		}
 
-		if (!this.animate || (opts && opts.direct)) this.set('index', newIndex, {force: opts && opts.force});
-		else this.animateTo(newIndex);
+		if (!this.animate || (opts && opts.direct)) this.set('index', targetIndex, {force: opts && opts.force});
+		else this.animateTo(targetIndex);
 
 		// TODO: When pushing panels after we have gone back (but have not popped), we need to
 		// adjust the position of the panels after the previous index before our push.
@@ -499,12 +499,15 @@ module.exports = kind(
 	* @param {Number} count - The number of panels we wish to replace.
 	* @param {Object|Object[]} info - The component definition (or array of component definitions)
 	*	for the replacement panel(s).
+	* @param {module:enyo/LightPanels~PushPanelOptions} opts - Additional options to be used when
+	*	pushing multiple panels. Note that for the case of "targetIndex", if this is not specified,
+	*	then the default behavior is to display the first replacement panel.
 	* @return {Object|Object[]|undefined} The panel or array of the panels that were pushed; if
 	*	`undefined`, the replacement could not be processed (i.e. we are currently transitioning).
 	* @public
 	*/
-	replaceAt: function (start, count, info) {
-		var panels, panelsToPop, insertBefore, commonInfo, end;
+	replaceAt: function (start, count, info, opts) {
+		var panels, panelsToPop, insertBefore, commonInfo, end, panelOpts, targetIndex;
 
 		if (this.transitioning) return;
 
@@ -513,13 +516,15 @@ module.exports = kind(
 		end = start + count;
 		insertBefore = panels[end];
 		commonInfo = {addBefore: insertBefore};
+		targetIndex = opts && opts.targetIndex;
+		panelOpts = {direct: true, force: true, targetIndex: targetIndex != null ? targetIndex : start};
 
 		panelsToPop = panels.splice(start, end - start);
 		this.popQueue = (this.popQueue && this.popQueue.concat(panelsToPop)) || panelsToPop;
 
 		// add replacement panels
-		if (utils.isArray(info)) return this.pushPanels(info, commonInfo, {direct: true, force: true});
-		else return this.pushPanel(info, commonInfo, {direct: true, force: true});
+		if (utils.isArray(info)) return this.pushPanels(info, commonInfo, panelOpts);
+		else return this.pushPanel(info, commonInfo, panelOpts);
 	},
 
 
