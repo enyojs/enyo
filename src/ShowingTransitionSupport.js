@@ -37,7 +37,7 @@ var kind = require('enyo/kind'),
 * @wip
 * @public
 */
-var ShowingTransitionSupport = {
+module.exports = {
 
 	/**
 	* @ignore
@@ -51,6 +51,7 @@ var ShowingTransitionSupport = {
 	*
 	* @type {Boolean}
 	* @default false
+	* @readonly
 	* @public
 	*/
 	showingTransitioning: false,
@@ -94,7 +95,7 @@ var ShowingTransitionSupport = {
 	hiddenMethod: undefined,
 
 	/**
-	* The the classname to apply for the "shown" (component is visible) resting state.
+	* The classname to apply for the "shown" (component is visible) resting state.
 	*
 	* @type {String}
 	* @default undefined
@@ -103,7 +104,7 @@ var ShowingTransitionSupport = {
 	shownClass: undefined,
 
 	/**
-	* The the classname to apply for the "hidden" (component is not visible) resting state.
+	* The classname to apply for the "hidden" (component is not visible) resting state.
 	*
 	* @type {String}
 	* @default 'hidden'
@@ -112,8 +113,8 @@ var ShowingTransitionSupport = {
 	hiddenClass: undefined,
 
 	/**
-	* The the classname to apply for the "hiding" (component has started the transition to the
-	* hidden state) transition state.
+	* The classname to apply for the "hiding" (component has started the transition to the hidden
+	* state) transition state.
 	*
 	* @type {String}
 	* @default 'hiding'
@@ -122,8 +123,8 @@ var ShowingTransitionSupport = {
 	hidingClass: undefined,
 
 	/**
-	* The the classname to apply for the "showing" (component has started the transition to the
-	* shown state) transition state.
+	* The classname to apply for the "showing" (component has started the transition to the shown
+	* state) transition state.
 	*
 	* @type {String}
 	* @default 'showing'
@@ -172,7 +173,7 @@ var ShowingTransitionSupport = {
 				this.removeClass(this.hidingClass);
 				this.removeClass(this.hiddenClass);
 				sup.apply(this, args);
-				if (this.showingDuration && this.generated) {
+				if (this.showingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					// Start transition: Apply a class and start a timer.
 					// When timer finishes, run the exit function,
@@ -193,7 +194,7 @@ var ShowingTransitionSupport = {
 				// Reset our state classes, in case we switched mid-stream
 				this.removeClass(this.showingClass);
 				this.removeClass(this.shownClass);
-				if (this.hidingDuration && this.generated) {
+				if (this.hidingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
 					this.startJob('showingTransition', function () {
@@ -217,5 +218,3 @@ var ShowingTransitionSupport = {
 		};
 	})
 };
-
-module.exports = ShowingTransitionSupport;
