@@ -1,17 +1,18 @@
 /**
- * Contains the declaration for the {@link module:enyo/RelationalModel/toMany~toMany} kind.
+ * Contains the declaration for the {@link module:enyo/RelationalModel~toMany} kind.
  * @module enyo/RelationalModel/toMany
+ * @private
  */
 
 var
 	kind = require('../kind'),
 	utils = require('../utils'),
 	Collection = require('../Collection'),
-	Relation = require('../Relation'),
 	Store = require('../Store');
 
 var
-	RelationalCollection = require('./RelationalCollection'),
+	Relation = require('./Relation'),
+	RelationalCollection = require('./Collection'),
 	toOne = require('./toOne');
 
 /**
@@ -19,11 +20,12 @@ var
 * models. This is an internally-used class.
 *
 * @class toMany
-* @extends module:enyo/Relation~Relation
-* @protected
+* @name module:enyo/RelationalModel~toMany
+* @extends module:enyo/RelationalModel~Relation
+* @private
 */
 var toMany = module.exports = kind(
-	/** @lends module:enyo/RelationalModel/toMany~toMany.prototype */ {
+	/** @lends module:enyo/RelationalModel~toMany.prototype */ {
 	
 	/**
 	* @private
@@ -36,13 +38,13 @@ var toMany = module.exports = kind(
 	name: 'enyo.toMany',
 	
 	/**
-	* The default [options]{@link module:enyo/Relation~RelationOptions} overloaded for this
-	* [kind]{@glossary kind}.
+	* The default [options]{@link module:enyo/RelationalModel~RelationOptions} overloaded for
+	* this [kind]{@glossary kind}.
 	*
-	* @type module:enyo/Relation~RelationOptions
+	* @type module:enyo/RelationalModel~RelationOptions
 	* @property {Boolean} create=true - By default, the relation should create the
 	*	[collection]{@link module:enyo/Collection~Collection} automatically.
-	* @property {module:enyo/Collection~Collection} collection=module:enyo/RelationalModel/RelationalCollection~RelationalCollection - The
+	* @property {module:enyo/Collection~Collection} collection=module:enyo/RelationalModel~Collection - The
 	*	[kind]{@glossary kind} of collection to use; can be the kind name or a
 	*	reference to the constructor.
 	* @property {Object} collectionOptions - An options hash to pass to the
@@ -66,9 +68,6 @@ var toMany = module.exports = kind(
 			inst = this.instance,
 			key = this.key,
 			related = this.related != null ? this.related : inst.attributes[key];
-		
-		if (typeof collection == 'string') collection = kind.constructorForKind(collection);
-		if (typeof model == 'string') model = kind.constructorForKind(model);
 		
 		// since we allow the model property to be used for the collection constructor
 		// we need to check for and use it if we find it
@@ -130,15 +129,23 @@ var toMany = module.exports = kind(
 	fetchRelated: function () {
 		
 	},
-	
+
 	/**
 	* @private
 	*/
-	setRelated: function (data) {
+	isRelated: function (related) {
+		return this.related.indexOf(related) >= 0;
+	},
+	
+	/**
+	* @see module:enyo/RelationalModel~Relation#setRelated
+	* @private
+	*/
+	setRelated: function (data, opts) {
 		var related = this.related;
 		
 		// related.add(data, {purge: true, parse: true});
-		related.add(data, {purge: true});
+		related.add(data, opts || {purge: true});
 	},
 	
 	/**

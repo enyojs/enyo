@@ -1,25 +1,29 @@
 /**
-* Contains the declaration for the {@link module:enyo/RelationalModel/toOne~toOne} kind.
+* Contains the declaration for the {@link module:enyo/RelationalModel~toOne} kind.
 * @module enyo/RelationalModel/toOne
+* @private
 */
 
 var
 	kind = require('../kind'),
 	utils = require('../utils'),
 	Model = require('../Model'),
-	Relation = require('../Relation'),
 	Store = require('../Store');
+
+var
+	Relation = require('./Relation');
 
 /**
 * Represents a relationship of data from one [model]{@link module:enyo/Model~Model} to another
 * model. This is an internally-used class.
 *
 * @class toOne
-* @extends module:enyo/Relation~Relation
-* @protected
+* @name module:enyo/RelationalModel~toOne
+* @extends module:enyo/RelationalModel~Relation
+* @private
 */
 var toOne = module.exports = kind(
-	/** @lends module:enyo/RelationalModel/toOne~toOne.prototype */ {
+	/** @lends module:enyo/RelationalModel~toOne.prototype */ {
 
 	/**
 	* @private
@@ -32,12 +36,12 @@ var toOne = module.exports = kind(
 	name: 'enyo.toOne',
 
 	/**
-	* The default [options]{@link module:enyo/Relation~RelationOptions} overloaded for this
+	* The default [options]{@link module:enyo/RelationalModel~RelationOptions} overloaded for this
 	* [kind]{@glossary kind}.
 	*
-	* @type module:enyo/Relation~RelationOptions
-	* @property {module:enyo/Relation~Relation} inverseType=module:enyo/RelationalModel/toOne~toOne - This can be
-	*	{@link module:enyo/RelationalModel/toOne~toOne} or {@link module:enyo/RelationalModel/toMany~toMany}.
+	* @type module:enyo/RelationalModel~RelationOptions
+	* @property {module:enyo/RelationalModel~Relation} inverseType=module:enyo/RelationalModel~toOne - This can be
+	*	{@link module:enyo/RelationalModel~toOne} or {@link module:enyo/RelationalModel~toMany}.
 	* @property {Object} modelOptions - An options hash to pass to the related instance if
 	*	`create` is `true`.
 	* @public
@@ -61,12 +65,6 @@ var toOne = module.exports = kind(
 			modelOptions = this.modelOptions,
 			id,
 			found;
-
-		// ensure we have a valid model constructor
-		if (typeof model == 'string') model = kind.constructorForKind(model);
-
-		// ensure our inverse type constructor is correct
-		if (typeof inverseType == 'string') inverseType = kind.constructorForKind(inverseType);
 
 		// ensure we've got the correct related if any
 		if (related || related === 0) this.related = related;
@@ -114,11 +112,9 @@ var toOne = module.exports = kind(
 					if (!modelOptions) modelOptions = {};
 					modelOptions.parse = true;
 				}
-				/*jshint -W055 */
 				// we create the empty instance so we can separately deal with the
 				// various ways the related data could be handed to us (could be id or data)
 				found = model = new model(related, null, modelOptions);
-				/*jshint +W055 */
 				this.related = model;
 			}
 		}
@@ -220,14 +216,7 @@ var toOne = module.exports = kind(
 				}
 
 				// now we ensure that the instances are pointing at eachother
-				switch (rev.kindName) {
-				case 'enyo.toOne':
-					if (rev.related !== this.instance) rev.setRelated(this.instance);
-					break;
-				case 'enyo.toMany':
-					rev.related.add(this.instance, {merge: false});
-					break;
-				}
+				if (!rev.isRelated(this.instance)) rev.setRelated(this.instance, {merge: false});
 			}
 
 			if (isOwner) found.on('change', this._changed, this);
