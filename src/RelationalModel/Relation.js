@@ -1,35 +1,38 @@
 require('enyo');
 
 /**
-* Contains the declaration for the {@link module:enyo/Relation~Relation} kind.
-* @module enyo/Relation
+* Contains the declaration for the {@link module:enyo/RelationalModel~Relation} kind.
+* @module enyo/RelationalModel/Relation
+* @private
 */
 
 var
-	kind = require('./kind'),
-	utils = require('./utils');
+	kind = require('../kind'),
+	utils = require('../utils');
 
 var
-	Store = require('./Store');
+	Store = require('../Store');
 
 /**
-* The default options for [relations]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel#relations}.
+* The default options for [relations]{@link module:enyo/RelationalModel~RelationalModel#relations}.
 * These may vary depending on the individual [kind]{@glossary kind} of relation.
 *
-* @typedef {Object} module:enyo/Relation~RelationOptions
-* @property {String} type=toOne - The [kind]{@glossary kind} of relation being declared.
-*	Can be the name of the relation type or a reference to the constructor.
-* @property {String} key=null - The [attribute]{@link module:enyo/Model~Model#attributes} name for the
-*	relation being declared.
+* @typedef {Object} module:enyo/RelationalModel~RelationOptions
+* @property {module:enyo/RelationalModel~Relation} type=module:enyo/RelationalModel~toOne - The
+*   [kind]{@glossary kind} of relation being declared.
+* @property {String} key=null - The [attribute]{@link module:enyo/Model~Model#attributes} name for
+*	the relation being declared.
 * @property {Boolean} create=false - Whether or not the relation should automatically create
 *	the instance of the related kind.
 * @property {Boolean} parse=false - Whether or not the relation should call the
 *	[parse()]{@link module:enyo/Model~Model#parse} method on incoming data before
-*	[setting]{@link module:enyo/Model~Model#set} it on the [model]{@link module:enyo/RelationalModel/RelationalModel~RelationalModel}.
+*	[setting]{@link module:enyo/Model~Model#set} it on the
+*	[model]{@link module:enyo/RelationalModel~RelationalModel}.
 * @property {String} model=enyo/RelationalModel~RelationModel - The kind of the
 *	reverse of the relation. This will vary depending on the type of relation being declared.
 * @property {Boolean} fetch=false - Whether or not to automatically call
-*	[fetch()]{@link module:enyo/Model~Model#fetch} (or {@link module:enyo/Collection~Collection#fetch}) after initialization.
+*	[fetch()]{@link module:enyo/Model~Model#fetch} (or
+*	{@link module:enyo/Collection~Collection#fetch}) after initialization.
 * @property {String} inverseKey=null - The key of the reverse relation.
 * @property {String} inverseType=null - The type of the reverse relation.
 * @property {Boolean} isOwner=false - Whether or not this end of the relation owns the
@@ -41,11 +44,11 @@ var
 *	be included.
 */
 var relationDefaults = {
-	type: 'toOne',
+	type: null, // set ex post facto by the module
 	key: null,
 	create: false,
 	parse: false,
-	model: null,
+	model: null, // set ex post facto by the module
 	fetch: false,
 	inverseKey: null,
 	inverseType: null,
@@ -55,10 +58,11 @@ var relationDefaults = {
 
 /**
 * @class Relation
-* @protected
+* @name module:enyo/RelationalModel~Relation
+* @private
 */
 var Relation = module.exports = kind(
-	/** @lends module:enyo/Relation~Relation.prototype */ {
+	/** @lends module:enyo/RelationalModel~Relation.prototype */ {
 
 	/**
 	* @private
@@ -86,9 +90,6 @@ var Relation = module.exports = kind(
 		// store a reference to the model we're relating
 		this.instance = instance;
 
-		// ensure we have a constructor for our related model kind
-		this.model = kind.constructorForKind(this.model);
-
         this.includeInJSON = props.includeInJSON == null && !this.isOwner
 			? (this.model.prototype.primaryKey || 'id')
 			: this.includeInJSON;
@@ -100,14 +101,25 @@ var Relation = module.exports = kind(
 	/**
 	* @private
 	*/
-	getRelated: function () {
-		return this.related;
+	isRelated: function (related) {
+		return related === this.related;
 	},
 
 	/**
 	* @private
 	*/
-	setRelated: function (related) {
+	getRelated: function () {
+		return this.related;
+	},
+
+	/**
+	* Sets the `related` model
+	*
+	* @param {module:enyo/Model~Model} related - The related model
+	* @param {Object} [opts] - Used by subkinds to configure the behavior of the method
+	* @private
+	*/
+	setRelated: function (related, opts) {
 		var inst = this.instance,
 			model = this.model,
 			was = this.related,
@@ -150,10 +162,6 @@ var Relation = module.exports = kind(
 	}
 });
 
-/**
-* @private
-* @static
-*/
 Relation.concat = function (ctor, props) {
 	var proto = ctor.prototype;
 	if (props.options) {
