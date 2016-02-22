@@ -37,7 +37,7 @@ var kind = require('enyo/kind'),
 * @wip
 * @public
 */
-module.exports = {
+var ShowingTransitionSupport = {
 
 	/**
 	* @ignore
@@ -238,3 +238,5 @@ module.exports = {
 		this.hiddenMethodScope = this.getInstanceOwner();
 	}
 };
+
+module.exports = ShowingTransitionSupport;
