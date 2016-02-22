@@ -8,8 +8,6 @@
 var kind = require('enyo/kind'),
 	utils = require('enyo/utils');
 
-var shownMethodScope, hiddenMethodScope;
-
 /**
 * The {@link module:enyo/ShowingTransitionSupport~ShowingTransitionSupport} [mixin]{@glossary mixin}
 * is applicable to any control that should use a transition or animation when it is shown or hidden.
@@ -143,7 +141,14 @@ module.exports = {
 	*/
 	create: kind.inherit(function (sup) {
 		return function () {
+			var owner;
+
 			sup.apply(this, arguments);
+
+			owner = this.getInstanceOwner();
+			this.shownMethodScope = this.hasOwnProperty('shownMethod') ? owner : this;
+			this.hiddenMethodScope = this.hasOwnProperty('hiddenMethod') ? owner : this;
+
 			this.showingDuration = (this.showingDuration === undefined) ? null      : this.showingDuration;
 			this.hidingDuration  = (this.hidingDuration  === undefined) ? null      : this.hidingDuration;
 			this.shownMethod     = (this.shownMethod     === undefined) ? null      : this.shownMethod;
@@ -152,8 +157,6 @@ module.exports = {
 			this.hiddenClass     = (this.hiddenClass     === undefined) ? 'hidden'  : this.hiddenClass;
 			this.hidingClass     = (this.hidingClass     === undefined) ? 'hiding'  : this.hidingClass;
 			this.showingClass    = (this.showingClass    === undefined) ? 'showing' : this.showingClass;
-			if (this.shownMethod) this.shownMethodChanged();
-			if (this.hiddenMethod) this.hiddenMethodChanged();
 			this.showingChanged();
 		};
 	}),
@@ -185,7 +188,7 @@ module.exports = {
 					// and add the final-state class
 					this.addClass(this.showingClass);
 					this.startJob('showingTransition', function () {
-						utils.call(shownMethodScope, this.shownMethod);	// Run the supplied method.
+						if (this.shownMethod) utils.call(this.shownMethodScope, this.shownMethod);	// Run the supplied method.
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
@@ -203,7 +206,7 @@ module.exports = {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
 					this.startJob('showingTransition', function () {
-						utils.call(hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
+						if (this.hiddenMethod) utils.call(this.hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.removeClass(this.hidingClass);
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
@@ -229,9 +232,9 @@ module.exports = {
 		if (!this.hidingDuration) this.stopJob('showingTransition');
 	},
 	shownMethodChanged: function () {
-		shownMethodScope = this.hasOwnProperty(this.shownMethod) ? this : this.getInstanceOwner();
+		this.shownMethodScope = this.getInstanceOwner();
 	},
 	hiddenMethodChanged: function () {
-		hiddenMethodScope = this.hasOwnProperty(this.hiddenMethod) ? this : this.getInstanceOwner();
+		this.hiddenMethodScope = this.getInstanceOwner();
 	}
 };
