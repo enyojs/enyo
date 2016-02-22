@@ -8,6 +8,8 @@
 var kind = require('enyo/kind'),
 	utils = require('enyo/utils');
 
+var shownMethodScope, hiddenMethodScope;
+
 /**
 * The {@link module:enyo/ShowingTransitionSupport~ShowingTransitionSupport} [mixin]{@glossary mixin}
 * is applicable to any control that should use a transition or animation when it is shown or hidden.
@@ -150,6 +152,8 @@ module.exports = {
 			this.hiddenClass     = (this.hiddenClass     === undefined) ? 'hidden'  : this.hiddenClass;
 			this.hidingClass     = (this.hidingClass     === undefined) ? 'hiding'  : this.hidingClass;
 			this.showingClass    = (this.showingClass    === undefined) ? 'showing' : this.showingClass;
+			if (this.shownMethod) this.shownMethodChanged();
+			if (this.hiddenMethod) this.hiddenMethodChanged();
 			this.showingChanged();
 		};
 	}),
@@ -181,13 +185,14 @@ module.exports = {
 					// and add the final-state class
 					this.addClass(this.showingClass);
 					this.startJob('showingTransition', function () {
-						utils.call(this, this.shownMethod);	// Run the supplied method.
+						utils.call(shownMethodScope, this.shownMethod);	// Run the supplied method.
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
 					}, this.showingDuration);
 				} else {
 					// No transition, just a shown class.
+					this.stopJob('showingTransition');
 					this.addClass(this.shownClass);
 				}
 			} else {
@@ -198,7 +203,7 @@ module.exports = {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
 					this.startJob('showingTransition', function () {
-						utils.call(this, this.hiddenMethod);	// Run the supplied method.
+						utils.call(hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.removeClass(this.hidingClass);
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
@@ -208,7 +213,7 @@ module.exports = {
 					}, this.hidingDuration);
 				} else {
 					// No transition, just a hidden class.
-					this.removeClass(this.hidingClass);
+					this.stopJob('showingTransition');
 					this.addClass(this.hiddenClass);
 					sup.apply(this, args);
 					this.applyStyle('visibility', 'hidden');
@@ -216,5 +221,17 @@ module.exports = {
 				}
 			}
 		};
-	})
+	}),
+	showingDurationChanged: function () {
+		if (!this.showingDuration) this.stopJob('showingTransition');
+	},
+	hidingDurationChanged: function () {
+		if (!this.hidingDuration) this.stopJob('showingTransition');
+	},
+	shownMethodChanged: function () {
+		shownMethodScope = this.hasOwnProperty(this.shownMethod) ? this : this.getInstanceOwner();
+	},
+	hiddenMethodChanged: function () {
+		hiddenMethodScope = this.hasOwnProperty(this.hiddenMethod) ? this : this.getInstanceOwner();
+	}
 };
