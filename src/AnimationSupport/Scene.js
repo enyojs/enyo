@@ -364,7 +364,7 @@ var SceneAction = {
         if (index < 0) {
             return;
         }
-        pose = pose || this.getAnimation(index);
+        pose = this.getAnimation(index);
         past = pose.animate;
 
         if (past instanceof sceneConstructor) {
