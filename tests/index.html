@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Tween module tests</title>
+	<link rel="stylesheet" media="all" href="./node_modules/mocha.css">
+	<link rel="stylesheet" media="all" href="./build/enyo.css">
+</head>
+<body>
+	<div id="mocha"><p><a href=".">Index</a></p></div>
+	<div id="messages"></div>
+	<div id="fixtures"></div>
+	<script src="./node_modules/mocha.js"></script>
+	<script src="./node_modules/chai.js"></script>
+	<script src="./build/enyo.js"></script>
+	<script>
+		mocha.setup('bdd');
+		expect = chai.expect;
+		var Tween = require('enyo/AnimationSupport/Tween');
+	</script>
+	<script src="./Tween/TweenTest.js"></script>
+	<script>mocha.run();</script>
+</body>
+</html>

@@ -1,11 +1,11 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	ModelController = require('../../lib/ModelController'),
-	Model = require('../../lib/Model'),
-	RelationalModel = require('../../lib/RelationalModel'),
-	CoreObject = require('../../lib/CoreObject');
+	ModelController = require('enyo/ModelController'),
+	Model = require('enyo/Model'),
+	RelationalModel = require('enyo/RelationalModel'),
+	CoreObject = require('enyo/CoreObject');
 
 describe('ModelController', function () {
 	

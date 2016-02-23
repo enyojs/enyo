@@ -1,6 +1,6 @@
 var
-	kind = require('../../lib/kind'),
-	Component = require('../../lib/Component');
+	kind = require('enyo/kind'),
+	Component = require('enyo/Component');
 
 describe('Component Handlers', function () {
 

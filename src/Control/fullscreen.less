@@ -1,0 +1,29 @@
+/* Fullscreen */
+
+.enyo-fullsize() {
+	width: 100% !important;
+	height: 100% !important;
+}
+
+.vendor-fullscreen({ .enyo-fullsize; });
+
+/* Fallback Fullscreen */
+body .enyo-fullscreen {
+	position: absolute !important;
+	left: 0 !important;
+	top: 0 !important;
+	right: 0 !important;
+	bottom: 0 !important;
+	.enyo-fullsize;
+	box-sizing: border-box !important; 
+}
+
+// ancestors of the full screen control that already fill their containers can still affect the
+// positioning of the full screen control with their padding and margin values so we reset them here
+.enyo-fit,
+.enyo-fill {
+	.vendor-fullscreen-ancestor({
+		padding: 0 !important;
+		margin: 0 !important;
+	});
+}

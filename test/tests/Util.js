@@ -1,5 +1,5 @@
 var
-	utils = require('../../lib/utils');
+	utils = require('enyo/utils');
 
 describe('Utilities', function () {
 	

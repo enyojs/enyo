@@ -1,8 +1,8 @@
 var
-	kind = require('../../lib/kind');
+	kind = require('enyo/kind');
 
 var
-	Select = require('../../lib/Select');
+	Select = require('enyo/Select');
 
 describe('Select', function () {
 	describe('properties', function () {

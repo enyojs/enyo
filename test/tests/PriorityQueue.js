@@ -1,5 +1,5 @@
 var
-	PriorityQueue = require('../../lib/PriorityQueue');
+	PriorityQueue = require('enyo/PriorityQueue');
 
 describe('PriorityQueue', function () {
 
