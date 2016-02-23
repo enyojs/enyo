@@ -373,7 +373,7 @@ var ObserverSupport = {
 			if (path) {
 				loc[path] = null;
 			} else {
-				observerTable[euid] = null;
+				delete observerTable[euid];
 			}
 		}
 		
@@ -509,7 +509,8 @@ var ObserverSupport = {
 				chain;
 			
 			sup.apply(this, arguments);
-			
+
+			this.removeAllObservers();
 			if (chains) {
 				for (path in chains) {
 					chain = chains[path];
