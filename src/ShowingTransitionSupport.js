@@ -184,15 +184,16 @@ var ShowingTransitionSupport = {
 					// and add the final-state class
 					this.addClass(this.showingClass);
 					this.startJob('showingTransition', function () {
-						utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
+						utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 					}, this.showingDuration);
 				} else {
 					// No transition, just a shown class.
 					this.stopJob('showingTransition');
 					this.addClass(this.shownClass);
+					utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 				}
 			} else {
 				// Reset our state classes, in case we switched mid-stream
@@ -202,11 +203,11 @@ var ShowingTransitionSupport = {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
 					this.startJob('showingTransition', function () {
-						utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.removeClass(this.hidingClass);
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
 						sup.apply(this, args);
+						utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.applyStyle('visibility', 'hidden');
 						this.applyStyle('display', null);
 					}, this.hidingDuration);
@@ -215,6 +216,7 @@ var ShowingTransitionSupport = {
 					this.stopJob('showingTransition');
 					this.addClass(this.hiddenClass);
 					sup.apply(this, args);
+					utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 					this.applyStyle('visibility', 'hidden');
 					this.applyStyle('display', null);
 				}
