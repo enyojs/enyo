@@ -40,6 +40,15 @@ var RepeaterChildSupport = {
 	selected: false,
 
 	/**
+	* The CSS class applied to the child when selected
+	*
+	* @name module:enyo/RepeaterChildSupport~RepeaterChildSupport#selectedClass
+	* @type {String}
+	* @default null
+	* @public
+	*/
+
+	/**
 	* Setting cachePoint: true ensures that events from the repeater child's subtree will
 	* always bubble up through the child, allowing the events to be decorated with repeater-
 	* related metadata and references.
