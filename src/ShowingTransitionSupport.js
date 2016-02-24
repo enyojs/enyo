@@ -8,8 +8,6 @@
 var kind = require('enyo/kind'),
 	utils = require('enyo/utils');
 
-var shownMethodScope, hiddenMethodScope;
-
 /**
 * The {@link module:enyo/ShowingTransitionSupport~ShowingTransitionSupport} [mixin]{@glossary mixin}
 * is applicable to any control that should use a transition or animation when it is shown or hidden.
@@ -39,7 +37,7 @@ var shownMethodScope, hiddenMethodScope;
 * @wip
 * @public
 */
-module.exports = {
+var ShowingTransitionSupport = {
 
 	/**
 	* @ignore
@@ -144,6 +142,7 @@ module.exports = {
 	create: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
+
 			this.showingDuration = (this.showingDuration === undefined) ? null      : this.showingDuration;
 			this.hidingDuration  = (this.hidingDuration  === undefined) ? null      : this.hidingDuration;
 			this.shownMethod     = (this.shownMethod     === undefined) ? null      : this.shownMethod;
@@ -185,7 +184,7 @@ module.exports = {
 					// and add the final-state class
 					this.addClass(this.showingClass);
 					this.startJob('showingTransition', function () {
-						utils.call(shownMethodScope, this.shownMethod);	// Run the supplied method.
+						utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
@@ -203,7 +202,7 @@ module.exports = {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
 					this.startJob('showingTransition', function () {
-						utils.call(hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
+						utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.removeClass(this.hidingClass);
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
@@ -229,9 +228,15 @@ module.exports = {
 		if (!this.hidingDuration) this.stopJob('showingTransition');
 	},
 	shownMethodChanged: function () {
-		shownMethodScope = this.hasOwnProperty(this.shownMethod) ? this : this.getInstanceOwner();
+		// checking if the actual method exists to workaround hasOwnProperty issues due to the
+		// mechanism we use for assigning mixin defaults
+		this._shownMethodScope = this[this.shownMethod] ? this : this.getInstanceOwner();
 	},
 	hiddenMethodChanged: function () {
-		hiddenMethodScope = this.hasOwnProperty(this.hiddenMethod) ? this : this.getInstanceOwner();
+		// checking if the actual method exists to workaround hasOwnProperty issues due to the
+		// mechanism we use for assigning mixin defaults
+		this._hiddenMethodScope = this[this.hiddenMethod] ? this : this.getInstanceOwner();
 	}
 };
+
+module.exports = ShowingTransitionSupport;
