@@ -141,13 +141,7 @@ var ShowingTransitionSupport = {
 	*/
 	create: kind.inherit(function (sup) {
 		return function () {
-			var owner;
-
 			sup.apply(this, arguments);
-
-			owner = this.getInstanceOwner();
-			this.shownMethodScope = this.hasOwnProperty('shownMethod') ? owner : this;
-			this.hiddenMethodScope = this.hasOwnProperty('hiddenMethod') ? owner : this;
 
 			this.showingDuration = (this.showingDuration === undefined) ? null      : this.showingDuration;
 			this.hidingDuration  = (this.hidingDuration  === undefined) ? null      : this.hidingDuration;
@@ -157,6 +151,8 @@ var ShowingTransitionSupport = {
 			this.hiddenClass     = (this.hiddenClass     === undefined) ? 'hidden'  : this.hiddenClass;
 			this.hidingClass     = (this.hidingClass     === undefined) ? 'hiding'  : this.hidingClass;
 			this.showingClass    = (this.showingClass    === undefined) ? 'showing' : this.showingClass;
+			if (this.shownMethod) this.shownMethodChanged();
+			if (this.hiddenMethod) this.hiddenMethodChanged();
 			this.showingChanged();
 		};
 	}),
@@ -188,7 +184,7 @@ var ShowingTransitionSupport = {
 					// and add the final-state class
 					this.addClass(this.showingClass);
 					this.startJob('showingTransition', function () {
-						if (this.shownMethod) utils.call(this.shownMethodScope, this.shownMethod);	// Run the supplied method.
+						utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
@@ -206,7 +202,7 @@ var ShowingTransitionSupport = {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
 					this.startJob('showingTransition', function () {
-						if (this.hiddenMethod) utils.call(this.hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
+						utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.removeClass(this.hidingClass);
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
@@ -232,10 +228,14 @@ var ShowingTransitionSupport = {
 		if (!this.hidingDuration) this.stopJob('showingTransition');
 	},
 	shownMethodChanged: function () {
-		this.shownMethodScope = this.getInstanceOwner();
+		// checking if the actual method exists to workaround hasOwnProperty issues due to the
+		// mechanism we use for assigning mixin defaults
+		this._shownMethodScope = this[this.shownMethod] ? this : this.getInstanceOwner();
 	},
 	hiddenMethodChanged: function () {
-		this.hiddenMethodScope = this.getInstanceOwner();
+		// checking if the actual method exists to workaround hasOwnProperty issues due to the
+		// mechanism we use for assigning mixin defaults
+		this._hiddenMethodScope = this[this.hiddenMethod] ? this : this.getInstanceOwner();
 	}
 };
 
