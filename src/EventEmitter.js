@@ -6,6 +6,7 @@
 require('enyo');
 
 var
+	kind = require('./kind'),
 	utils = require('./utils');
 
 var
@@ -202,7 +203,7 @@ var EventEmitter = {
 					return ln.event != e;
 				});
 			} else {
-				eventTable[euid] = null;
+				delete eventTable[euid];
 			}
 		}
 		
@@ -248,7 +249,17 @@ var EventEmitter = {
 	*/
 	emit: function () {
 		return !this._silenced? emit(this, arguments): false;
-	}
+	},
+
+	/**
+	* @private
+	*/
+	destroy: kind.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			this.removeAllListeners();
+		};
+	})
 };
 
 module.exports = EventEmitter;
