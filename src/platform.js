@@ -41,13 +41,12 @@ exports = module.exports = {
 	* `true` if the platform has native single-finger [events]{@glossary event}.
 	* @public
 	*/
-	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints || window.navigator.maxTouchPoints),
+	touch: Boolean(('ontouchstart' in window) || window.navigator.msMaxTouchPoints || (window.navigator.msManipulationViewsEnabled && window.navigator.maxTouchPoints)),
 	/**
 	* `true` if the platform has native double-finger [events]{@glossary event}.
 	* @public
 	*/
-	gesture: Boolean(('ongesturestart' in window) || (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1) || (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 1))
-
+	gesture: Boolean(('ongesturestart' in window) || ('onmsgesturestart' in window && window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1) || ('onmsgesturestart' in window && window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 1))
 	/**
 	* The name of the platform that was detected or `undefined` if the platform
 	* was unrecognized. This value is the key name for the major version of the
