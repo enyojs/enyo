@@ -47,6 +47,7 @@ exports = module.exports = {
 	* @public
 	*/
 	gesture: Boolean(('ongesturestart' in window) || ('onmsgesturestart' in window && window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1) || ('onmsgesturestart' in window && window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 1))
+	
 	/**
 	* The name of the platform that was detected or `undefined` if the platform
 	* was unrecognized. This value is the key name for the major version of the
