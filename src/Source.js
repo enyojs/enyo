@@ -219,9 +219,14 @@ Source.execute = function (action, model, opts) {
 
 		// if it is an array of specific sources to use we, well, will only use those!
 		else if (source instanceof Array) {
-			source.forEach(function (nom) {
-				var src = typeof nom == 'string' ? sources[nom] : nom;
-				ret = [];
+			var i,
+				src;
+
+			ret = [];
+
+			for (i = 0; i < source.length; i++) {
+				nom = source[i];
+				src = typeof nom == 'string' ? sources[nom] : nom;
 
 				if (src && src[action]) {
 					// bind the source name to the success and error callbacks
@@ -230,7 +235,7 @@ Source.execute = function (action, model, opts) {
 
 					ret.push(src[action](model, options));
 				}
-			});
+			}
 		}
 
 		// if it is an instance of a source
