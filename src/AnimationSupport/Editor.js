@@ -1,7 +1,7 @@
 require('enyo');
 
 /**
-* @module enyo/AnimationSupport/SceneEditor
+* @module enyo/AnimationSupport/Editor
 */
 
 /**
@@ -20,19 +20,15 @@ module.exports = {
     /**
     * @private
     */
-	_frameSpeed: 0,
-    /**
-    * @private
-    */
-    _startTime: 0,
+	speed: 0,
 
     /**
     * @private
     */
 	cache: function(actor) {
 		actor = actor || this;
-		if(actor._frameSpeed === 0){
-			actor._frameSpeed = actor._cachedValue;
+		if(actor.speed === 0){
+			actor.speed = actor._cachedValue;
 		}
 		this.animating = true;
 	},
@@ -45,7 +41,7 @@ module.exports = {
      */
 	play: function (actor) {
 		actor = actor || this;
-		actor._frameSpeed = 1;
+		actor.speed = 1;
 		if (isNaN(actor.timeline) || !actor.timeline) {
 			actor.timeline = 0;
 		}
@@ -62,7 +58,7 @@ module.exports = {
 	resume: function(actor) {
 		this.cache(actor);
 		actor = actor || this;
-		actor._frameSpeed *= 1;
+		actor.speed *= 1;
 	},
 
     /**
@@ -73,8 +69,8 @@ module.exports = {
      */
 	pause: function (actor) {
 		actor = actor || this;
-		actor._cachedValue = actor._frameSpeed;
-		actor._frameSpeed = 0;
+		actor._cachedValue = actor.speed;
+		actor.speed = 0;
 	},
 
     /**
@@ -86,7 +82,7 @@ module.exports = {
 	reverse: function (actor) {
 		this.cache(actor);
 		actor = actor || this;
-		actor._frameSpeed *= -1;
+		actor.speed *= -1;
 	},
 
     /**
@@ -98,7 +94,7 @@ module.exports = {
 	fast: function (mul, actor) {
 		this.cache(actor);
 		actor = actor || this;
-		actor._frameSpeed *= mul;
+		actor.speed *= mul;
 	},
 
     /**
@@ -110,7 +106,7 @@ module.exports = {
 	slow: function (mul, actor) {
 		this.cache(actor);
 		actor = actor || this;
-		actor._frameSpeed *= mul;
+		actor.speed *= mul;
 	},
 
     /**
@@ -118,7 +114,7 @@ module.exports = {
      * Speed of the animation changed based on the <code>factor</code>.</br>
      * To slow down the speed use values between <b>0</b> and <b>1</b>. For Example <b>0.5</b> to reduce the speed by <b>50%</b>.</br>
      * To increase the speed use values above <b>1</b>. For Example <b>2</b> to increase the speed by <b>200%</b>.</br>
-     * Animation will be paused if factor is <b>0</b>. To pause the animation use <code>{@link enyo/AnimationSupport/SceneEditor.pause pause}</code> API.</br>
+     * Animation will be paused if factor is <b>0</b>. To pause the animation use <code>{@link enyo/AnimationSupport/Editor.pause pause}</code> API.</br>
      * Speed will not be affected incase of negative multiplication factor.
      * @param  {Number} factor                                              Multiplication factor which changes the speed
      * @param  [Component {@link module:enyo/Component~Component}] actor     The component whose animating speed should be changed
@@ -128,7 +124,7 @@ module.exports = {
         if (mul < 0) return;
         this.cache(actor);
         actor = actor || this;
-        actor._frameSpeed *= mul;
+        actor.speed *= mul;
     },
     
     /**
@@ -140,10 +136,10 @@ module.exports = {
 	stop: function (actor) {
 		actor = actor || this;
 		actor._cachedValue = 1;
-		actor._frameSpeed = 0;
+		actor.speed = 0;
 		actor.timeline = 0;
-		this.animating = false;
-		this.cancel();
+		// this.animating = false;
+		// this.cancel();
 	},
 	
     /**
@@ -175,9 +171,9 @@ module.exports = {
 			actor.timeline = 0;
 		
 		if(actor.delay > 0) {
-			actor.delay -= _rolePlay(t, actor._frameSpeed);
+			actor.delay -= _rolePlay(t, actor.speed);
 		} else {
-			actor.timeline += _rolePlay(t, actor._frameSpeed);
+			actor.timeline += _rolePlay(t, actor.speed);
 		}
 		return actor.timeline;
 	}

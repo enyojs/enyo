@@ -85,18 +85,12 @@ module.exports = {
      */
     cast: function (actors, scene) {
         var acts = utils.isArray(actors) ? actors : [actors],
-            id = scene.getID(),
-            rolePlays = scene.rolePlays || {};
+            rolePlays = scene.rolePlays || [];
 
-        if (!rolePlays[id]) {
-            rolePlays[id] = acts;
-        } else {
-            rolePlays[id] = acts.reduce(function(actors, actor) {
+        scene.rolePlays = acts.reduce(function(actors, actor) {
                 actors.push( actor );
                 return actors;
-            }, rolePlays[id]);
-        }
-        scene.rolePlays = rolePlays;
+            }, rolePlays);
     },
 
     /**
@@ -104,19 +98,15 @@ module.exports = {
      * @param  {Array.<Component>} actors   actor or Array of actors which needs to be casted in the scene.
      * @param  {@link @module enyo/AnimationSupport/Scene} scene    Scene from which the actors has to be removed.
      */
-    reject: function (scene, actors) {
-        var id = scene.getID(), acts,
-            rolePlays = scene.rolePlays || [];
-        actors = actors || rolePlays[id];
-        acts = utils.isArray(actors) ? actors : [actors];
-        if (rolePlays[id]) {
-            rolePlays[id] = acts.reduce(function(actors, actor) {
-                var i = actors.indexOf(actor);
-                if (i >= 0) actors.splice(i, 1);
-                return actors;
-            }, rolePlays[id]);
-        }
-        scene.rolePlays = rolePlays;
+    reject: function (actors, scene) {
+        var rolePlays = scene.rolePlays || [],
+            acts = utils.isArray(actors) ? actors : [actors];
+
+        scene.rolePlays = acts.reduce(function(actors, actor) {
+            var i = actors.indexOf(actor);
+            if (i >= 0) actors.splice(i, 1);
+            return actors;
+        }, rolePlays);
     },
 
     /**
