@@ -9,36 +9,48 @@ var
  * 
  * @module enyo/AnimationSupport/Scene
  */
-module.exports = function(props) {
+var Scene = module.exports = function(props) {
 	var scene = actor(props);
-	utils.mixin(scene, Scene);
+	utils.mixin(scene, SceneAction);
+	utils.mixin(scene, props);
+	return scene;
 };
 
-var Scene = {
+var SceneAction = {
 	threshold: 0,
 
 	rolePlays: [],
 
 	action: function(ts, pose) {
 		var i, role, actor, count = 0,
-			tm = this.rolePlay(ts);
+			tm = this.rolePlay(ts),
+			animate = false;
+			thres = this.threshold;
 
-		tm += this.threshold;
+		//tm += this.threshold;
 		for (i = 0; (role = this.rolePlays[i]); i++) {
-
-			//TODO: set matrix 2d to these components
-			if (tm > role.span) continue;
-
 			actor = role.actor;
-			if (tm === role.span) {
-				pose = actor.action(ts, pose);
+			//TODO: set matrix 2d to these components
+			if (actor.timeline >= role.dur) continue;
+
+			
+			if (thres === (role.dur)) {
+				animate = true;
 				break;
-			} else if (tm > role.span) {
-				pose = actor.action(ts, pose);
+			} else if (thres > (role.dur)) {
+				animate = true;
 			} else {
-				actor.timeline = count * this.threshold;
+				if((count * thres) < role.span) {
+					actor.startTimeline = count * thres;
+					animate = true;
+					count ++;
+				}
+			}
+
+			if (animate) {
+				actor.speed = this.speed;
 				pose = actor.action(ts, pose);
-				count ++;
+				animate = false;
 			}
 		}
 		return pose;
@@ -64,11 +76,14 @@ Scene.link = function(actors, scene) {
 	var actorScene,
 		acts = utils.isArray(actors) ? actors : [actors];
 
-	for (var i = 0; i < acts.length; i++) {
-		actorScene = actor(scene, acts[i]);
+	for (var act, i = 0; (act = acts[i]); i++) {
 		if (scene.isScene) {
+			actorScene = act.scene.isScene ? act.scene : actor(act.scene, act);
 			scene.span += actorScene.span;
-			scene.rolePlays.push({actor: actorScene, span: scene.span});
+			scene.rolePlays.push({actor: actorScene, span: scene.span, dur: actorScene.span});
+		} else {
+			actorScene = actor(scene, act);
+			acts[i].scene = actorScene;
 		}
 	}
 };

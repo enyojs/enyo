@@ -16,6 +16,7 @@ var AnimationSupport = {
 		return function () {
 			sup.apply(this, arguments);
 			scene.link(this, this.scene);
+			console.log("comp : " + this.name + " linked to :", this.scene);
 		};
 	}),
 

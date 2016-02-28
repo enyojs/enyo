@@ -21,7 +21,10 @@ module.exports = {
     * @private
     */
 	speed: 0,
-
+    /**
+    * @private
+    */
+    startTimeline: 0,
     /**
     * @private
     */
@@ -120,12 +123,12 @@ module.exports = {
      * @param  [Component {@link module:enyo/Component~Component}] actor     The component whose animating speed should be changed
      * @public
      */
-    speed: function(mul, actor) {
-        if (mul < 0) return;
-        this.cache(actor);
-        actor = actor || this;
-        actor.speed *= mul;
-    },
+    // speed: function(mul, actor) {
+    //     if (mul < 0) return;
+    //     this.cache(actor);
+    //     actor = actor || this;
+    //     actor.speed *= mul;
+    // },
     
     /**
      * Stops the animation of the actor given in argument.
@@ -172,7 +175,9 @@ module.exports = {
 		
 		if(actor.delay > 0) {
 			actor.delay -= _rolePlay(t, actor.speed);
-		} else {
+		} if(actor.startTimeline > 0 && actor.timeline == 0){
+            actor.timeline = actor.startTimeline;
+        } else {
 			actor.timeline += _rolePlay(t, actor.speed);
 		}
 		return actor.timeline;

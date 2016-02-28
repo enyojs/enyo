@@ -154,7 +154,7 @@ Actor.makeScene = function(actor) {
 		 */
 		trigger: function(force) {
 			if (force || !this.animating) {
-				_req = animation.requestAnimationFrame(loop);
+				_req = animation.requestAnimationFrame(utils.bindSafely(this, loop));
 			}
 		},
 
@@ -269,17 +269,14 @@ function loop() {
  * @return {Object} An instance of the constructor
  */
 function create(props) {
-	if (!props && !props.animation) return;
+	if (!props) return;
 
-	var anims = utils.isArray(props.animation) ? props.animation : [props.animation],
-		dur = props.duration || 0;
+	var anims = utils.isArray(props) ? props : [props];
 
 	for (var i = 0; i < anims.length; i++) {
-		this.addAnimation(anims[i], anims[i].duration || dur);
+		this.addAnimation(anims[i], anims[i].duration || 0);
 		delete anims[i].duration;
 	}
-	delete props.animation;
-	delete props.duration;
 }
 
 
@@ -291,15 +288,15 @@ function create(props) {
  * @return {Object} An instance of the constructor
  */
 function createFromScene(source) {
-	if (source) return;
+	if (!source) return;
 
 	var i, l = source.length(),
 		anim;
 
 	for (i = 0; i < l; i++) {
-		anim = utils.minin({}, source.getAnimation(i));
+		anim = utils.mixin({}, source.getAnimation(i));
 		this.addAnimation(anim.animate, anim.span);
 	}
 
-	utils.mixin(this, source);
+	
 }
