@@ -86,6 +86,7 @@ Actor.makeScene = function(actor) {
 				} else {
 					this.timeline = dur;
 					this.speed = 0;
+					this.active = false;
 					this.actorCompleted && this.actorCompleted(_actor);
 				}
 			}
@@ -297,6 +298,4 @@ function createFromScene(source) {
 		anim = utils.mixin({}, source.getAnimation(i));
 		this.addAnimation(anim.animate, anim.span);
 	}
-
-	
 }

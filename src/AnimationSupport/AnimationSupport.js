@@ -2,6 +2,7 @@ require('enyo');
 
 var
 	kind = require('../kind'),
+	actor = require('./Actor'),
 	scene = require('./Scene');
 
 var extend = kind.statics.extend;
@@ -15,7 +16,13 @@ var AnimationSupport = {
 	create: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			scene.link(this, this.scene);
+			var parent = this.scene.isScene && this.scene;
+			if (parent) {
+				this.scene = actor(this.scene, this);
+				scene.link(this, parent);
+			} else {
+				scene.link(this, this.scene);
+			}
 			console.log("comp : " + this.name + " linked to :", this.scene);
 		};
 	}),

@@ -22,35 +22,26 @@ var SceneAction = {
 	rolePlays: [],
 
 	action: function(ts, pose) {
-		var i, role, actor, count = 0,
+		var i, role, actor,
 			tm = this.rolePlay(ts),
-			animate = false;
-			thres = this.threshold;
+			thres = this.threshold || this.span;
 
-		//tm += this.threshold;
-		for (i = 0; (role = this.rolePlays[i]); i++) {
-			actor = role.actor;
-			//TODO: set matrix 2d to these components
-			if (actor.timeline >= role.dur) continue;
-
-			
-			if (thres === (role.dur)) {
-				animate = true;
-				break;
-			} else if (thres > (role.dur)) {
-				animate = true;
-			} else {
-				if((count * thres) < role.span) {
-					actor.startTimeline = count * thres;
-					animate = true;
-					count ++;
+		role = this.rolePlays[Math.floor(tm/thres)];
+		if (role && thres < role.dur) {
+			role.actor.active = true;
+		} else {
+			for (i = 0; (role = this.rolePlays[i]); i++) {
+				if ((tm + thres) >= role.span ) {
+					role.actor.active = true;
 				}
 			}
+		}
 
-			if (animate) {
+		for (i = 0; (role = this.rolePlays[i]); i++) {
+			actor = role.actor;
+			if (actor.active) {
 				actor.speed = this.speed;
 				pose = actor.action(ts, pose);
-				animate = false;
 			}
 		}
 		return pose;
@@ -61,6 +52,30 @@ var SceneAction = {
 	}
 
 };
+
+
+
+	// if (thres === role.dur) {
+	// 	actor.speed = this.speed;
+	// 	pose = actor.action(ts, pose);
+	// 	tm = this.rolePlay(ts);
+	// 	console.log(tm + " same duration:"+ role.span);
+	// 	break;
+	// } else if (thres > role.dur) {
+	// 	thres -= role.dur;
+	// 	actor.speed = this.speed;
+	// 	tm = this.rolePlay(ts);
+	// 	pose = actor.action(ts, pose);
+	// 	console.log(tm + " greater duration"+ role.span);
+	// } 
+	// else {
+	// 	actor.speed = this.speed;
+	// 	tm = this.rolePlay(ts);
+	// 	// actor.timeline = tm == 0 ? 0 : thres;
+	// 	pose = actor.action(ts, pose);
+	// 	break;
+	// }
+
 
 /**
  * Connects an actor/s to a scene.
