@@ -1,9 +1,9 @@
 require('enyo');
 
 var tween = require('./Tween'),
-    utils =  require('../utils');
+    utils = require('../utils');
 
-var pose, dur, tm, t;
+var dur, tm, t;
 
 /**
 * Contains the declaration for the {@link module:enyo/AnimationSupport/Director} module.
@@ -50,7 +50,7 @@ module.exports = {
 
         if (isNaN(tm) || tm < 0) return;
         if (tm <= dur) {
-            pose = scene.action(ts, pose);
+            scene.pose = scene.action(ts, scene.pose);
         } else {
             scene.timeline = dur;
             scene.animating = false;
