@@ -77,6 +77,24 @@ module.exports = {
             tween.step(actor, pose, 1, dur);
         }
     },
+
+    /**
+     * <code>cut</code> is the method which triggers end of animation of the actor.
+     * @param  {Object} pose  Animation poses
+     * @param  {@link module:enyo/Component~Component} actor <code>Component</code> on which the animation should be performed
+     * @param  {Number} since Elapsed time since the animation of this pose has started
+     * @param  {Number} dur   Total duration of this pose
+     */
+    cut: function (scene, actor) {
+        if (actor && scene) {
+            scene.timeline = scene.span;
+            scene.speed = 0;
+            if (scene.active) {
+                scene.active = false;
+                tween.halt(actor);
+            }
+        }
+    },
  
     /**
      * Casts an actor or all the actors in the array to the given scene.

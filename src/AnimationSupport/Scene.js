@@ -10,7 +10,7 @@ var
  * @module enyo/AnimationSupport/Scene
  */
 var Scene = module.exports = function(props) {
-	var scene = actor(props);
+	var scene = actor(props.animation);
 	utils.mixin(scene, SceneAction);
 	utils.mixin(scene, props);
 	return scene;
@@ -37,20 +37,16 @@ var SceneAction = {
 			}
 		}
 
+		//TODO: cache all DOM updates till the end
 		for (i = 0; (role = this.rolePlays[i]); i++) {
 			actor = role.actor;
-			if (actor.active) {
+			if (actor.active && actor.timeline < role.dur) {
 				actor.speed = this.speed;
 				pose = actor.action(ts, pose);
 			}
 		}
 		return pose;
-	},
-
-	updateSpan: function(span) {
-		this.span = this.totalSpan * span / this.threshold;
 	}
-
 };
 
 
@@ -93,6 +89,7 @@ Scene.link = function(actors, scene) {
 
 	for (var act, i = 0; (act = acts[i]); i++) {
 		if (scene.isScene) {
+			act.scene = act.scene || actor(scene, act);
 			actorScene = act.scene.isScene ? act.scene : actor(act.scene, act);
 			scene.span += actorScene.span;
 			scene.rolePlays.push({actor: actorScene, span: scene.span, dur: actorScene.span});

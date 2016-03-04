@@ -18,7 +18,7 @@ var Actor = module.exports = function(prop, actor) {
 	var scene = Actor.makeScene(actor), fn;
 	utils.mixin(scene, editor);
 
-	fn = prop.isScene ? createFromScene : create;
+	fn = prop && prop.isScene ? createFromScene : create;
 	fn.call(scene, prop);
 	return scene;
 };
@@ -74,7 +74,7 @@ Actor.makeScene = function(actor) {
 			var past, index, tm,
 				dur = this.span;
 
-			if (_actor && _actor.generated && this.speed) {
+			if (_actor && _actor.generated) {
 				tm = this.rolePlay(ts);
 				if (isNaN(tm) || tm < 0) return pose;
 				else if (tm <= dur) {
@@ -84,13 +84,31 @@ Actor.makeScene = function(actor) {
 					director.action(pose, _actor, tm - past, pose.span - past);
 					this.step && this.step(_actor);
 				} else {
-					this.timeline = dur;
-					this.speed = 0;
-					this.active = false;
-					this.actorCompleted && this.actorCompleted(_actor);
+					director.cut(this, _actor);
+					this.completed && this.completed(_actor);
 				}
 			}
 			return pose;
+		},
+
+		/**
+		 * Function used to loop in all the animations in a scene
+		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @private
+		 */
+		loop = function() {
+			if (this.animating) {
+				_ts = utils.perfNow();
+				_ts = _ts - (_wasts !== undefined ? _wasts : _ts);
+				_ts = (_ts > _framerate) ? _framerate : _ts;
+				director.take(this, _ts);
+				_wasts = _ts;
+				this.trigger(true);
+			} else {
+				_wasts = undefined;
+				this.cancel();
+				this.completed && this.completed(_actor);
+			}
 		};
 
 	return {
@@ -227,39 +245,12 @@ Actor.makeScene = function(actor) {
 		 * @memberOf module:enyo/AnimationSupport/Scene
 		 * @public
 		 */
-		step: function() {},
-
-		/**
-		 * Event to identify when the actor has done animating.
-		 * @param  {Object} actor - animating element
-		 * @memberOf module:enyo/AnimationSupport/Scene
-		 * @public
-		 */
-		actorCompleted: function(actor) {}
+		step: function() {}
 	};
 };
 
 
 
-/**
- * Function used to loop in all the animations in a scene
- * @memberOf module:enyo/AnimationSupport/Scene
- * @private
- */
-function loop() {
-	if (this.animating) {
-		_ts = utils.perfNow();
-		_ts = _ts - (_wasts !== undefined ? _wasts : _ts);
-		_ts = (_ts > _framerate) ? _framerate : _ts;
-		director.take(this, _ts);
-		_wasts = _ts;
-		this.trigger(true);
-	} else {
-		_wasts = undefined;
-		this.cancel();
-		this.completed && this.completed();
-	}
-}
 
 
 /**
@@ -276,7 +267,7 @@ function create(props) {
 
 	for (var i = 0; i < anims.length; i++) {
 		this.addAnimation(anims[i], anims[i].duration || 0);
-		delete anims[i].duration;
+		//delete anims[i].duration;
 	}
 }
 
@@ -296,6 +287,6 @@ function createFromScene(source) {
 
 	for (i = 0; i < l; i++) {
 		anim = utils.mixin({}, source.getAnimation(i));
-		this.addAnimation(anim.animate, anim.span);
+		this.addAnimation(anim.animate, anim.animate.duration);
 	}
 }

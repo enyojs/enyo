@@ -28,14 +28,18 @@ module.exports = {
     /**
     * @private
     */
-	cache: function(actor) {
+    seekInterval:0,
+    /**
+    * @private
+    */
+    cache: function(actor) {
 		actor = actor || this;
 		if(actor.speed === 0){
 			actor.speed = actor._cachedValue;
 		}
 		this.animating = true;
 	},
-	
+
     /**
      * Starts the animation of the <code>actor</code> given in argument.
      * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be started.
@@ -49,6 +53,7 @@ module.exports = {
 			actor.timeline = 0;
 		}
 		this.trigger();
+        actor._cachedValue = actor.speed;
 		this.animating = true;
 	},
 
@@ -85,6 +90,7 @@ module.exports = {
 	reverse: function (actor) {
 		this.cache(actor);
 		actor = actor || this;
+        actor._cachedValue = actor.speed;
 		actor.speed *= -1;
 	},
 
@@ -129,7 +135,7 @@ module.exports = {
     //     actor = actor || this;
     //     actor.speed *= mul;
     // },
-    
+
     /**
      * Stops the animation of the actor given in argument.
      * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be stopped.
@@ -144,7 +150,7 @@ module.exports = {
 		// this.animating = false;
 		// this.cancel();
 	},
-	
+
     /**
      * Seeks the animation of the <code>actor</code> to the position provided in <code>timeline</code>
      * The value of <code>timeline</code> should be between <b>0</b> to <code>duration</code> of the animation.
@@ -154,11 +160,14 @@ module.exports = {
      */
     seek: function(timeline, actor) {
         actor = actor || this;
-        if (this.animating !== true) {
+        if (timeline>0 ) {
             this.play(actor);
-            this.pause(actor);
+            //this.pause(actor);
+        }else{
+             this.reverse(actor);
         }
-        actor.timeline = timeline;
+        this.seekInterval = actor.timeline + timeline;
+        //actor.timeline = timeline;
     },
 
     /**
@@ -170,9 +179,12 @@ module.exports = {
      */
 	rolePlay: function (t, actor) {
 		actor = actor || this;
-		if (actor.timeline === undefined || actor.timeline < 0) 
+		if (actor.timeline === undefined || actor.timeline < 0)
 			actor.timeline = 0;
-		
+        if(this.seekInterval !== 0) {
+            if((this.seekInterval-actor.timeline)*actor.speed <= 0)
+                actor.speed =0;
+        }
 		if(actor.delay > 0) {
 			actor.delay -= _rolePlay(t, actor.speed);
 		} if(actor.startTimeline > 0 && actor.timeline == 0){
