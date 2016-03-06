@@ -8,7 +8,7 @@ var _ts, _wasts, _framerate = 16.6;
 
 /**
  * Function to construct all the scenes instantiated from the Scene
- * @memberOf module:enyo/AnimationSupport/Scene
+ * @memberOf module:enyo/AnimationSupport/Actor
  * @private
  * @param  {number} id - id of the scene generated when created
  * @return {object} Constructed instance
@@ -32,7 +32,7 @@ Actor.makeScene = function(actor) {
 
 		/**
 		 * Holds refereneces of the all animations added to this scene.
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @private
 		 * @type {Array}
 		 */
@@ -40,35 +40,7 @@ Actor.makeScene = function(actor) {
 
 		_actor = actor,
 
-		/**
-		 * Returns animation pose index for a particular 
-		 * instance of time from the list of 
-		 * animations added to the scene.
-		 * @param  {number} span - Time span from the animation timeline
-		 * @return {number}      - index of the animation
-		 * @memberOf module:enyo/AnimationSupport/Scene
-		 * @private
-		 */
-		animateAtTime = function(span) {
-			var startIndex = 0,
-				stopIndex = _poses.length - 1,
-				middle = Math.floor((stopIndex + startIndex) / 2);
-
-			if (span === 0) {
-				return startIndex;
-			}
-
-			while (_poses[middle].span != span && startIndex < stopIndex) {
-				if (span < _poses[middle].span) {
-					stopIndex = middle;
-				} else if (span > _poses[middle].span) {
-					startIndex = middle + 1;
-				}
-
-				middle = Math.floor((stopIndex + startIndex) / 2);
-			}
-			return (_poses[middle].span != span) ? startIndex : middle;
-		},
+		
 
 		action = function(ts, pose) {
 			var past, index, tm,
@@ -78,12 +50,13 @@ Actor.makeScene = function(actor) {
 				tm = this.rolePlay(ts);
 				if (isNaN(tm) || tm < 0) return pose;
 				else if (tm <= dur) {
-					index = animateAtTime(tm);
+					index = Actor.animateAtTime(_poses, tm);
 					pose = this.getAnimation(index);
 					past = index ? this.getAnimation(index - 1).span : 0;
 					director.action(pose, _actor, tm - past, pose.span - past);
 					this.step && this.step(_actor);
 				} else {
+					this.timeline = this.span;
 					director.cut(this, _actor);
 					this.completed && this.completed(_actor);
 				}
@@ -91,9 +64,13 @@ Actor.makeScene = function(actor) {
 			return pose;
 		},
 
+		cut = function () {
+			director.cut(this, _actor);
+		},
+
 		/**
 		 * Function used to loop in all the animations in a scene
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @private
 		 */
 		loop = function() {
@@ -122,7 +99,7 @@ Actor.makeScene = function(actor) {
 		 * 'true' - the scene is asked for animation(doesn't mean animation is happening)
 		 * 'false' - the scene is not active(has completed or its actors are not visible)
 		 * @type {Boolean}
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		animating: false,
@@ -132,7 +109,7 @@ Actor.makeScene = function(actor) {
 		 * 'true' - the scene actors are ready for action
 		 * 'false' - some or all actors are not ready
 		 * @type {Boolean}
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		active: false,
@@ -140,7 +117,7 @@ Actor.makeScene = function(actor) {
 		/**
 		 * Holds refereneces of complete time span for this scene.
 		 * @type {Number}
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		span: 0,
@@ -151,14 +128,16 @@ Actor.makeScene = function(actor) {
 		 * @param  {number} ts   - timespan
 		 * @param  {Object} pose - pose from the animation list
 		 * @return {Object}      - pose
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @private
 		 */
 		action: action,
 
+		cut: cut,
+
 		/**
 		 * Cancel the animation
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		cancel: function() {
@@ -168,7 +147,7 @@ Actor.makeScene = function(actor) {
 		/**
 		 * Triggers the Request Animation Frame
 		 * @param  {boolean} force - A boolean value for letting the rAF start.
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		trigger: function(force) {
@@ -179,7 +158,7 @@ Actor.makeScene = function(actor) {
 
 		/**
 		 * Adds new animation on already existing animation for this character.
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		addAnimation: function(newProp, span) {
@@ -200,7 +179,7 @@ Actor.makeScene = function(actor) {
 
 		/**
 		 * Function which returns the length of the poses.
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 * @return {number}      - length of the poses
 		 */
@@ -210,7 +189,7 @@ Actor.makeScene = function(actor) {
 
 		/**
 		 * Clears/removes the animation
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		clearAnimation: function() {
@@ -224,7 +203,7 @@ Actor.makeScene = function(actor) {
 		 * animations added to this scene.
 		 * @param  {number} index - animation's index from the list of animations
 		 * @return {Object}   pose of the animation based on the index in the list
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		getAnimation: function(index) {
@@ -235,18 +214,48 @@ Actor.makeScene = function(actor) {
 		//TODO: Move these events to Event Delegator
 		/**
 		 * Event to identify when the scene has done animating.
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		completed: function() {},
 
 		/**
 		 * Event to identify when the scene has done a step(rAF updatation of time) in the animation.
-		 * @memberOf module:enyo/AnimationSupport/Scene
+		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
 		step: function() {}
 	};
+};
+
+/**
+ * Returns animation pose index for a particular 
+ * instance of time from the list of 
+ * animations added to the scene.
+ * @param  {number} span - Time span from the animation timeline
+ * @return {number}      - index of the animation
+ * @memberOf module:enyo/AnimationSupport/Actor
+ * @private
+ */
+Actor.animateAtTime = function(anims, span) {
+	var startIndex = 0,
+		stopIndex = anims.length - 1,
+		middle = Math.floor((stopIndex + startIndex) / 2);
+
+	if (span === 0) {
+		return startIndex;
+	}
+
+	while (anims[middle].span != span && startIndex < stopIndex) {
+		if (span < anims[middle].span) {
+			stopIndex = middle;
+		} else if (span > anims[middle].span) {
+			startIndex = middle + 1;
+		}
+
+		middle = Math.floor((stopIndex + startIndex) / 2);
+	}
+	return (anims[middle].span != span) ? startIndex : middle;
 };
 
 
@@ -256,7 +265,7 @@ Actor.makeScene = function(actor) {
 /**
  * Creates a empty instance of scene.
  * Can be used for runtime creation of animations
- * @memberOf module:enyo/AnimationSupport/Scene
+ * @memberOf module:enyo/AnimationSupport/Actor
  * @public
  * @return {Object} An instance of the constructor
  */
@@ -275,7 +284,7 @@ function create(props) {
 /**
  * Creates a empty instance of scene.
  * Can be used for runtime creation of animations
- * @memberOf module:enyo/AnimationSupport/Scene
+ * @memberOf module:enyo/AnimationSupport/Actor
  * @public
  * @return {Object} An instance of the constructor
  */

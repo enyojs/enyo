@@ -87,7 +87,6 @@ module.exports = {
      */
     cut: function (scene, actor) {
         if (actor && scene) {
-            scene.timeline = scene.span;
             scene.speed = 0;
             if (scene.active) {
                 scene.active = false;

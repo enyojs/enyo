@@ -158,16 +158,21 @@ module.exports = {
      * @param  [Component]{@link module:enyo/Component~Component}   actor       The component to be animated
      * @public
      */
-    seek: function(timeline, actor) {
+    seek: function(seek, actor) {
         actor = actor || this;
-        if (timeline>0 ) {
-            this.play(actor);
-            //this.pause(actor);
+        actor.timeline = seek;
+    },
+
+    seekAnimate: function(seek, actor) {
+        actor = actor || this;
+        if (seek >= 0 ) {
+            if (!this.animating)
+                this.play(actor);
+            actor.speed = 1;
         }else{
-             this.reverse(actor);
+            actor.speed = -1;
         }
-        this.seekInterval = actor.timeline + timeline;
-        //actor.timeline = timeline;
+        actor.seekInterval = actor.timeline + seek;
     },
 
     /**
@@ -181,17 +186,21 @@ module.exports = {
 		actor = actor || this;
 		if (actor.timeline === undefined || actor.timeline < 0)
 			actor.timeline = 0;
-        if(this.seekInterval !== 0) {
-            if((this.seekInterval-actor.timeline)*actor.speed <= 0)
-                actor.speed =0;
-        }
+        
 		if(actor.delay > 0) {
 			actor.delay -= _rolePlay(t, actor.speed);
-		} if(actor.startTimeline > 0 && actor.timeline == 0){
+		}
+        if(actor.startTimeline > 0 && actor.timeline == 0){
             actor.timeline = actor.startTimeline;
         } else {
 			actor.timeline += _rolePlay(t, actor.speed);
 		}
+        if(actor.seekInterval !== 0) {
+            if((actor.seekInterval-actor.timeline)*actor.speed < 0) {
+                actor.seekInterval = 0;
+                actor.speed = 0;
+            }
+        }
 		return actor.timeline;
 	}
 };
