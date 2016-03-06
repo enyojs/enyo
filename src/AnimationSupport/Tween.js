@@ -40,8 +40,9 @@ module.exports = {
 	 */
     step: function(actor, pose, t, d) {
         if (!(actor && pose && pose.animate)) return;
-        if (t<0) t=0;
-        if (t>1) t=1;
+        t = t < 0 ? 0 : t;
+        t = t > 1 ? 1 : t;
+
         var k;
         node = actor.hasNode();
         state = actor.currentState = actor.currentState || pose.currentState || {};
@@ -105,7 +106,14 @@ module.exports = {
         );
         frame.accelerate(actor, matrix);
         state.matrix = matrix;
-        pose.currentState = state;
+        
+        actor.currentState = pose.currentState = state;
+    },
+
+    halt: function (actor, pose) {
+        var matrix = actor.currentState && actor.currentState.matrix;
+        pose = frame.decompose2DMatrix(matrix, pose);
+        frame.accelerate(actor, pose.matrix2D);
     },
 
     /**

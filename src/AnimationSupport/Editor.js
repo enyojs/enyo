@@ -1,7 +1,7 @@
 require('enyo');
 
 /**
-* @module enyo/AnimationSupport/SceneEditor
+* @module enyo/AnimationSupport/Editor
 */
 
 /**
@@ -20,23 +20,26 @@ module.exports = {
     /**
     * @private
     */
-	_frameSpeed: 0,
+	speed: 0,
     /**
     * @private
     */
-    _startTime: 0,
-
+    startTimeline: 0,
     /**
     * @private
     */
-	cache: function(actor) {
+    seekInterval:0,
+    /**
+    * @private
+    */
+    cache: function(actor) {
 		actor = actor || this;
-		if(actor._frameSpeed === 0){
-			actor._frameSpeed = actor._cachedValue;
+		if(actor.speed === 0){
+			actor.speed = actor._cachedValue;
 		}
 		this.animating = true;
 	},
-	
+
     /**
      * Starts the animation of the <code>actor</code> given in argument.
      * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be started.
@@ -45,11 +48,12 @@ module.exports = {
      */
 	play: function (actor) {
 		actor = actor || this;
-		actor._frameSpeed = 1;
+		actor.speed = 1;
 		if (isNaN(actor.timeline) || !actor.timeline) {
 			actor.timeline = 0;
 		}
 		this.trigger();
+        actor._cachedValue = actor.speed;
 		this.animating = true;
 	},
 
@@ -62,7 +66,7 @@ module.exports = {
 	resume: function(actor) {
 		this.cache(actor);
 		actor = actor || this;
-		actor._frameSpeed *= 1;
+		actor.speed *= 1;
 	},
 
     /**
@@ -73,8 +77,8 @@ module.exports = {
      */
 	pause: function (actor) {
 		actor = actor || this;
-		actor._cachedValue = actor._frameSpeed;
-		actor._frameSpeed = 0;
+		actor._cachedValue = actor.speed;
+		actor.speed = 0;
 	},
 
     /**
@@ -86,7 +90,8 @@ module.exports = {
 	reverse: function (actor) {
 		this.cache(actor);
 		actor = actor || this;
-		actor._frameSpeed *= -1;
+        actor._cachedValue = actor.speed;
+		actor.speed *= -1;
 	},
 
     /**
@@ -98,7 +103,7 @@ module.exports = {
 	fast: function (mul, actor) {
 		this.cache(actor);
 		actor = actor || this;
-		actor._frameSpeed *= mul;
+		actor.speed *= mul;
 	},
 
     /**
@@ -110,7 +115,7 @@ module.exports = {
 	slow: function (mul, actor) {
 		this.cache(actor);
 		actor = actor || this;
-		actor._frameSpeed *= mul;
+		actor.speed *= mul;
 	},
 
     /**
@@ -118,19 +123,19 @@ module.exports = {
      * Speed of the animation changed based on the <code>factor</code>.</br>
      * To slow down the speed use values between <b>0</b> and <b>1</b>. For Example <b>0.5</b> to reduce the speed by <b>50%</b>.</br>
      * To increase the speed use values above <b>1</b>. For Example <b>2</b> to increase the speed by <b>200%</b>.</br>
-     * Animation will be paused if factor is <b>0</b>. To pause the animation use <code>{@link enyo/AnimationSupport/SceneEditor.pause pause}</code> API.</br>
+     * Animation will be paused if factor is <b>0</b>. To pause the animation use <code>{@link enyo/AnimationSupport/Editor.pause pause}</code> API.</br>
      * Speed will not be affected incase of negative multiplication factor.
      * @param  {Number} factor                                              Multiplication factor which changes the speed
      * @param  [Component {@link module:enyo/Component~Component}] actor     The component whose animating speed should be changed
      * @public
      */
-    speed: function(mul, actor) {
-        if (mul < 0) return;
-        this.cache(actor);
-        actor = actor || this;
-        actor._frameSpeed *= mul;
-    },
-    
+    // speed: function(mul, actor) {
+    //     if (mul < 0) return;
+    //     this.cache(actor);
+    //     actor = actor || this;
+    //     actor.speed *= mul;
+    // },
+
     /**
      * Stops the animation of the actor given in argument.
      * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be stopped.
@@ -140,12 +145,12 @@ module.exports = {
 	stop: function (actor) {
 		actor = actor || this;
 		actor._cachedValue = 1;
-		actor._frameSpeed = 0;
+		actor.speed = 0;
 		actor.timeline = 0;
-		this.animating = false;
-		this.cancel();
+		// this.animating = false;
+		// this.cancel();
 	},
-	
+
     /**
      * Seeks the animation of the <code>actor</code> to the position provided in <code>timeline</code>
      * The value of <code>timeline</code> should be between <b>0</b> to <code>duration</code> of the animation.
@@ -153,13 +158,21 @@ module.exports = {
      * @param  [Component]{@link module:enyo/Component~Component}   actor       The component to be animated
      * @public
      */
-    seek: function(timeline, actor) {
+    seek: function(seek, actor) {
         actor = actor || this;
-        if (this.animating !== true) {
-            this.play(actor);
-            this.pause(actor);
+        actor.timeline = seek;
+    },
+
+    seekAnimate: function(seek, actor) {
+        actor = actor || this;
+        if (seek >= 0 ) {
+            if (!this.animating)
+                this.play(actor);
+            actor.speed = 1;
+        }else{
+            actor.speed = -1;
         }
-        actor.timeline = timeline;
+        actor.seekInterval = actor.timeline + seek;
     },
 
     /**
@@ -171,14 +184,23 @@ module.exports = {
      */
 	rolePlay: function (t, actor) {
 		actor = actor || this;
-		if (actor.timeline === undefined || actor.timeline < 0) 
+		if (actor.timeline === undefined || actor.timeline < 0)
 			actor.timeline = 0;
-		
+        
 		if(actor.delay > 0) {
-			actor.delay -= _rolePlay(t, actor._frameSpeed);
-		} else {
-			actor.timeline += _rolePlay(t, actor._frameSpeed);
+			actor.delay -= _rolePlay(t, actor.speed);
 		}
+        if(actor.startTimeline > 0 && actor.timeline == 0){
+            actor.timeline = actor.startTimeline;
+        } else {
+			actor.timeline += _rolePlay(t, actor.speed);
+		}
+        if(actor.seekInterval !== 0) {
+            if((actor.seekInterval-actor.timeline)*actor.speed < 0) {
+                actor.seekInterval = 0;
+                actor.speed = 0;
+            }
+        }
 		return actor.timeline;
 	}
 };

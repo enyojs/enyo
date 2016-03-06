@@ -179,6 +179,84 @@ var frame = module.exports = {
 	},
 
 	/**
+	 * Decompose transformation matrix2d from matrix3d.
+	 * @public
+	 * @param  {Number[]} matrix Matrix3d
+	 * @param  {Object}   ret    To store various transformation properties like translate, angle and matrix.
+	 * @return {Boolean}  ret    To store various transformation properties like translate, angle and matrix.
+	 */
+	decompose2DMatrix: function (m, ret) {
+		var row0x = m[0],
+			row0y = m[1],
+			row1x = m[4],
+			row1y = m[5],
+			scale = [],
+			matrix = [],
+			det, angle, sn, cs,
+			m11, m12, m21, m22;
+
+		ret = ret || {};
+		scale = [
+			Math.sqrt(row0x * row0x + row0y * row0y),
+			Math.sqrt(row1x * row1x + row1y * row1y)
+		];
+
+		// If determinant is negative, one axis was flipped.
+		det = row0x * row1y - row0y * row1x;
+		if (det < 0)
+			// Flip axis with minimum unit vector dot product.
+			if (row0x < row1y)
+				scale[0] = -scale[0];
+			else
+				scale[1] = -scale[1];
+
+		// Renormalize matrix to remove scale. 
+		if (scale[0]) {
+			row0x *= 1 / scale[0];
+			row0y *= 1 / scale[0];
+		}
+			
+		if (scale[1]) {
+			row1x *= 1 / scale[1];
+			row1y *= 1 / scale[1];
+		}
+		ret.scale = scale;
+			
+
+		// Compute rotation and renormalize matrix. 
+		angle = Math.atan2(row0y, row0x); 
+
+		if (angle) {
+			sn = -row0y;
+			cs = row0x;
+			m11 = row0x;
+			m12 = row0y;
+			m21 = row1x;
+			m22 = row1y;
+			row0x = cs * m11 + sn * m21;
+			row0y = cs * m12 + sn * m22;
+			row1x = -sn * m11 + cs * m21;
+			row1y = -sn * m12 + cs * m22;
+		}
+
+		// Rotate(-angle) = [cos(angle), sin(angle), -sin(angle), cos(angle)]
+		//                = [row0x, -row0y, row0y, row0x]
+		// Thanks to the normalization above.
+		matrix[0] = row0x;
+		matrix[1] = row0y;
+		matrix[2] = row1x;
+		matrix[3] = row1y;
+		matrix[4] = m[12];
+		matrix[5] = m[13];
+		ret.matrix2D = matrix;
+
+		// Convert into degrees because our rotation functions expect it.
+		ret.angle = angle * 180 / Math.PI;
+
+		return ret;
+	},
+
+	/**
 	 * Clones an array based on offset value.
 	 * @public
 	 * @param  {Object} v      Object with transformation properties like translate, rotate, scale, skew and perspective.
@@ -216,7 +294,7 @@ var frame = module.exports = {
 	 * @param  {Number[]} v Matrix(2d)
 	 * @return {Number[]}   Matrix3d
 	 */
-	parseMatrix: function (v) {
+	parseMatrix3D: function (v) {
 		var m = Matrix.identity();
 		v = v.replace(/^\w*\(/, '').replace(')', '');
 		v = this.parseValue(v);
@@ -260,7 +338,7 @@ var frame = module.exports = {
 		if (m === undefined || m === null || m == "none") {
 			return "";
 		}
-		return this.parseMatrix(m);
+		return this.parseMatrix3D(m);
 	},
 
 	/**
@@ -288,9 +366,9 @@ var frame = module.exports = {
 	/**
 	 * Applies style property to DOM element.
 	 * @public
-	 * @param {enyo.Component} 	actor	Component to be animated.
-	 * @param {String}      	prop 	CSS property to be applied.
-	 * @param {Number}      val  Value of the property applied.
+	 * @param {enyo.Component}	actor	Component to be animated.
+	 * @param {String}			prop	CSS property to be applied.
+	 * @param {Number}			val  Value of the property applied.
 	 */
 	setProperty: function (actor, prop, val) {
 		if (COLOR[prop]) {
@@ -311,8 +389,8 @@ var frame = module.exports = {
 	/**
 	 * Applies transform property to DOM element.
 	 * @public
-	 * @param {enyo.Component} 	actor 	Component to be animated.
-	 * @param {Number[]}    	matrix		Matrix3d
+	 * @param {enyo.Component}	actor	Component to be animated.
+	 * @param {Number[]}		matrix		Matrix3d
 	 */
 	setTransformProperty: function (actor, matrix) {
 		var mat = Matrix.toString(matrix);
@@ -322,10 +400,10 @@ var frame = module.exports = {
 		element.style.msTransform = mat;
 		element.style.OTransform = mat;*/
 		actor.addStyles('transform:' + mat + ';'
-		      + 'webkitTransform:' + mat + ';'
-		      + 'MozTransform:' + mat + ';'
-		      + 'msTransform' + mat + ';'
-		      + 'OTransform' + mat + ';');
+			+ 'webkitTransform:' + mat + ';'
+			+ 'MozTransform:' + mat + ';'
+			+ 'msTransform' + mat + ';'
+			+ 'OTransform' + mat + ';');
 	},
 
 	/**

@@ -16,6 +16,15 @@ module.exports = {
 	},
 
 	/**
+	 * To create Identity Matrix3d (4X4 order).
+	 * @public
+	 * @return {Number[]} Identity Matrix3d
+	 */
+	identity2D: function() {
+		return [1,0,0,0,1,0,0,0,1];
+	},
+
+	/**
 	 * To translate in any dimension based on co-ordinates.
 	 * @public
 	 * @param  {Number}   x Translate value in X axis
@@ -269,11 +278,11 @@ module.exports = {
 	 * @return {String}     Matrix3d String
 	 */
 	toString: function (m) {
-		var ms = 'matrix3d(';
-		for (var i = 0; i < 15; i++) {
+		var ms = m.length > 10 ? 'matrix3d(' : 'matrix(';
+		for (var i = 0; i < m.length -1; i++) {
 			ms += (m[i] < 0.000001 && m[i] > -0.000001) ? '0,' : m[i] + ',';
 		}
-		ms += m[15] + ')';
+		ms += m[m.length -1] + ')';
 		return ms;
 	}
 };
