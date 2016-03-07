@@ -1148,7 +1148,8 @@ var Control = module.exports = kind(
 	* @private
 	*/
 	teardownRender: function (cache) {
-		var delegate = this.renderDelegate || Control.renderDelegate;
+		var delegate = this.renderDelegate || Control.renderDelegate,
+			wasGenerated = this.generated;
 
 		if (this._retainedNode) {
 			storeRetainedNode(this);
@@ -1158,7 +1159,7 @@ var Control = module.exports = kind(
 
 		// if the original state was set with renderOnShow true then we need to reset these
 		// values as well to coordinate the original intent
-		if (this.renderOnShow && !cache) {
+		if (wasGenerated && this.renderOnShow && !cache) {
 			this.set('showing', false);
 			this.set('canGenerate', false);
 		}
