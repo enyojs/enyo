@@ -57,6 +57,7 @@ Dom.requiresWindow(function() {
 			this._touchCount += e.changedTouches.length;
 			this.excludedTarget = null;
 			var event = this.makeEvent(e);
+			event.target = this.findTarget(event);
 			//store the finger which generated the touchstart event
 			this.currentIdentifier = event.identifier;
 			gesture.down(event);
@@ -139,7 +140,7 @@ Dom.requiresWindow(function() {
 		makeEvent: function (e) {
 			var event = utils.clone(e.changedTouches[0]);
 			event.srcEvent = e;
-			event.target = this.findTarget(event);
+			//event.target = this.findTarget(event);
 			// normalize "mouse button" info
 			event.which = 1;
 			//enyo.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
