@@ -295,7 +295,7 @@ module.exports = kind(
 	*/
 	updateKeyframes: function () {
 		if (this.useCssAnimation) {
-			this.$.spriteImage.set('stylesheetContent', this._generateKeyframes());
+			this.$.spriteImage.set('stylesheetContent', this._generateKeyframes('-webkit-') + this._generateKeyframes('-moz-') + this._generateKeyframes());
 		} else {
 			this._generatePositionList();
 		}
@@ -349,6 +349,7 @@ module.exports = kind(
 	start: function () {
 		if (this.useCssAnimation) {
 			this.$.spriteImage.applyStyle('-webkit-animation-name', this.get('animationName'));
+			this.$.spriteImage.applyStyle('-moz-animation-name', this.get('animationName'));
 			this.$.spriteImage.applyStyle('animation-name', this.get('animationName'));
 		} else {
 			this._intervalHandle = scope.setInterval(this.bindSafely(this._nextFrame, this), this.get('frameLength'));
@@ -363,6 +364,7 @@ module.exports = kind(
 	*/
 	stop: function () {
 		this.$.spriteImage.applyStyle('-webkit-animation-name', null);
+		this.$.spriteImage.applyStyle('-moz-animation-name', null);
 		this.$.spriteImage.applyStyle('animation-name', null);
 		scope.clearInterval(this._intervalHandle);
 		this._loopCount = 0;
@@ -373,6 +375,7 @@ module.exports = kind(
 	*/
 	stopAtEndChanged: function() {
 		this.$.spriteImage.applyStyle('-webkit-animation-fill-mode', this.get('stopAtEnd') ? 'forwards' : null);
+		this.$.spriteImage.applyStyle('-moz-animation-fill-mode', this.get('stopAtEnd') ? 'forwards' : null);
 		this.$.spriteImage.applyStyle('animation-fill-mode', this.get('stopAtEnd') ? 'forwards' : null);
 	},
 
@@ -409,6 +412,7 @@ module.exports = kind(
 			iterations = parseInt(this.get('iterationCount'), 10) || null; // strings like "infinite" will be converted to null
 
 		this.$.spriteImage.applyStyle('-webkit-transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
+		this.$.spriteImage.applyStyle('-moz-transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
 		this.$.spriteImage.applyStyle('transform', 'translate3d('+ x +'px, '+ y +'px, 0)');
 
 		if (fi + 1 >= this._positionList.length - 1) {
@@ -448,8 +452,10 @@ module.exports = kind(
 
 		iterations = (iterations && iterations !== 0) ? iterations : 'infinite';
 		this.$.spriteImage.applyStyle('-webkit-animation-timing-function', 'steps(' + steps + ', start)');
+		this.$.spriteImage.applyStyle('-moz-animation-timing-function', 'steps(' + steps + ', start)');
 		this.$.spriteImage.applyStyle('animation-timing-function', 'steps(' + steps + ', start)');
 		this.$.spriteImage.applyStyle('-webkit-animation-iteration-count', iterations);
+		this.$.spriteImage.applyStyle('-moz-animation-iteration-count', iterations);
 		this.$.spriteImage.applyStyle('animation-iteration-count', iterations);
 		this.durationChanged();
 	},
@@ -457,7 +463,8 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	_generateKeyframes: function () {
+	_generateKeyframes: function (prefix) {
+		prefix = prefix || '';
 		var o,
 			width = this.get('width'),
 			height = this.get('height'),
@@ -467,7 +474,7 @@ module.exports = kind(
 			kfStr = '',
 			outer = (horiz ? rows : cols);
 
-		kfStr += '@-webkit-keyframes '+ this.get('animationName') +' {\n';
+		kfStr += '@'+ prefix +'keyframes '+ this.get('animationName') +' {\n';
 		for (o = 0; o < outer; o++) {
 			kfStr += this._generateKeyframe(
 				// percent
@@ -475,7 +482,8 @@ module.exports = kind(
 				// startX
 				horiz ? width : (-width * o),
 				// startY
-				horiz ? (-height * o) : height
+				horiz ? (-height * o) : height,
+				prefix
 			);
 			kfStr += this._generateKeyframe(
 				// percent
@@ -483,7 +491,8 @@ module.exports = kind(
 				// endX
 				horiz ? ((-width * cols) + width) : (-width * o),
 				// endY
-				horiz ? (-height * o) : ((-height * rows) + height)
+				horiz ? (-height * o) : ((-height * rows) + height),
+				prefix
 			);
 		}
 		kfStr += '}\n';
@@ -493,8 +502,15 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	_generateKeyframe: function (percent, x, y) {
-		return (Math.ceil(percent*1000000) / 10000) +'%	{ -webkit-transform: translate3d('+ x +'px, '+ y +'px, 0);	transform: translate3d('+ x +'px, '+ y +'px, 0); }\n';
+	_generateKeyframe: function (percent, x, y, prefix) {
+		var outStr = (Math.ceil(percent*1000000) / 10000) +'%	{ ',
+			transform = 'transform: translate3d('+ x +'px, '+ y +'px, 0); ';
+		if (prefix) {
+			// add the prefix and the standard
+			outStr+= prefix + transform;
+		}
+		outStr+= transform +'}\n';
+		return outStr;
 	},
 
 	_generatePositionList: function () {
