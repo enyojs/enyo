@@ -20,8 +20,9 @@ var Scene = module.exports = function(props) {
         var anims = utils.isArray(props.animation) ? props.animation : [props.animation];
 
         for (var i = 0; i < anims.length; i++) {
-            scene.addAnimation(anims[i], anims[i].span || anims[i].duration || dur);
+            scene.addAnimation(anims[i], anims[i].span || anims[i].duration || dur, anims[i].delay);
             delete anims[i].duration;
+            delete anims[i].delay;
         }
         delete props.animation;
         delete props.duration;
@@ -225,13 +226,29 @@ var sceneConstructor = function(id) {
      * @memberOf module:enyo/AnimationSupport/Scene
      * @public
      */
-    this.addAnimation = function(newProp, span) {
+    this.addAnimation = function(newProp, span, delay) {
         if (_prevDur === 0 && span === 0) {
-            _poses[0] = {
+            var index = 0;
+            if (delay) {
+                _prevDur = delay;
+                this.span += _prevDur;
+                _poses[index++] = {
+                    span: this.span
+                };
+            }
+            _prevDur = 0;
+            _poses[index] = {
                 animate: newProp,
-                span: 0
+                span: this.span
             };
         } else {
+            if (delay) {
+                _prevDur = delay;
+                this.span += _prevDur;
+                _poses.push({
+                    span: this.span
+                });
+            }
             _prevDur = span || _prevDur;
             this.span += _prevDur;
             _poses.push({
