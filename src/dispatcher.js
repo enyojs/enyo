@@ -330,14 +330,15 @@ dispatcher.features.push(
 			(e.type == "click")      ||
 			(e.type == "touchmove")
 		) {
-			_xy.clientX = e.clientX;
-			_xy.clientY = e.clientY;
+			var evt = (e.type == "touchmove") ? e.touches[0] : e;
+			_xy.clientX = evt.clientX;
+			_xy.clientY = evt.clientY;
 			// note only ie8 does not support pageX/pageY
-			_xy.pageX   = e.pageX;
-			_xy.pageY   = e.pageY;
+			_xy.pageX   = evt.pageX;
+			_xy.pageY   = evt.pageY;
 			// note ie8 and opera report these values incorrectly
-			_xy.screenX = e.screenX;
-			_xy.screenY = e.screenY;
+			_xy.screenX = evt.screenX;
+			_xy.screenY = evt.screenY;
 		}
 	}
 );
