@@ -277,6 +277,7 @@ var RichText = module.exports = kind(
 	* @param {module:enyo/RichText~ModifyType} type - The type of change to apply.
 	* @param {module:enyo/RichText~ModifyDirection} dir - The direction in which to apply the change.
 	* @param {module:enyo/RichText~ModifyAmount} amount - The granularity of the change.
+	* @deprecated since version 2.7
 	* @public
 	*/
 	modifySelection: function (type, dir, amount) {
@@ -291,6 +292,7 @@ var RichText = module.exports = kind(
 	*
 	* @param {module:enyo/RichText~ModifyDirection} dir - The direction in which to apply the change.
 	* @param {module:enyo/RichText~ModifyAmount} amount - The granularity of the change.
+	* @deprecated since version 2.7
 	* @public
 	*/
 	moveCursor: function (dir, amount) {
@@ -300,6 +302,7 @@ var RichText = module.exports = kind(
 	/**
 	* Moves the cursor to end of text field.
 	*
+	* @deprecated since version 2.7
 	* @public
 	*/
 	moveCursorToEnd: function () {
@@ -309,6 +312,7 @@ var RichText = module.exports = kind(
 	/**
 	* Moves the cursor to start of text field.
 	*
+	* @deprecated since version 2.7
 	* @public
 	*/
 	moveCursorToStart: function () {
