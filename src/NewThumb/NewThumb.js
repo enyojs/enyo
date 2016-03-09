@@ -34,12 +34,12 @@ module.exports = kind(
 	* @private
 	*/
 	name: 'enyo.NewScrollThumb',
-	
+
 	kind: Control,
 
 	/**
 	* The orientation of the scroll indicator bar; 'v' for vertical or 'h' for horizontal.
-	* 
+	*
 	* @type {String}
 	* @default 'v'
 	* @public
@@ -52,14 +52,14 @@ module.exports = kind(
 
 	/**
 	* Minimum size of the indicator.
-	* 
+	*
 	* @private
 	*/
 	minSize: ri.scale(4),
 
 	/**
 	* Size of the indicator's corners.
-	* 
+	*
 	* @private
 	*/
 	cornerSize: ri.scale(6),
@@ -137,7 +137,7 @@ module.exports = kind(
 				s.on('stateChanged', this._updateVisibility);
 			}
 		}
-		
+
 		if (was && !is) {
 			s.off('metricsChanged', this._update);
 			s.off('stateChanged', this._updateVisibility);
@@ -174,7 +174,7 @@ module.exports = kind(
 	* Updates the scroll indicator bar based on the scroll bounds of the strategy, the available
 	* scroll area, and whether there is overscrolling. If the scroll indicator bar is not
 	* needed, it will be not be displayed.
-	* 
+	*
 	* @param {module:enyo/ScrollStrategy~ScrollStrategy} strategy - The scroll strategy to update from.
 	* @public
 	*/
@@ -217,7 +217,7 @@ module.exports = kind(
 
 	/**
 	* Override `show()` to give fade effect.
-	* 
+	*
 	* @private
 	*/
 	show: function (delay) {
@@ -227,6 +227,17 @@ module.exports = kind(
 				this.stopJob('hide');
 				this.startJob('hide', this.hide, delay || this.delay);
 			}
+		}
+	},
+
+	/**
+	* Override `handleResize()` to re-calculate ratio and size.
+	* @private
+	*/
+	handleResize: function () {
+		Control.prototype.handleResize.apply(this, arguments);
+		if (this.getAbsoluteShowing()) {
+			this.calculateMetrics();
 		}
 	},
 
