@@ -8,8 +8,10 @@ var
 	Matrix = require('./Matrix');
 
 var
-	COLOR = {color: 1, backgroundColor: 1},
-	INT_UNIT = {zIndex: 1},
+	BORDER = {'border-radius': 1, 'border-top-left-radius': 1, 'border-top-right-radius': 1, 'border-bottom-left-radius': 1, 'border-bottom-right-radius': 1, 'border-image-slice': 1},
+	COLOR = {'color': 1, 'background-color': 1, 'border-color': 1, 'border-top-color': 1, 'border-left-color': 1, 'border-right-color': 1, 'border-bottom-color': 1, 'fill': 1, 'flood-color': 1,'lighting-color': 1, 'stop-color': 1, 'outline-color': 1},
+	INT_UNIT = {'z-index': 1},
+	OPACITY = {'opacity': 1, 'flood-opacity': 1, 'stop-opacity': 1, 'fill-opacity': 1, 'stroke-opacity': 1},
 	TRANSFORM = {translate: 1, translateX: 1, translateY: 1, translateZ: 1, rotateX: 1, rotateY: 1, rotateZ: 1, rotate: 1, skew: 1, scale: 1, perspective: 1};
 
 /**
@@ -295,10 +297,12 @@ var frame = module.exports = {
 	setProperty: function (actor, prop, val) {
 		if (COLOR[prop]) {
 			val = val.map(function(v) { return parseInt(v, 10);});
-			val =  'rgb('+ val + ')';
+			val = 'rgb('+ val + ')';
 		} else if(INT_UNIT[prop]) {
 			val = parseInt(val[0], 10);
-		} else if (prop == 'opacity') {
+		} else if (BORDER[prop]) {
+			val = val[0] + '%';
+		} else if (OPACITY[prop]) {
 			val = val[0].toFixed(6);
 			val = (val <= 0) ? '0.000001' : val;
 		} else {
