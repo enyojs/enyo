@@ -7,8 +7,7 @@ require('enyo');
 
 var
 	kind = require('../kind'),
-	utils = require('../utils'),
-	platform = require('../platform');
+	utils = require('../utils');
 var
 	Input = require('../Input');
 
@@ -98,8 +97,7 @@ module.exports = kind(
 	* @private
 	*/
 	handlers: {
-		onchange: 'change',
-		onclick: 'click'
+		onchange: 'change'
 	},
 
 	/**
@@ -178,19 +176,6 @@ module.exports = kind(
 	change: function () {
 		var nodeChecked = utils.isTrue(this.getNodeProperty('checked'));
 		this.setActive(nodeChecked);
-	},
-
-	/**
-	* @private
-	*/
-	click: function (sender, e) {
-		// Various versions of IE (notably IE8) do not fire 'onchange' for
-		// checkboxes, so we discern change via 'click'.
-		// Note: keyboard interaction (e.g. pressing space when focused) fires
-		// a click event.
-		if (platform.ie <= 8) {
-			this.bubble('onchange', e);
-		}
 	},
 
 	// Accessibility
