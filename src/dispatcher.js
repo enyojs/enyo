@@ -42,17 +42,17 @@ var dispatcher = module.exports = dispatcher = {
 	*
 	* @private
 	*/
-	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
-		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
-		"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationend",
-		"webkitAnimationStart", "animationstart", "webkitAnimationIteration", "animationiteration"],
+	events: ['mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mousewheel',
+		'click', 'dblclick', 'change', 'keydown', 'keyup', 'keypress', 'input',
+		'paste', 'copy', 'cut', 'webkitTransitionEnd', 'transitionend', 'webkitAnimationEnd', 'animationend',
+		'webkitAnimationStart', 'animationstart', 'webkitAnimationIteration', 'animationiteration'],
 
 	/**
 	* These events come from window
 	*
 	* @private
 	*/
-	windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate", "focus", "blur"],
+	windowEvents: ['resize', 'load', 'unload', 'message', 'hashchange', 'popstate', 'focus', 'blur'],
 
 	/**
 	* Feature plugins (aka filters)
@@ -71,8 +71,8 @@ var dispatcher = module.exports = dispatcher = {
 		}
 		for (i=0; (n=d.windowEvents[i]); i++) {
 			// Chrome Packaged Apps don't like "unload"
-			if(n === "unload" &&
-				(typeof global.chrome === "object") &&
+			if(n === 'unload' &&
+				(typeof global.chrome === 'object') &&
 				global.chrome.app) {
 				continue;
 			}
@@ -157,7 +157,7 @@ var dispatcher = module.exports = dispatcher = {
 	*/
 	dispatchBubble: function(e, c) {
 		var type = e.type;
-		type = e.customEvent ? type : "on" + type;
+		type = e.customEvent ? type : 'on' + type;
 		return c.bubble(type, e, c);
 	}
 };
@@ -201,7 +201,7 @@ dispatcher.bubble = function(inEvent) {
 // This string is set on event handlers attributes for DOM elements that
 // don't normally bubble (like onscroll) so that they can participate in the
 // Enyo event system.
-dispatcher.bubbler = "enyo.bubble(arguments[0])";
+dispatcher.bubbler = 'enyo.bubble(arguments[0])';
 
 // The code below helps make Enyo compatible with Google Packaged Apps
 // Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html),
@@ -224,7 +224,7 @@ dispatcher.bubbler = "enyo.bubble(arguments[0])";
 		var args = Array.prototype.slice.call(arguments, 0),
 			control = args.shift();
 
-		if((typeof control === "object") && (typeof control.hasNode === "function")) {
+		if((typeof control === 'object') && (typeof control.hasNode === 'function')) {
 			utils.forEach(args, function(event) {
 				if(this.hasNode()) {
 					dispatcher.listen(this.node, event, bubbleUp);
@@ -245,7 +245,7 @@ dispatcher.bubbler = "enyo.bubble(arguments[0])";
 		var args = Array.prototype.slice.call(arguments, 0),
 			control = args.shift();
 
-		if((typeof control === "object") && (typeof control.hasNode === "function")) {
+		if((typeof control === 'object') && (typeof control.hasNode === 'function')) {
 			utils.forEach(args, function(event) {
 				if(this.hasNode()) {
 					dispatcher.stopListening(this.node, event, bubbleUp);
@@ -268,12 +268,12 @@ Dom.requiresWindow(dispatcher.connect);
 */
 dispatcher.features.push(
 	function (e) {
-		if ("click" === e.type) {
+		if ('click' === e.type) {
 			if (e.clientX === 0 && e.clientY === 0 && !e.detail) {
 				// this allows the click to dispatch as well
 				// but note the tap event will fire first
 				var cp = utils.clone(e);
-				cp.type = "tap";
+				cp.type = 'tap';
 				cp.preventDefault = utils.nop;
 				dispatcher.dispatch(cp);
 			}
@@ -292,19 +292,20 @@ var _xy = {};
 dispatcher.features.push(
 	function (e) {
 		if (
-			(e.type == "mousemove")  ||
-			(e.type == "tap")        ||
-			(e.type == "click")      ||
-			(e.type == "touchmove")
+			(e.type == 'mousemove')  ||
+			(e.type == 'tap')        ||
+			(e.type == 'click')      ||
+			(e.type == 'touchmove')
 		) {
-			_xy.clientX = e.clientX;
-			_xy.clientY = e.clientY;
+			var evt = (e.type == 'touchmove') ? e.touches[0] : e;
+			_xy.clientX = evt.clientX;
+			_xy.clientY = evt.clientY;
 			// note only ie8 does not support pageX/pageY
-			_xy.pageX   = e.pageX;
-			_xy.pageY   = e.pageY;
+			_xy.pageX   = evt.pageX;
+			_xy.pageY   = evt.pageY;
 			// note ie8 and opera report these values incorrectly
-			_xy.screenX = e.screenX;
-			_xy.screenY = e.screenY;
+			_xy.screenX = evt.screenX;
+			_xy.screenY = evt.screenY;
 		}
 	}
 );
@@ -343,7 +344,7 @@ dispatcher.getPosition = function () {
 * 	417 : 'fastforward'
 * });
 * ```
-* 
+*
 * @private
 */
 dispatcher.features.push(function(e) {
@@ -406,7 +407,7 @@ utils.mixin(dispatcher, {
 	*/
 	captures: [],
 
-	/** 
+	/**
 	* Captures [events]{@glossary event} for `inTarget`, where `inEvents` is specified as a
 	* hash of event names mapped to callback handler names to be called on `inTarget` (or,
 	* optionally, `inScope`). The callback is called when any of the captured events are
@@ -423,7 +424,7 @@ utils.mixin(dispatcher, {
 
 	/**
 	* Removes the specified target from the capture list.
-	* 
+	*
 	* @private
 	*/
 	release: function(inTarget) {
@@ -438,7 +439,7 @@ utils.mixin(dispatcher, {
 
 	/**
 	* Sets the information for a captured {@glossary event}.
-	* 
+	*
 	* @private
 	*/
 	setCaptureInfo: function(inInfo) {
@@ -452,7 +453,7 @@ utils.mixin(dispatcher, {
 (function () {
 	/**
 	* Dispatcher preview feature
-	* 
+	*
 	* Allows {@link module:enyo/Control~Control} ancestors of the {@glossary event} target
 	* a chance (eldest first) to react by implementing `previewDomEvent`.
 	*
