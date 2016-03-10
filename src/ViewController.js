@@ -5,6 +5,9 @@ require('enyo');
 * @module enyo/ViewController
 */
 
+// needed so that the default kind is Control instead of Component, if it isn't required elsewhere
+require('./Control');
+
 var
 	kind = require('./kind'),
 	utils = require('./utils');

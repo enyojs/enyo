@@ -50,11 +50,6 @@ module.exports = {
 		// Note that while 'which' works in IE9, it is broken for mousemove. Therefore,
 		// in IE, use global.event.button
 		if (platform.ie < 10) {
-			//Fix for IE8, which doesn't include pageX and pageY properties
-			if(platform.ie==8 && e.target) {
-				e.pageX = e.clientX + e.target.scrollLeft;
-				e.pageY = e.clientY + e.target.scrollTop;
-			}
 			var b = global.event && global.event.button;
 			if (b) {
 				// multi-button not supported, priority: left, right, middle
