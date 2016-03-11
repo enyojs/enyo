@@ -328,8 +328,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	removeNode: function (node) {
-		if (node.remove) node.remove();
-		else if (node.parentNode) node.parentNode.removeChild(node);
+		if (node.parentNode) node.parentNode.removeChild(node);
 	},
 
 	/**
