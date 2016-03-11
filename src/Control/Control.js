@@ -33,7 +33,7 @@ var styleBuffer = [];
 
 var applyStyleToDom = function() {
 	var length = styleBuffer.length;
-	if (length == 0) {
+	if (length === 0) {
 		return;
 	}
 
@@ -113,8 +113,7 @@ var applyStyleToDom = function() {
 		// it is rendered
 		delegate.invalidate(that, 'style');
 	}
-}
-
+};
 
 /**
 * Called by `Control.teardownRender()`. In certain circumstances,
