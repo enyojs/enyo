@@ -29,6 +29,93 @@ require('../gesture');
 
 var nodePurgatory;
 
+var styleBuffer = [];
+
+var applyStyleToDom = function() {
+	var length = styleBuffer.length;
+	if (length == 0) {
+		return;
+	}
+
+	for (var i = 0; i < length; i++) {
+
+		var obj = styleBuffer.pop(),
+			that = obj.that,
+			prop = obj.prop,
+			value = obj.value;
+
+		// NOTE: that method deliberately avoids calling set('style', ...) for performance
+		// as it will have already been parsed by the browser so we pass it on via the
+		// notification system which is the same
+
+		// TODO: Wish we could delay that potentially...
+		// if we have a node we render the value immediately and update our style string
+		// in the process to keep them synchronized
+		var node = that.hasNode(),
+			delegate = that.renderDelegate || Control.renderDelegate;
+
+		// FIXME: that is put in place for a Firefox bug where setting a style value of a node
+		// via its CSSStyleDeclaration object (by accessing its node.style property) does
+		// not work when using a CSS property name that contains one or more dash, and requires
+		// setting the property via the JavaScript-style property name. that fix should be
+		// removed once that issue has been resolved in the Firefox mainline and its variants
+		// (it is currently resolved in the 36.0a1 nightly):
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=1083457
+		if (node && (platform.firefox < 35 || platform.firefoxOS || platform.androidFirefox)) {
+			prop = prop.replace(/-([a-z])/gi, function(match, submatch) {
+				return submatch.toUpperCase();
+			});
+		}
+
+		if (value !== null && value !== '' && value !== undefined) {
+			// update our current cached value
+			if (node) {
+				node.style[prop] = value;
+
+				// cssText is an internal property used to help know when to sync and not
+				// sync with the node in styleChanged
+				that.style = that.cssText = node.style.cssText;
+
+				// otherwise we have to try and prepare it for the next time it is rendered we
+				// will need to update it because it will not be synchronized
+			} else {
+				that.set('style', that.style + (' ' + prop + ':' + value + ';'));
+			}
+		} else {
+
+			// in that case we are trying to clear the style property so if we have the node
+			// we let the browser handle whatever the value should be now and otherwise
+			// we have to parse it out of the style string and wait to be rendered
+
+			if (node) {
+				node.style[prop] = '';
+				that.style = that.cssText = node.style.cssText;
+
+				// we need to invalidate the style for the delegate
+				delegate.invalidate(that, 'style');
+			} else {
+				var style = that.style;
+
+				// that is a rare case to nullify the style of a control that is not
+				// rendered or does not have a node
+				style = style.replace(new RegExp(
+					// that looks a lot worse than it is. The complexity stems from needing to
+					// match a url container that can have other characters including semi-
+					// colon and also that the last property may/may-not end with one
+					'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)',
+					'gi'
+				),'');
+				that.set('style', style);
+			}
+		}
+		// we need to invalidate the style for the delegate -- regardless of whether or
+		// not the node exists to ensure that the tag is updated properly the next time
+		// it is rendered
+		delegate.invalidate(that, 'style');
+	}
+}
+
+
 /**
 * Called by `Control.teardownRender()`. In certain circumstances,
 * we need to temporarily keep a DOM node around after tearing down
@@ -615,73 +702,11 @@ var Control = module.exports = kind(
 	* @public
 	*/
 	applyStyle: function (prop, value) {
-
-		// NOTE: This method deliberately avoids calling set('style', ...) for performance
-		// as it will have already been parsed by the browser so we pass it on via the
-		// notification system which is the same
-
-		// TODO: Wish we could delay this potentially...
-		// if we have a node we render the value immediately and update our style string
-		// in the process to keep them synchronized
-		var node = this.hasNode(),
-			style = this.style,
-			delegate = this.renderDelegate || Control.renderDelegate;
-
-		// FIXME: This is put in place for a Firefox bug where setting a style value of a node
-		// via its CSSStyleDeclaration object (by accessing its node.style property) does
-		// not work when using a CSS property name that contains one or more dash, and requires
-		// setting the property via the JavaScript-style property name. This fix should be
-		// removed once this issue has been resolved in the Firefox mainline and its variants
-		// (it is currently resolved in the 36.0a1 nightly):
-		// https://bugzilla.mozilla.org/show_bug.cgi?id=1083457
-		if (node && (platform.firefox < 35 || platform.firefoxOS || platform.androidFirefox)) {
-			prop = prop.replace(/-([a-z])/gi, function(match, submatch) {
-				return submatch.toUpperCase();
-			});
-		}
-
-		if (value !== null && value !== '' && value !== undefined) {
-			// update our current cached value
-			if (node) {
-				node.style[prop] = value;
-
-				// cssText is an internal property used to help know when to sync and not
-				// sync with the node in styleChanged
-				this.style = this.cssText = node.style.cssText;
-
-				// otherwise we have to try and prepare it for the next time it is rendered we
-				// will need to update it because it will not be synchronized
-			} else this.set('style', style + (' ' + prop + ':' + value + ';'));
-		} else {
-
-			// in this case we are trying to clear the style property so if we have the node
-			// we let the browser handle whatever the value should be now and otherwise
-			// we have to parse it out of the style string and wait to be rendered
-
-			if (node) {
-				node.style[prop] = '';
-				this.style = this.cssText = node.style.cssText;
-
-				// we need to invalidate the style for the delegate
-				delegate.invalidate(this, 'style');
-			} else {
-
-				// this is a rare case to nullify the style of a control that is not
-				// rendered or does not have a node
-				style = style.replace(new RegExp(
-					// This looks a lot worse than it is. The complexity stems from needing to
-					// match a url container that can have other characters including semi-
-					// colon and also that the last property may/may-not end with one
-					'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)',
-					'gi'
-				),'');
-				this.set('style', style);
-			}
-		}
-		// we need to invalidate the style for the delegate -- regardless of whether or
-		// not the node exists to ensure that the tag is updated properly the next time
-		// it is rendered
-		delegate.invalidate(this, 'style');
+		styleBuffer.push({
+			that: this,
+			prop: prop,
+			value: value
+		});
 
 		return this;
 	},
@@ -1739,3 +1764,9 @@ Control.floatingLayer = new Control.FloatingLayer({id: 'floatingLayer'});
 * @public
 */
 Control.Fullscreen = fullscreen(Control);
+
+/**
+* @static
+* @public
+*/
+Control.applyStyleToDom = applyStyleToDom;
