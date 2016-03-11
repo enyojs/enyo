@@ -247,6 +247,16 @@ var frame = module.exports = {
 		});
 	},
 
+	parseShortHand: function (val, length) {
+		var res;
+		if (val.indexOf('rgb') === 0) {
+			res = this.parseValue(val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1]));
+		} else {
+			res = this.parseValue(val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,''));
+		}
+		return res.concat(Array(length - res.length).fill(0));
+	},
+
 	/**
 	 * Gets a matrix for DOM element.
 	 * @public
@@ -274,8 +284,12 @@ var frame = module.exports = {
 	 */
 	getStyleValue: function (style, key) {
 		var v = style.getPropertyValue(key) || style[key];
-		if (v === undefined || v === null || v == "auto") {
+		if (!v || v === "auto") {
 			return 0;
+		}
+		if (key === 'box-shadow') {
+			if (v === 'none') return Array(7).fill(0);
+			return v.split(')')[0].replace(/^\w*\(/, '').concat(v.split(')')[1].split(' ').join(','));
 		}
 		if (COLOR[key]) {
 			return v.replace(/^\w*\(/, '').replace(')', '');
@@ -305,6 +319,9 @@ var frame = module.exports = {
 		} else if (OPACITY[prop]) {
 			val = val[0].toFixed(6);
 			val = (val <= 0) ? '0.000001' : val;
+		} else if (prop === 'box-shadow') {
+			val = 'rgb('+ val.slice(0, 3).map(function(v) { return parseInt(v, 10);})
+				+ ') ' + val.slice(3).map(function(v) {return v + 'px'}).join(' ');
 		} else {
 			val = val[0] + 'px';
 		}
@@ -347,15 +364,19 @@ var frame = module.exports = {
 			sP = initial ? utils.mixin({}, initial) : {},
 			tP = {},
 			dP = {},
-			m, k, v,
+			m, k, u, v,
 			s = initial ? undefined : Dom.getComputedStyle(node);
 
 		for (k in props) {
 			v = sP[k];
 			if (!this.isTransform(k)) {
 				v = v || this.getStyleValue(s || Dom.getComputedStyle(node), k);
-				eP[k] = this.parseValue(props[k]);
 				sP[k] = this.parseValue(v);
+				if (k === 'box-shadow' || COLOR[k]) {
+					eP[k] = this.parseShortHand(props[k], sP[k].length);
+				} else {
+					eP[k] = this.parseValue(props[k]);
+				}
 			} else {
 				v = this.parseValue(props[k]);
 				//tP[k] = k == 'rotate' ? Vector.toQuant(v) : v;
