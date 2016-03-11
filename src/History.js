@@ -38,6 +38,7 @@
 var
 	dispatcher = require('enyo/dispatcher'),
 	kind = require('enyo/kind'),
+	platform = require('enyo/platform'),
 	utils = require('enyo/utils'),
 	Component = require('enyo/Component'),
 	Signals = require('enyo/Signals');
@@ -65,6 +66,17 @@ var
 
 	// `true` if the platform support the HTML5 History API
 	_supports = !!global.history.pushState;
+
+/**
+* Registers key mapping for Safari to support the Delete key as Back (https://discussions.apple.com/thread/4136412?tstart=0).
+*
+* @private
+*/
+if (platform.safari >= 6) {
+	dispatcher.registerKeyMap({
+		8: 'back'
+	});
+}
 
 var EnyoHistory = module.exports = kind.singleton(
 	/** @lends module:enyo/History~History.prototype */ {
