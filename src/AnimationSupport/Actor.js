@@ -112,7 +112,7 @@ Actor.makeScene = function(actor) {
 		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @public
 		 */
-		active: false,
+		active: _actor && _actor.generated,
 
 		/**
 		 * Holds refereneces of complete time span for this scene.

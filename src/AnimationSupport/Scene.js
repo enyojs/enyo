@@ -51,28 +51,35 @@ var SceneAction = {
 			tm = this.timeline,
 			th = this.threshold || this.span;
 
-		s = Actor.animateAtTime(this.rolePlays, tm);
-		e = Actor.animateAtTime(this.rolePlays, tm + th);
+		if (this.rolePlays && this.rolePlays.length > 0 ) {
+			s = Actor.animateAtTime(this.rolePlays, tm);
+			e = Actor.animateAtTime(this.rolePlays, tm + th);
 
-		for (i = 0;
-			(role = this.rolePlays[i]); i++) {
-			actor = role.actor;
-			actor.active = true;
-			if (i < s) {
-				actor.timeline = role.dur;
-				pose = actor.action(0, pose);
-				actor.cut();
-			} else if (i >= s && i < e) {
-				sts += ts;
-				actor.speed = this.speed;
-				pose = actor.action(ts, pose);
-			} else {
-				pose = actor.action(0, pose);
-				actor.cut();
+			for (i = 0;
+				(role = this.rolePlays[i]); i++) {
+				actor = role.actor;
+				if (i < s) {
+					actor.active = true;
+					actor.timeline = role.dur;
+					pose = actor.action(0, pose);
+					actor.cut();
+				} else if (i >= s && i < e) {
+					actor.active = true;
+					sts += ts;
+					actor.speed = this.speed;
+					pose = actor.action(ts, pose);
+				} else {
+					if (actor.active) {
+						pose = actor.action(0, pose);
+						actor.cut();	
+					}
+				}
 			}
+			tm = this.rolePlay(sts);
+			return pose;
 		}
-		tm = this.rolePlay(sts);
-		return pose;
+		
+		return actor.action(ts, pose);
 	}
 };
 

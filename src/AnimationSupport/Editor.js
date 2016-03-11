@@ -24,7 +24,7 @@ module.exports = {
 	/**
 	* @private
 	*/
-	seekInterval:0,
+	seekInterval: 0,
 	/**
 	* @private
 	*/
@@ -178,6 +178,7 @@ module.exports = {
 		actor.seekInterval = actor.timeline + seek;
 		if (actor.seekInterval < 0) {
 			actor.speed = 0;
+			actor.seekInterval = 0;
 		}
 	},
 
@@ -190,9 +191,7 @@ module.exports = {
 	 */
 	rolePlay: function (t, actor) {
 		actor = actor || this;
-		if (actor.timeline === undefined || actor.timeline < 0)
-			actor.timeline = 0;
-		
+
 		if(actor.delay > 0) {
 			actor.delay -= _rolePlay(t, actor.speed);
 		} else {
@@ -205,6 +204,9 @@ module.exports = {
 				actor.speed = 0;
 			}
 		}
+		
+		if (actor.timeline === undefined || actor.timeline < 0)
+			actor.timeline = 0;
 		return actor.timeline;
 	}
 };
