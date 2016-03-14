@@ -2,6 +2,7 @@ var
 	kind = require('enyo/kind');
 
 var
+	Control = require('enyo/Control'),
 	Select = require('enyo/Select');
 
 describe('Select', function () {
@@ -49,6 +50,18 @@ describe('Select', function () {
 			});
 
 			it ('should have the value "four" at render', function () {
+				expect(testSelect.get('value')).to.equal('four');
+			});
+		});
+
+		describe('property interaction', function () {
+			it ('should update the value when selected is changed', function () {
+				testSelect.set('value', 'two')
+				expect(testSelect.get('selected')).to.equal(1);
+			});
+
+			it ('should update selected when the value is changed', function () {
+				testSelect.set('selected', 3)
 				expect(testSelect.get('value')).to.equal('four');
 			});
 		});

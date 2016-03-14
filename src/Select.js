@@ -164,6 +164,25 @@ module.exports = kind(
 	},
 
 	/**
+	* Updates the `selected` option matching the current value. If the option doesn't have a value,
+	* it will match its content instead.
+	*
+	* @private
+	*/
+	selectOptionByValue: function () {
+		var i, controls, l, c;
+
+		for (i = 0, controls = this.getControls(), l = controls.length; i < l; i++) {
+			c = controls[i];
+			// support 
+			if (c.value ? c.value === this.value : c.content === this.value) {
+				if (i !== this.selected) this.set('selected', i);
+				break;
+			}
+		}
+	},
+
+	/**
 	* @private
 	*/
 	selectedChanged: function () {
@@ -175,8 +194,15 @@ module.exports = kind(
 	* @private
 	*/
 	valueChanged: function () {
-		this.setNodeProperty('value', this.value);
-		this.updateSelectedFromNode();
+		// IE will clear selectedIndex when setting the value directly on the node so instead we
+		// iterate the children, find the matching value, and update selected if necessary.
+		if (platform.ie || platform.edge) {
+			this.selectOptionByValue();
+		}
+		else {
+			this.setNodeProperty('value', this.value);
+			this.updateSelectedFromNode();
+		}
 	},
 
 	/**
