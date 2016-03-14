@@ -9,7 +9,8 @@ var
 	kind = require('./kind');
 
 var
-	CoreObject = require('./CoreObject');
+	CoreObject = require('./CoreObject'),
+	animation = require('./animation');
 
 module.exports = kind.singleton({
 	/** @lends module:enyo/Loop */
@@ -44,7 +45,7 @@ module.exports = kind.singleton({
 	* @private
 	*/
 	trigger: function () {
-		global.requestAnimationFrame(this.lcb || this.initLoopCallback());
+		animation.requestAnimationFrame(this.lcb || this.initLoopCallback());
 	},
 	/**
 	* @private

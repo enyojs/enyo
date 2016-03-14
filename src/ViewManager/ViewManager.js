@@ -93,8 +93,6 @@
 * @public
 */
 
-var rAF = window.requestAnimationFrame;
-
 var
 	animation = require('../animation'),
 	kind = require('../kind'),
