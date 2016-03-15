@@ -53,11 +53,16 @@ Dom.requiresWindow(function() {
 		/**
 		* @private
 		*/
+		eventTarget: undefined,
+
+		/**
+		* @private
+		*/
 		touchstart: function (e) {
 			this._touchCount += e.changedTouches.length;
 			this.excludedTarget = null;
 			var event = this.makeEvent(e);
-			event.target = this.findTarget(event);
+			this.eventTarget = event.target = this.findTarget(event);
 			//store the finger which generated the touchstart event
 			this.currentIdentifier = event.identifier;
 			gesture.down(event);
@@ -77,6 +82,8 @@ Dom.requiresWindow(function() {
 			var de = gesture.drag.dragEvent;
 			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 			var event = this.makeEvent(e);
+			event.target = this.eventTarget;
+			
 			// do not generate the move event if this touch came from a different
 			// finger than the starting touch
 			if (this.currentIdentifier !== event.identifier) {
