@@ -73,6 +73,9 @@ var gesture = module.exports = {
 			e.vertical = !e.horizontal;
 		}
 		dispatcher.dispatch(e);
+		if (e.scrollMode) {
+			evt.scrollMode = true;
+		}
 	},
 
 	/**

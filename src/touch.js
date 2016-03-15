@@ -60,11 +60,22 @@ Dom.requiresWindow(function() {
 		/**
 		* @private
 		*/
+		scrollMode: undefined,
+
+		/**
+		* @private
+		*/
+		eventTarget: undefined,
+
+		/**
+		* @private
+		*/
 		touchstart: function (e) {
 			this._touchCount += e.changedTouches.length;
 			this.excludedTarget = null;
+			this.scrollMode = undefined;
 			var event = this.makeEvent(e);
-			event.target = this.findTarget(event);
+			this.eventTarget = event.target = this.findTarget(event);
 			//store the finger which generated the touchstart event
 			this.currentIdentifier = event.identifier;
 			gesture.down(event);
@@ -89,13 +100,20 @@ Dom.requiresWindow(function() {
 			// target finding via the drag event.
 			var de = gesture.drag.dragEvent;
 			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
+			e.scrollMode = this.scrollMode;
+
 			var event = this.makeEvent(e);
+			event.target = this.eventTarget;
+
 			// do not generate the move event if this touch came from a different
 			// finger than the starting touch
 			if (this.currentIdentifier !== event.identifier) {
 				return;
 			}
 			gesture.move(event);
+			if(event.scrollMode) {
+				this.scrollMode = true;
+			}
 			// prevent default document scrolling if enyo.bodyIsFitting == true
 			// avoid window scrolling by preventing default on this event
 			// note: this event can be made unpreventable (native scrollers do this)
@@ -103,7 +121,7 @@ Dom.requiresWindow(function() {
 				e.preventDefault();
 			}
 			// synthesize over and out (normally generated via mouseout)
-			if (this.overEvent && this.overEvent.target != event.target) {
+			if (!this.scrollMode && this.overEvent && this.overEvent.target != event.target) {
 				this.overEvent.relatedTarget = event.target;
 				event.relatedTarget = this.overEvent.target;
 				gesture.out(this.overEvent);
@@ -156,6 +174,7 @@ Dom.requiresWindow(function() {
 			//event.target = this.findTarget(event);
 			// normalize "mouse button" info
 			event.which = 1;
+			event.scrollMode = e.scrollMode;
 			//enyo.log("target for " + inEvent.type + " at " + e.pageX + ", " + e.pageY + " is " + (e.target ? e.target.id : "none"));
 			return event;
 		},

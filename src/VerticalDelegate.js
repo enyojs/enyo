@@ -180,7 +180,7 @@ module.exports = {
 			view = (page.children[i - page.start] || list.createComponent({}));
 			// disable notifications until all properties to be updated
 			// have been
-			view.teardownRender();
+			// view.teardownRender();
 			view.stopNotifications();
 			view.set('model', data.at(i));
 			view.set('index', i);

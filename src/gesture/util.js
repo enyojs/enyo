@@ -36,6 +36,7 @@ module.exports = {
 		e.srcEvent = e.srcEvent || evt;
 		e.preventDefault = this.preventDefault;
 		e.disablePrevention = this.disablePrevention;
+		e.scrollMode = evt.scrollMode;
 
 		if (dom._bodyScaleFactorX !== 1 || dom._bodyScaleFactorY !== 1) {
 			// Intercept only these events, not all events, like: hold, release, tap, etc,
