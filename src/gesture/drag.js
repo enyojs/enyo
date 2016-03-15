@@ -306,6 +306,7 @@ module.exports = {
 		e.metaKey = inEvent.metaKey;
 		e.shiftKey = inEvent.shiftKey;
 		e.srcEvent = inEvent.srcEvent;
+		e.scrollMode = inEvent.scrollMode;
 		// };
 		//Fix for IE8, which doesn't include pageX and pageY properties
 		if(platform.ie==8 && e.target) {
@@ -324,6 +325,9 @@ module.exports = {
 		//enyo.log('dragstart');
 		this.dragEvent = this.makeDragEvent('dragstart', this.target, e);
 		dispatcher.dispatch(this.dragEvent);
+		if (this.dragEvent.scrollMode) {
+			e.scrollMode = true;
+		}
 	},
 
 	/**
@@ -333,7 +337,9 @@ module.exports = {
 		//enyo.log('sendDrag to ' + this.dragEvent.target.id + ', over to ' + e.target.id);
 		// send dragOver event to the standard event target
 		var synth = this.makeDragEvent('dragover', e.target, e, this.dragEvent.dragInfo);
-		dispatcher.dispatch(synth);
+		if(!e.scrollMode) {
+			dispatcher.dispatch(synth);
+		}
 		// send drag event to the drag source
 		synth.type = 'drag';
 		synth.target = this.dragEvent.target;
