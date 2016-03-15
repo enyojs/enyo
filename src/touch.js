@@ -4,11 +4,13 @@ var
 	utils = require('./utils'),
 	gesture = require('./gesture'),
 	dispatcher = require('./dispatcher'),
-	platform = require('./platform');
+	platform = require('./platform'),
+	animation = require('./animation');
 
 var
 	Dom = require('./dom'),
-	Job = require('./job');
+	Job = require('./job'),
+	Control = require('./Control');
 
 function dispatch (e) {
 	return dispatcher.dispatch(e);
@@ -21,7 +23,7 @@ Dom.requiresWindow(function() {
 
 	/**
 	* Add touch-specific gesture feature
-	* 
+	*
 	* @private
 	*/
 
@@ -29,7 +31,7 @@ Dom.requiresWindow(function() {
 	* @private
 	*/
 	var oldevents = gesture.events;
-	
+
 	/**
 	* @private
 	*/
@@ -39,7 +41,7 @@ Dom.requiresWindow(function() {
 		gesture.events = touchGesture;
 		gesture.events.touchstart(e);
 	};
-	
+
 	/**
 	* @private
 	*/
@@ -49,6 +51,11 @@ Dom.requiresWindow(function() {
 		* @private
 		*/
 		_touchCount: 0,
+
+		/**
+		* @private
+		*/
+		clientYBefore: -1,
 
 		/**
 		* @private
@@ -83,15 +90,21 @@ Dom.requiresWindow(function() {
 		*/
 		touchmove: function (e) {
 			Job.stop('resetGestureEvents');
+
+			if (this.clientYBefore != e.changedTouches[0].clientY) {
+				animation.requestAnimationFrame(Control.applyStyleToDom);
+				this.clientYBefore = e.changedTouches[0].clientY;
+			}
+
 			// NOTE: allow user to supply a node to exclude from event
 			// target finding via the drag event.
 			var de = gesture.drag.dragEvent;
 			this.excludedTarget = de && de.dragInfo && de.dragInfo.node;
 			e.scrollMode = this.scrollMode;
-			
+
 			var event = this.makeEvent(e);
 			event.target = this.eventTarget;
-			
+
 			// do not generate the move event if this touch came from a different
 			// finger than the starting touch
 			if (this.currentIdentifier !== event.identifier) {
@@ -139,10 +152,10 @@ Dom.requiresWindow(function() {
 		},
 
 		/**
-		* Use `mouseup()` after touches are done to reset {@glossary event} handling 
+		* Use `mouseup()` after touches are done to reset {@glossary event} handling
 		* back to default; this works as long as no one did a `preventDefault()` on
 		* the touch events.
-		* 
+		*
 		* @private
 		*/
 		mouseup: function () {
@@ -189,9 +202,9 @@ Dom.requiresWindow(function() {
 		},
 
 		/**
-		* NOTE: Will find only 1 element under the touch and will fail if an element is 
+		* NOTE: Will find only 1 element under the touch and will fail if an element is
 		* positioned outside the bounding box of its parent.
-		* 
+		*
 		* @private
 		*/
 		findTargetTraverse: function (node, x, y) {
@@ -242,6 +255,6 @@ Dom.requiresWindow(function() {
 			}
 		}
 	};
-	
+
 	touchGesture.connect();
 });
