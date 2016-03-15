@@ -14,7 +14,6 @@ var
 	touchGestures = require('./touchGestures'),
 	gestureUtil = require('./util');
 
-
 /**
 * Enyo supports a set of normalized events that work similarly across all supported platforms.
 * These events are provided so that users can write a single set of event handlers for
@@ -84,7 +83,7 @@ var gesture = module.exports = {
 
 		// We have added some logic to synchronize up and down events in certain scenarios (i.e.
 		// clicking multiple buttons with a mouse) and to generally guard against any potential
-		// asymmetry, but a full solution would be to maintain a map of up/down events as an 
+		// asymmetry, but a full solution would be to maintain a map of up/down events as an
 		// ideal solution, for future work.
 		e._tapPrevented = this.downEvent && this.downEvent._tapPrevented && this.downEvent.which == e.which;
 		e.preventTap = function() {
@@ -259,7 +258,7 @@ var gesture = module.exports = {
 	/**
 	* @todo I'd rather refine the public API of gesture rather than simply forwarding the internal
 	*   drag module but this will work in the interim. - ryanjduffy
-	* 
+	*
 	* Known Consumers:
 	*  - Spotlight.onAcceleratedKey - (prepare|begin|end)Hold()
 	*  - Moonstone - configureHoldPulse()
@@ -334,13 +333,18 @@ module.exports.events = {
 dom.requiresWindow(function() {
 	if (document.addEventListener) {
 		document.addEventListener('DOMMouseScroll', function(inEvent) {
-			var e = utils.clone(inEvent);
+			var e = utils.clone(inEvent),
+				isVertical = e.VERTICAL_AXIS == e.axis,
+				wheelDelta;
 			e.preventDefault = function() {
 				inEvent.preventDefault();
 			};
 			e.type = 'mousewheel';
-			var p = e.VERTICAL_AXIS == e.axis ? 'wheelDeltaY' : 'wheelDeltaX';
-			e[p] =  e.detail * -40;
+
+			wheelDelta = e.detail * -40;
+			e.wheelDeltaY = isVertical ? wheelDelta : 0;
+			e.wheelDeltaX = isVertical ? 0 : wheelDelta;
+
 			dispatcher.dispatch(e);
 		}, false);
 	}
