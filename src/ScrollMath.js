@@ -406,63 +406,60 @@ module.exports = kind(
 		var t0 = utils.perfNow(), t = 0;
 		// delta tracking
 		var x0, y0;
-		// animation handler
-		var fn = this.bindSafely(function() {
-			// wall-clock time
-			var t1 = utils.perfNow();
-			// delta from last wall clock time
-			var dt = t1 - t0;
-			// record the time for next delta
-			t0 = t1;
-			// user drags override animation
-			if (this.dragging) {
-				this.y0 = this.y = this.uy;
-				this.x0 = this.x = this.ux;
-				this.endX = this.endY = null;
-			}
-			// frame-time accumulator
-			// min acceptable time is 16ms (60fps)
-			t += Math.max(16, dt);
-			// prevent snapping to originally desired scroll position if we are in overscroll
-			if (this.isInOverScroll()) {
-				this.endX = null;
-				this.endY = null;
 
-				this.takeBoundarySnapshot();
-			}
-			else {
-				this.discardBoundarySnapshot();
+		// wall-clock time
+		var t1 = utils.perfNow();
+		// delta from last wall clock time
+		var dt = t1 - t0;
+		// record the time for next delta
+		t0 = t1;
+		// user drags override animation
+		if (this.dragging) {
+			this.y0 = this.y = this.uy;
+			this.x0 = this.x = this.ux;
+			this.endX = this.endY = null;
+		}
+		// frame-time accumulator
+		// min acceptable time is 16ms (60fps)
+		t += Math.max(16, dt);
+		// prevent snapping to originally desired scroll position if we are in overscroll
+		if (this.isInOverScroll()) {
+			this.endX = null;
+			this.endY = null;
 
-				// alternate fixed-time step strategy:
-				if (this.fixedTime) {
-					t = this.interval;
-				}
-			}
-			// consume some t in simulation
-			t = this.simulate(t);
-			// scroll if we have moved, otherwise the animation is stalled and we can stop
-			if (y0 != this.y || x0 != this.x) {
-				this.scroll();
-			} else if (!this.dragging) {
-				// set final values
-				if (this.endX != null) {
-					this.x = this.x0 = this.endX;
-				}
-				if (this.endY != null) {
-					this.y = this.y0 = this.endY;
-				}
+			this.takeBoundarySnapshot();
+		}
+		else {
+			this.discardBoundarySnapshot();
 
-				this.stop();
-				this.scroll();
-				this.doScrollStop();
-
-				this.endX = null;
-				this.endY = null;
+			// alternate fixed-time step strategy:
+			if (this.fixedTime) {
+				t = this.interval;
 			}
-			y0 = this.y;
-			x0 = this.x;
-		});
-		fn();
+		}
+		// consume some t in simulation
+		t = this.simulate(t);
+		// scroll if we have moved, otherwise the animation is stalled and we can stop
+		if (y0 != this.y || x0 != this.x) {
+			this.scroll();
+		} else if (!this.dragging) {
+			// set final values
+			if (this.endX != null) {
+				this.x = this.x0 = this.endX;
+			}
+			if (this.endY != null) {
+				this.y = this.y0 = this.endY;
+			}
+
+			this.stop();
+			this.scroll();
+			this.doScrollStop();
+
+			this.endX = null;
+			this.endY = null;
+		}
+		y0 = this.y;
+		x0 = this.x;
 	},
 
 	/**

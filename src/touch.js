@@ -4,14 +4,13 @@ var
 	utils = require('./utils'),
 	gesture = require('./gesture'),
 	dispatcher = require('./dispatcher'),
-	platform = require('./platform');
+	platform = require('./platform'),
+	animation = require('./animation');
 
 var
 	Dom = require('./dom'),
 	Job = require('./job'),
 	Control = require('./Control');
-
-var rAF = global.requestAnimationFrame;
 
 function dispatch (e) {
 	return dispatcher.dispatch(e);
@@ -82,7 +81,7 @@ Dom.requiresWindow(function() {
 			Job.stop('resetGestureEvents');
 
 			if (this.clientYBefore != e.changedTouches[0].clientY) {
-				rAF(Control.applyStyleToDom);
+				animation.requestAnimationFrame(Control.applyStyleToDom);
 				this.clientYBefore = e.changedTouches[0].clientY;
 			}
 

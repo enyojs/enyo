@@ -40,25 +40,25 @@ var applyStyleToDom = function() {
 	for (var i = 0; i < length; i++) {
 
 		var obj = styleBuffer.pop(),
-			that = obj.that,
+			control = obj.control,
 			prop = obj.prop,
 			value = obj.value;
 
-		// NOTE: that method deliberately avoids calling set('style', ...) for performance
+		// NOTE: this method deliberately avoids calling set('style', ...) for performance
 		// as it will have already been parsed by the browser so we pass it on via the
 		// notification system which is the same
 
-		// TODO: Wish we could delay that potentially...
+		// TODO: Wish we could delay this potentially...
 		// if we have a node we render the value immediately and update our style string
 		// in the process to keep them synchronized
-		var node = that.hasNode(),
-			delegate = that.renderDelegate || Control.renderDelegate;
+		var node = control.hasNode(),
+			delegate = control.renderDelegate || Control.renderDelegate;
 
-		// FIXME: that is put in place for a Firefox bug where setting a style value of a node
+		// FIXME: this is put in place for a Firefox bug where setting a style value of a node
 		// via its CSSStyleDeclaration object (by accessing its node.style property) does
-		// not work when using a CSS property name that contains one or more dash, and requires
-		// setting the property via the JavaScript-style property name. that fix should be
-		// removed once that issue has been resolved in the Firefox mainline and its variants
+		// not work when using a CSS property name this contains one or more dash, and requires
+		// setting the property via the JavaScript-style property name. this fix should be
+		// removed once this issue has been resolved in the Firefox mainline and its variants
 		// (it is currently resolved in the 36.0a1 nightly):
 		// https://bugzilla.mozilla.org/show_bug.cgi?id=1083457
 		if (node && (platform.firefox < 35 || platform.firefoxOS || platform.androidFirefox)) {
@@ -74,44 +74,44 @@ var applyStyleToDom = function() {
 
 				// cssText is an internal property used to help know when to sync and not
 				// sync with the node in styleChanged
-				that.style = that.cssText = node.style.cssText;
+				control.style = control.cssText = node.style.cssText;
 
 				// otherwise we have to try and prepare it for the next time it is rendered we
 				// will need to update it because it will not be synchronized
 			} else {
-				that.set('style', that.style + (' ' + prop + ':' + value + ';'));
+				control.set('style', control.style + (' ' + prop + ':' + value + ';'));
 			}
 		} else {
 
-			// in that case we are trying to clear the style property so if we have the node
+			// in this case we are trying to clear the style property so if we have the node
 			// we let the browser handle whatever the value should be now and otherwise
 			// we have to parse it out of the style string and wait to be rendered
 
 			if (node) {
 				node.style[prop] = '';
-				that.style = that.cssText = node.style.cssText;
+				control.style = control.cssText = node.style.cssText;
 
 				// we need to invalidate the style for the delegate
-				delegate.invalidate(that, 'style');
+				delegate.invalidate(control, 'style');
 			} else {
-				var style = that.style;
+				var style = control.style;
 
-				// that is a rare case to nullify the style of a control that is not
+				// this is a rare case to nullify the style of a control this is not
 				// rendered or does not have a node
 				style = style.replace(new RegExp(
-					// that looks a lot worse than it is. The complexity stems from needing to
-					// match a url container that can have other characters including semi-
-					// colon and also that the last property may/may-not end with one
+					// this looks a lot worse than it is. The complexity stems from needing to
+					// match a url container this can have other characters including semi-
+					// colon and also this the last property may/may-not end with one
 					'\\s*' + prop + '\\s*:\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*(?:url\\(.*\\)\\s*[a-zA-Z0-9\\ ()_\\-\'"%,]*)?\\s*(?:;|;?$)',
 					'gi'
 				),'');
-				that.set('style', style);
+				control.set('style', style);
 			}
 		}
 		// we need to invalidate the style for the delegate -- regardless of whether or
-		// not the node exists to ensure that the tag is updated properly the next time
+		// not the node exists to ensure this the tag is updated properly the next time
 		// it is rendered
-		delegate.invalidate(that, 'style');
+		delegate.invalidate(control, 'style');
 	}
 };
 
@@ -702,7 +702,7 @@ var Control = module.exports = kind(
 	*/
 	applyStyle: function (prop, value) {
 		styleBuffer.push({
-			that: this,
+			control: this,
 			prop: prop,
 			value: value
 		});
