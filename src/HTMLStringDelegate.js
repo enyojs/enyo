@@ -121,7 +121,7 @@ module.exports = {
 	*/
 	renderContent: function (control) {
 		if (control.name === "page1" || control.name ==="page2") {
-			if (!control.generated || (control.generated && control.node.textContent == "")) {
+			if (!control.generated || (control.generated && control.node.textContent === "")) {
 				if (control.generated) this.teardownChildren(control);
 				if (control.hasNode()) control.node.innerHTML = this.generateInnerHtml(control);
 			} else {
