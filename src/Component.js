@@ -14,6 +14,7 @@ var
 	CoreObject = require('./CoreObject'),
 	ApplicationSupport = require('./ApplicationSupport'),
 	ComponentBindingSupport = require('./ComponentBindingSupport'),
+	AnimationSupport = require('./AnimationSupport/AnimationSupport'),
 	Jobs = require('./jobs');
 
 var

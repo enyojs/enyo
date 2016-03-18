@@ -59,6 +59,9 @@ Actor.makeScene = function(actor) {
 					this.timeline = this.span;
 					director.cut(this, _actor);
 					this.completed && this.completed(_actor);
+					if(this.repeat){
+						this.replay();
+					}
 				}
 			}
 			return pose;

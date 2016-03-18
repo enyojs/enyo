@@ -23,6 +23,9 @@ var AnimationSupport = {
 			} else {
 				scene.link(this, this.scene);
 			}
+			if(this.repeat){
+				this.scene.repeat= this.repeat;
+			}
 			console.log("comp : " + this.name + " linked to :", this.scene);
 		};
 	}),
