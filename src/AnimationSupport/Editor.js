@@ -28,6 +28,10 @@ module.exports = {
 	/**
 	* @private
 	*/
+	repeat: false,
+	/**
+	* @private
+	*/
 	cache: function(actor) {
 		actor = actor || this;
 		if(actor.speed === 0){
@@ -53,6 +57,16 @@ module.exports = {
 		this.animating = true;
 	},
 
+	/**
+	 * Replays the animation of the <code>actor</code> given in argument.
+	 * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be started.
+	 * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+	 * @public
+	 */
+	replay: function (actor) {
+		this.stop();
+		this.play();
+	},
 	/**
 	 * Resumes the paused animation of the <code>actor</code> given in argument.
 	 * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be resumed.
