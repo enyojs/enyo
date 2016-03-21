@@ -166,6 +166,7 @@ module.exports = kind(
 		// as long as calculateMetrics() is called only by reset().
 		this.numItems = num;
 	},
+
 	/**
 	* @private
 	*/
@@ -209,6 +210,34 @@ module.exports = kind(
 		}
 		this.positionChildren();
 	},
+
+	/**
+	* @private
+	*/
+	refreshThresholds: function () {
+		var tt = this.threshold;
+
+		if (tt) {
+			var
+				v = (this.direction === 'vertical'),
+				val = v ? this.scrollTop : this.scrollLeft,
+				delta = this.delta,
+				cb = this.cachedBounds ? this.cachedBounds : this._getScrollBounds(),
+				maxVal = v ? cb.maxTop : cb.maxLeft,
+				d2x = this.dim2extent,
+				head = Math.floor(this.overhang / 2),
+				fvg = Math.floor(val / delta),
+				fg = Math.max(0, fvg - head),
+				f = d2x * fg,
+				nPos = fvg * delta;
+
+			tt.max = Math.min(maxVal, nPos + delta),
+			tt.min = Math.max(0, nPos);
+
+			this.first = f;
+		}
+	},
+
 	/**
 	* @private
 	*/
@@ -341,6 +370,7 @@ module.exports = kind(
 	modelsAdded: kind.inherit(function (sup) {
 		return function() {
 			this.calcBoundaries();
+			this.refreshThresholds();
 			sup.apply(this, arguments);
 		};
 	}),
@@ -351,6 +381,7 @@ module.exports = kind(
 	modelsRemoved: kind.inherit(function (sup) {
 		return function() {
 			this.calcBoundaries();
+			this.refreshThresholds();
 			sup.apply(this, arguments);
 		};
 	}),
