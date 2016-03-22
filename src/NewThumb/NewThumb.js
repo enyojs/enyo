@@ -36,7 +36,7 @@ module.exports = kind(
 
 	/**
 	* The orientation of the scroll indicator bar; 'v' for vertical or 'h' for horizontal.
-	* 
+	*
 	* @type {String}
 	* @default 'v'
 	* @public
@@ -49,14 +49,14 @@ module.exports = kind(
 
 	/**
 	* Minimum size of the indicator.
-	* 
+	*
 	* @private
 	*/
 	minSize: ri.scale(4),
 
 	/**
 	* Size of the indicator's corners.
-	* 
+	*
 	* @private
 	*/
 	cornerSize: ri.scale(6),
@@ -171,7 +171,7 @@ module.exports = kind(
 	* Updates the scroll indicator bar based on the scroll bounds of the strategy, the available
 	* scroll area, and whether there is overscrolling. If the scroll indicator bar is not
 	* needed, it will be not be displayed.
-	* 
+	*
 	* @param {module:enyo/ScrollStrategy~ScrollStrategy} strategy - The scroll strategy to update from.
 	* @public
 	*/
@@ -214,7 +214,7 @@ module.exports = kind(
 
 	/**
 	* Override `show()` to give fade effect.
-	* 
+	*
 	* @private
 	*/
 	show: function (delay) {
@@ -235,6 +235,18 @@ module.exports = kind(
 	hide: function () {
 		this.stopJob('hide');
 		this.addClass('hidden');
+	},
+
+	/**
+	* Recalculate metrics on show.
+	*
+	* @private
+	*/
+	showingChangedHandler: function (sender, e) {
+		Control.prototype.showingChangedHandler.apply(this, arguments);
+		if (this.getAbsoluteShowing()) {
+			this.calculateMetrics();
+		}
 	},
 
 	v2dMatrix: function (p, s) {
