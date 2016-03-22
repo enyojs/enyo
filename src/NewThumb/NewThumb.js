@@ -34,7 +34,7 @@ module.exports = kind(
 	* @private
 	*/
 	name: 'enyo.NewScrollThumb',
-	
+
 	kind: Control,
 
 	/**
@@ -137,7 +137,7 @@ module.exports = kind(
 				s.on('stateChanged', this._updateVisibility);
 			}
 		}
-		
+
 		if (was && !is) {
 			s.off('metricsChanged', this._update);
 			s.off('stateChanged', this._updateVisibility);
@@ -227,6 +227,17 @@ module.exports = kind(
 				this.stopJob('hide');
 				this.startJob('hide', this.hide, delay || this.delay);
 			}
+		}
+	},
+
+	/**
+	* Override `handleResize()` to re-calculate ratio and size.
+	* @private
+	*/
+	handleResize: function () {
+		Control.prototype.handleResize.apply(this, arguments);
+		if (this.getAbsoluteShowing()) {
+			this.calculateMetrics();
 		}
 	},
 
