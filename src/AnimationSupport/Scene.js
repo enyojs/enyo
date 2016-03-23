@@ -12,6 +12,7 @@ var
 var Scene = module.exports = function(props) {
 	var scene = Actor(props.animation);
 	utils.mixin(scene, SceneAction);
+	scene.rolePlays = [];
 	utils.mixin(scene, props);
 	return scene;
 };
@@ -54,6 +55,7 @@ var SceneAction = {
 		if (this.rolePlays && this.rolePlays.length > 0 ) {
 			s = Actor.animateAtTime(this.rolePlays, tm);
 			e = Actor.animateAtTime(this.rolePlays, tm + th);
+			e += e == s ? 1 : 0;
 
 			for (i = 0;
 				(role = this.rolePlays[i]); i++) {
@@ -67,6 +69,7 @@ var SceneAction = {
 					actor.active = true;
 					sts += ts;
 					actor.speed = this.speed;
+					actor.repeat = this.repeat;
 					pose = actor.action(ts, pose);
 				} else {
 					if (actor.active) {
@@ -76,10 +79,8 @@ var SceneAction = {
 				}
 			}
 			tm = this.rolePlay(sts);
-			return pose;
 		}
-		
-		return actor.action(ts, pose);
+		return pose;
 	}
 };
 

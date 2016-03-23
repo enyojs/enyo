@@ -406,6 +406,45 @@ var frame = module.exports = {
 			+ 'OTransform' + mat + ';');
 	},
 
+	toPropertyValue: function (prop, val, ret) {
+		ret = ret || {};
+		if (COLOR[prop]) {
+			val = val.map(function(v) { return parseInt(v, 10);});
+			val =  'rgb('+ val + ')';
+		} else if(INT_UNIT[prop]) {
+			val = parseInt(val[0], 10);
+		} else if (prop == 'opacity') {
+			val = val[0].toFixed(6);
+			val = (val <= 0) ? '0.000001' : val;
+		} else {
+			val = val[0] + 'px';
+		}
+
+		ret[prop] = val;
+		return ret;
+	},
+
+	toTransformValue: function (matrix, ret) {
+		var mat = Matrix.toString(matrix);
+
+		ret = ret || {};
+		ret.transform =  mat;
+		ret.webkitTransform = mat;
+		ret.MozTransform = mat;
+		ret.msTransform = mat;
+		ret.OTransform = mat;
+
+		return ret;
+	},
+
+	toDom: function (actor, domCSS) {
+		var k, newStyle = actor.style || '';
+		if (actor.hasNode()) {
+            for (k in domCSS) newStyle += (k + ':' + domCSS[k] + ';');
+            actor.node.style.cssText = newStyle;
+        }
+	},
+
 	/**
 	 * Get DOM node animation properties.
 	 * @public

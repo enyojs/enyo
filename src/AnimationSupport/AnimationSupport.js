@@ -19,14 +19,11 @@ var AnimationSupport = {
 			var parent = this.scene.isScene && this.scene;
 			if (parent) {
 				this.scene = actor(this.scene, this);
+				this.scene.repeat = parent.repeat;
 				scene.link(this, parent);
 			} else {
 				scene.link(this, this.scene);
 			}
-			if(this.repeat){
-				this.scene.repeat= this.repeat;
-			}
-			console.log("comp : " + this.name + " linked to :", this.scene);
 		};
 	}),
 

@@ -57,9 +57,9 @@ Actor.makeScene = function(actor) {
 					this.step && this.step(_actor);
 				} else {
 					this.timeline = this.span;
-					director.cut(this, _actor);
+					this.cut();
 					this.completed && this.completed(_actor);
-					if(this.repeat){
+					if (this.repeat) {
 						this.replay();
 					}
 				}
@@ -68,7 +68,7 @@ Actor.makeScene = function(actor) {
 		},
 
 		cut = function () {
-			director.cut(this, _actor);
+			this.handleLayers && director.cut(this, _actor);
 		},
 
 		/**
@@ -96,6 +96,8 @@ Actor.makeScene = function(actor) {
 		id: utils.uid("@"),
 
 		isScene: true,
+
+		handleLayers: false,
 
 		/**
 		 * An exposed property to know if know the animating state of this scene.
