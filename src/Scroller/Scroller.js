@@ -198,8 +198,8 @@ var Scroller = module.exports = kind(
 		*	scrolling mechanism using CSS transitions; it is currently recommended only for iOS 
 		*	5 and later.
 		*
-		* @type {String}
-		* @default 'ScrollStrategy'
+		* @type {Object}
+		* @default module:enyo/ScrollStrategy~ScrollStrategy
 		* @public
 		*/
 		strategyKind: ScrollStrategy,
