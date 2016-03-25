@@ -810,7 +810,7 @@ module.exports = kind(
 	* @public
 	*/
 	setCurrentTime: function (time) {
-		if ((typeof time === 'number') && this.hasNode()) {
+		if ((typeof time === 'number' && time !== Infinity) && this.hasNode()) {
 			this.node.currentTime = time;
 		}
 	},
