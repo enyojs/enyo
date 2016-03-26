@@ -517,17 +517,12 @@ module.exports = {
 	* @private
 	*/
 	adjustBuffer: function (list) {
-		var pc = this.pageCount(list),
-			ds = this.defaultPageSize(list),
+		var cs = this.childSize(list),
+			count = list.collection ? list.collection.length : 0,
 			bs = 0, sp = list.psizeProp, ss = list.ssizeProp,
-			n = list.$.buffer.node || list.$.buffer.hasNode(), p;
+			n = list.$.buffer.node || list.$.buffer.hasNode();
 		if (n) {
-			if (pc !== 0) {
-				for (var i=0; i<pc; ++i) {
-					p = list.metrics.pages[i];
-					bs += (p && p[sp]) || ds;
-				}
-			}
+			bs = cs * count;
 			list.bufferSize = bs;
 			n.style[sp] = bs + 'px';
 			n.style[ss] = this[ss](list) + 'px';
