@@ -3,6 +3,7 @@ require('enyo');
 /**
 * Contains the declaration for the {@link module:enyo/NewThumb~NewThumb} kind.
 * @wip
+* @public
 * @module enyo/NewThumb
 */
 
@@ -15,17 +16,37 @@ var
 	Control = require('../Control');
 
 /**
-* {@link module:enyo/NewThumb~NewThumb} is a helper [kind]{@glossary kind} used
-* by {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy} and
-* {@link module:enyo/TranslateScrollStrategy~TranslateScrollStrategy} to display
-* a small visual scroll indicator.
+* {@link module:enyo/NewThumb~NewThumb} is a simple scroll thumb designed to be
+* used with any scrolling {@link module:enyo/Control~Control} whose scrolling
+* behavior is provided by the {@link module:enyo/Scrollable~Scrollable} mixin.
+* 
+* Like all {@link module:enyo/Scrollable~Scrollable}-compatible scroll controls,
+* {@link module:enyo/NewThumb~NewThumb} listens to events emitted by the scrolling
+* {@link module:enyo/Control~Control} and updates its state (position, visibility,
+* etc.) accordingly.
 *
-* `enyo/NewThumb` is not typically created in application code.
+* To use {@link module:enyo/NewThumb~NewThumb}, simply include it in the
+* {@link module:enyo/Scrollable~Scrollable#scrollControls} block of the scrolling
+* control:
+*
+* ```javascript
+* 	var
+* 		kind = require('enyo/kind'),
+* 		NewThumb = require('enyo/NewThumb'),
+*       NewDataList = require('enyo/NewDataList');
+*
+* 	var MyList = kind({
+*		kind: NewDataList,
+*		scrollControls: [
+*			{kind: NewThumb}
+*		]
+*	});
+* ```
 *
 * @class NewThumb
 * @extends module:enyo/Control~Control
 * @wip
-* @protected
+* @public
 */
 module.exports = kind(
 	/** @lends module:enyo/NewThumb~NewThumb.prototype */ {
@@ -52,20 +73,20 @@ module.exports = kind(
 
 	/**
 	* Minimum size of the indicator.
-	*
-	* @private
+	* 
+	* @public
 	*/
 	minSize: ri.scale(4),
 
 	/**
 	* Size of the indicator's corners.
-	*
-	* @private
+	* 
+	* @public
 	*/
 	cornerSize: ri.scale(6),
 
 	/**
-	* @private
+	* @public
 	*/
 	enabled: false,
 
@@ -115,6 +136,9 @@ module.exports = kind(
 		};
 	}),
 
+	/**
+	* @private
+	*/
 	scrollerChanged: function(was) {
 		if (was) {
 			was.off('scrollabilityChanged', this._updateEnablement);
@@ -126,6 +150,9 @@ module.exports = kind(
 		}
 	},
 
+	/**
+	* @private
+	*/
 	updateEnablement: function() {
 		var s = this.scroller,
 			was = this.enabled,
@@ -145,6 +172,9 @@ module.exports = kind(
 		}
 	},
 
+	/**
+	* @private
+	*/
 	_updateVisibility: function() {
 		var s = this.scroller;
 
@@ -157,6 +187,9 @@ module.exports = kind(
 		}
 	},
 
+	/**
+	* @private
+	*/
 	rendered: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
@@ -164,6 +197,9 @@ module.exports = kind(
 		};
 	}),
 
+	/**
+	* @private
+	*/
 	calculateMetrics: function () {
 		this.extent = this.parent.getBounds()[this.dimension];
 		this.minSizeRatio = this.minSize / this.extent;
@@ -171,12 +207,7 @@ module.exports = kind(
 	},
 
 	/**
-	* Updates the scroll indicator bar based on the scroll bounds of the strategy, the available
-	* scroll area, and whether there is overscrolling. If the scroll indicator bar is not
-	* needed, it will be not be displayed.
-	*
-	* @param {module:enyo/ScrollStrategy~ScrollStrategy} strategy - The scroll strategy to update from.
-	* @public
+	* @private
 	*/
 	update: function () {
 		var sc = this.scroller,
@@ -216,9 +247,13 @@ module.exports = kind(
 	},
 
 	/**
-	* Override `show()` to give fade effect.
+	* Shows the thumb.
 	*
-	* @private
+	* App code should generally not need to manage thumb visibility
+	* unless the {@link module:enyo/NewThumb~NewThumb#autoHide} property
+	* has been set to `false`.
+	* 
+	* @public
 	*/
 	show: function (delay) {
 		if (this.enabled) {
@@ -231,7 +266,22 @@ module.exports = kind(
 	},
 
 	/**
-	* Override `handleResize()` to re-calculate ratio and size.
+	* Hides the thumb.
+	*
+	* App code should generally not need to manage thumb visibility
+	* unless the {@link module:enyo/NewThumb~NewThumb#autoHide} property
+	* has been set to `false`.
+	* 
+	* @public
+	*/
+	hide: function () {
+		this.stopJob('hide');
+		this.addClass('hidden');
+	},
+
+	/**
+	* Overriding `handleResize()` to re-calculate ratio and size.
+	*
 	* @private
 	*/
 	handleResize: function () {
@@ -242,17 +292,7 @@ module.exports = kind(
 	},
 
 	/**
-	* Hides the control.
-	*
-	* @private
-	*/
-	hide: function () {
-		this.stopJob('hide');
-		this.addClass('hidden');
-	},
-
-	/**
-	* Recalculate metrics on show.
+	* Overriding `showingChangedHandler()` to recalculate metrics on show.
 	*
 	* @private
 	*/
@@ -263,18 +303,30 @@ module.exports = kind(
 		}
 	},
 
+	/**
+	* @private
+	*/
 	v2dMatrix: function (p, s) {
 		return '1, 0, 0, ' + (s / this.naturalSize) + ', 0,' + p;
 	},
 
+	/**
+	* @private
+	*/
 	v3dMatrix: function(p, s) {
 		return '1, 0, 0, 0, 0,' + (s / this.naturalSize) + ', 0, 0, 0, 0, 1, 0, 0, ' + p + ', 1, 1';
 	},
 
+	/**
+	* @private
+	*/
 	h2dMatrix: function(p, s) {
 		return (s / this.naturalSize) + ', 0, 0, 1, ' + p + ', 0';
 	},
 
+	/**
+	* @private
+	*/
 	h3dMatrix: function(p, s) {
 		return (s / this.naturalSize) + ', 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, ' + p + ', 0, 1, 1';
 	}

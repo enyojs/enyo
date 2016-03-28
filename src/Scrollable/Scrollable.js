@@ -1,3 +1,11 @@
+/**
+* Exports the {@link module:enyo/Scrollable~Scrollable} mixin.
+*
+* @wip
+* @public
+* @module enyo/Scrollable
+*/
+
 var
 	kind = require('../kind'),
 	utils = require('../utils'),
@@ -27,9 +35,9 @@ function calcNodeVisibility (nodePos, nodeSize, scrollPos, scrollSize) {
 }
 
 /**
-* Doc
+* Mix scrolling support into any Control that contains content suitable for scrolling.
 *
-* @module enyo/Scrollable
+* @wip
 * @public
 */
 module.exports = {
@@ -80,24 +88,19 @@ module.exports = {
 	scrollLeft: 0,
 
 	/**
-	* Maximum height of the scroll content.
-	* 
-	* @type {Number}
-	* @default null
-	* @memberof module:enyo/Scroller~Scroller.prototype
-	* @public
+	* Vestige of previous implementation -- should be eliminated and
+	* does not appear to be referenced, but leaving here for the moment
+	* to avoid accidental breakage.
+	*
+	* @private
 	*/
 	maxHeight: null,
 
 	/**
-	* Set to `true` to make this [scroller]{@link module:enyo/Scroller~Scroller} select a 
-	* platform-appropriate touch-based scrolling strategy. Note that if you specify a value 
-	* for [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind}, that will take precedence over
-	* this setting.
-	* 
-	* @type {Boolean}
-	* @default false
-	* @public
+	* Vestige of previous implementation -- should be eliminated, but
+	* currently still referenced.
+	*
+	* @private
 	*/
 	touch: true,
 
@@ -127,16 +130,16 @@ module.exports = {
 	block: 'farthest',
 
 	/**
-	* Set to `true` to display a scroll thumb in touch [scrollers]{@link module:enyo/Scroller~Scroller}.
-	* 
-	* @type {Boolean}
-	* @default true
-	* @public
+	* Vestige of previous implementation -- should be eliminated and
+	* does not appear to be referenced, but leaving here for the moment
+	* to avoid accidental breakage.
+	*
+	* @private
 	*/
 	thumb: true,
 
 	/**
-	* If `true`, mouse wheel may be used to move the [scroller]{@link module:enyo/Scroller~Scroller}.
+	* If `true`, mouse wheel may be used to move the [scrollable]{@link module:enyo/Scrollable~Scrollable} control.
 	* 
 	* @type {Boolean}
 	* @default true
@@ -145,51 +148,116 @@ module.exports = {
 	useMouseWheel: true,
 
 	/**
-	* TODO: Document
-	* Experimental
+	* This should ultimately be made public, but not sure it's fully baked so
+	* holding off for now.
 	*
-	* @public
+	* @private
 	*/
 	horizontalSnapIncrement: null,
 
 	/**
-	* TODO: Document
-	* Experimental
+	* This should ultimately be made public, but not sure it's fully baked so
+	* holding off for now.
 	*
-	* @public
+	* @private
 	*/
 	verticalSnapIncrement: null,
 
 	/**
-	* TODO: Document
-	* Experimental
+	* This should ultimately be made public, but not sure it's fully baked so
+	* holding off for now.
 	*
-	* @public
+	* @private
 	*/
 	suppressMouseEvents: false,
 
+	/**
+	* By default, {@link module:enyo/Scrollable~Scrollable} creates and
+	* uses a default instance of {@link module:enyo/ScrollMath~ScrollMath}, which
+	* is responsible for scroll physics.
+	*
+	* If you want to customize scroll physics, you can provide an object literal
+	* to the `scrollMath` property that will be used to create a 
+	* {@link module:enyo/ScrollMath~ScrollMath} instance to your specifications.
+	* Make sure to include `kind: ScrollMath` in your object literal, along with
+	* whatever `ScrollMath` properties you want to set.
+	*
+	* @type {Object}
+	* @public
+	*/
 	scrollMath: {kind: ScrollMath},
 
+	/**
+	* This should ultimately be made public, but not sure it's fully baked so
+	* holding off for now.
+	*
+	* @private
+	*/
 	pageMultiplier: 1,
 
+	/**
+	* @private
+	*/
 	canScrollX: false,
+	/**
+	* @private
+	*/
 	canScrollY: false,
+	/**
+	* @private
+	*/
 	couldScrollX: false,
+	/**
+	* @private
+	*/
 	couldScrollY: false,
+	/**
+	* @private
+	*/
 	canScrollUp: false,
+	/**
+	* @private
+	*/
 	canScrollDown: false,
+	/**
+	* @private
+	*/
 	canScrollLeft: false,
+	/**
+	* @private
+	*/
 	canScrollRight: false,
 
+	/**
+	* @private
+	*/
 	velocity: 0,
 
+	/**
+	* @private
+	*/
 	topOffset: 0,
+	/**
+	* @private
+	*/
 	rightOffset: 0,
+	/**
+	* @private
+	*/
 	bottomOffset: 0,
+	/**
+	* @private
+	*/
 	leftOffset: 0,
 
+	/**
+	* @private
+	*/
 	mixins: [EventEmitter],
 
+	/**
+	* @private
+	*/
 	handlers: {
 		ondragstart: 'dragstart',
 		ondragfinish: 'dragfinish',
@@ -213,8 +281,14 @@ module.exports = {
 		onShouldDrag: ''
 	},
 
+	/**
+	* @private
+	*/
 	classes: 'enyo-scrollable enyo-fill',
 
+	/**
+	* @private
+	*/
 	create: kind.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
@@ -234,6 +308,9 @@ module.exports = {
 		};
 	}),
 
+	/**
+	* @private
+	*/
 	destroy: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
@@ -243,6 +320,9 @@ module.exports = {
 		};
 	}),
 
+	/**
+	* @private
+	*/
 	showingChangedHandler: kind.inherit(function (sup) {
 		return function (sender, event) {
 			// Calculate boundaries when shown, just in case
@@ -262,6 +342,9 @@ module.exports = {
 		};
 	}),
 
+	/**
+	* @private
+	*/
 	rendered: kind.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);

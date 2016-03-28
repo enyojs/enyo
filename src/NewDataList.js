@@ -1,6 +1,8 @@
 /**
 * Contains the declaration for the {@link module:enyo/NewDataList~NewDataList} kind.
+*
 * @wip
+* @public
 * @module enyo/NewDataList
 */
 
@@ -15,27 +17,134 @@ var
 	VirtualDataRepeater = require('./VirtualDataRepeater');
 
 /**
-* {@link module:enyo/NewDataList~NewDataList} is a work-in-progress
+* {@link module:enyo/NewDataList~NewDataList} is new virtual list implementation.
+*
+* It is intended to replace the older {@link module:enyo/DataList~DataList},
+* {@link module:enyo/DataGridList~DataGridList} and probably
+* {@link module:enyo/List~List}, but as of the Enyo 2.7 release is a work in
+* progress and currently lacks many of the features of those older implementations.
+*
+* The most significant difference between `NewDataList` and `DataList` / `DataGridList`
+* is that `NewDataList` "virtualizes" items one at a time, not a page at a time. This
+* approach performs somewhat better in general and most notably disributes the cost of
+* virtualization over time, which produces smoother frame rates.
+*
+* `NewDataList` supports both linear and grid layouts, in either horizontal or
+* vertical direction.
+* 
+* Notes:
+*   * List items must be styled with `position: absolute` to be laid out properly,
+*     but `NewDataList` does not currently provide any default style rules for items,
+*     so you need to specify `position: absolute` in your items' classes or style attributes.
+*   * `NewDataList` currently supports only explicitly sized items; neither variable-size
+*      items nor "naturally" sized items are currently supported.
 *
 * @class NewDataList
 * @extends module:enyo/VirtualDataRepeater~VirtualDataRepeater
 * @wip
 * @ui
+* @public
 */
 module.exports = kind(
 	/** @lends module:enyo/NewDataList~NewDataList.prototype */ {
 	name: 'enyo.NewDataList',
 	kind: VirtualDataRepeater,
+	/**
+	* The direction of the layout, which may be either 'vertical'
+	* or 'horizontal'.
+	*
+	* @type {String}
+	* @default 'vertical'
+	* @public
+	*/
 	direction: 'vertical',
+	/**
+	* The height of each list item, in pixels.
+	* 
+	* Required for grid layouts and linear vertical layouts; may be
+	* omitted for linear horizontal layouts.
+	*
+	* @type {Number}
+	* @default 100
+	* @public
+	*/
 	itemHeight: 100,
+	/**
+	* The width of each list item, in pixels.
+	* 
+	* Required for grid layouts and linear horizontal layouts; may be
+	* omitted for linear vertical layouts.
+	*
+	* @type {Number}
+	* @default 100
+	* @public
+	*/
 	itemWidth: 100,
+	/**
+	* The space between list items, in pixels.
+	*
+	* @type {Number}
+	* @default 0
+	* @public
+	*/
 	spacing: 0,
+	/**
+	* The number of rows (only applies to horizontally scrolling grid layouts).
+	* 
+	* To specify a horizontally scrolling grid layout, set `rows` to `2` or more
+	* and `direction` to `horizontal`.
+	*
+	* @type {Number}
+	* @default 'auto'
+	* @public
+	*/
 	rows: 'auto',
+	/**
+	* The number of columns (only applies to vertically scrolling grid layouts).
+	* 
+	* To specify a vertically scrolling grid layout, set `columns` to `2` or more
+	* and `direction` to `vertical`.
+	*
+	* @type {Number}
+	* @default 'auto'
+	* @public
+	*/
 	columns: 'auto',
+	/**
+	* This number determines how many "extra" items the list will generate, beyond
+	* the number required to fill the list's viewport. Higher numbers result in more
+	* extra items being generated.
+	*
+	* You should generally not need to adjust this value.
+	*
+	* @type {Number}
+	* @default 3
+	* @public
+	*/
 	overhang: 3,
-	// Experimental
+	/**
+	* This feature is experimental, and only partly functional.
+	*
+	* When `scrollToBoundaries` is set to `true`, the list will come to rest on an
+	* item boundary, such that the first visible item is fully within the list's
+	* viewport, not partially outside.
+	*
+	* Important limitation: this feature currently only works when scrolling in
+	* response to wheel events or when scrolling to explicitly provided coordinates;
+	* it does not work when scrolling in response to touch or mouse events.
+	*
+	* @type {Boolean}
+	* @default false
+	* @public
+	*/
 	scrollToBoundaries: false,
+	/**
+	* @private
+	*/
 	mixins: [Scrollable],
+	/**
+	* @private
+	*/
 	observers: [
 		{method: 'reset', path: [
 			'direction', 'columns', 'rows',
