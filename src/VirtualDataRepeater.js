@@ -36,7 +36,8 @@ var
 * @wip
 * @public
 */
-module.exports = kind({
+module.exports = kind(
+	/** @lends module:enyo/VirtualDataRepeater~VirtualDataRepeater.prototype */ {
 	name: 'enyo.VirtualDataRepeater',
 	kind: DataRepeater,
 	/**

@@ -21,7 +21,7 @@ var
 *
 * It is intended to replace the older {@link module:enyo/DataList~DataList},
 * {@link module:enyo/DataGridList~DataGridList} and probably
-* {@link module:enyo/List~List}, but as of the Enyo 2.7 release is a work in
+* {@link module:layout/List~List}, but as of the Enyo 2.7 release is a work in
 * progress and currently lacks many of the features of those older implementations.
 *
 * The most significant difference between `NewDataList` and `DataList` / `DataGridList`
@@ -50,8 +50,8 @@ module.exports = kind(
 	name: 'enyo.NewDataList',
 	kind: VirtualDataRepeater,
 	/**
-	* The direction of the layout, which may be either 'vertical'
-	* or 'horizontal'.
+	* The direction of the layout, which may be either `'vertical'`
+	* or `'horizontal'`.
 	*
 	* @type {String}
 	* @default 'vertical'

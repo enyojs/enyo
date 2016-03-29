@@ -37,16 +37,30 @@ function calcNodeVisibility (nodePos, nodeSize, scrollPos, scrollSize) {
 /**
 * Mix scrolling support into any Control that contains content suitable for scrolling.
 *
+* @mixin
 * @wip
 * @public
 */
-module.exports = {
+var Scrollable = {
 	
 	/**
 	* @private
 	*/
 	name: 'Scrollable',
-	
+
+	/**
+	* An array of control definitions that will be instatiated with the scroller. Each object
+	* will be passed a `scroller` property that contains a reference to the scroller. The controls
+	* can register to receive scroll events from the scroller.
+	*
+	* @name scrollControls
+	* @type {Object[]}
+	* @default undefined
+	* @see module:enyo/NewThumb~NewThumb
+	* @public
+	* @memberof module:enyo/Scrollable~Scrollable
+	*/
+
 	/**
 	* Specifies how to horizontally scroll.  Acceptable values are `'scroll'`, `'auto'`,
 	* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
@@ -1154,3 +1168,5 @@ module.exports = {
 		return false;
 	}
 };
+
+module.exports = Scrollable;
