@@ -16,7 +16,12 @@ var
 	NewAnimator = require('../NewAnimator');
 
 /**
-* {@link module:enyo/NewDrawer~NewDrawer} is a work-in-progress
+* {@link module:enyo/NewDrawer~NewDrawer} is an experimental
+* {@link module:enyo/Control~Control}.
+*
+* It is not a 1:1 replacement for {@link module:enyo/Drawer~Drawer}
+* and will likely never be promoted out of its experimental state.
+* Use at your own risk.
 *
 * @class NewDrawer
 * @extends module:enyo/Control~Control
