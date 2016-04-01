@@ -283,7 +283,8 @@ kind.extendMethods(p, {
 	*/
 	didResize: function (list) {
 		// store the previous stats for comparative purposes
-		var prev = list.boundsCache;
+		var prev = list.boundsCache,
+			prevCPP = list.controlsPerPage;
 
 		// flag the list to have its bounds updated
 		list._updateBounds = true;
@@ -298,6 +299,12 @@ kind.extendMethods(p, {
 			prev.height === list.boundsCache.height
 		) {
 			return;
+		}
+
+		if (prevCPP !== list.controlsPerPage) {
+			// since we are now using a different number of controls per page,
+			// we need to invalidate our cached page metrics
+			list.metrics.pages = {};
 		}
 
 		// it is necessary to update the content of the list according to our
