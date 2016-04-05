@@ -143,6 +143,30 @@ var exists = exports.exists = function (target) {
 
 var uidCounter = 0;
 
+var
+	BORDER = {
+		'border-radius': 1, 'border-image-slice': 1,
+		'border-top-left-radius': 1, 'border-top-right-radius': 1, 'border-bottom-left-radius': 1, 'border-bottom-right-radius': 1
+	},
+	COLOR = {
+		'color': 1, 'background-color': 1, 'fill': 1, 'flood-color': 1,'lighting-color': 1, 'stop-color': 1, 'outline-color': 1,
+		'border-color': 1, 'border-top-color': 1, 'border-left-color': 1, 'border-right-color': 1, 'border-bottom-color': 1
+	},
+	INT_UNIT = {
+		'z-index': 1
+	},
+	SHADOW = {
+		'box-shadow': 1, 'text-shadow': 1
+	},
+	OPACITY = {
+		'opacity': 1, 'flood-opacity': 1, 'stop-opacity': 1, 'fill-opacity': 1, 'stroke-opacity': 1
+	},
+	TRANSFORM = {
+		translate: 1, translateX: 1, translateY: 1, translateZ: 1,
+		rotateX: 1, rotateY: 1, rotateZ: 1, rotate: 1, skew: 1, scale: 1, perspective: 1
+	};
+
+
 /**
 * Creates a unique identifier (with an optional prefix) and returns the identifier as a string.
 *
@@ -1320,6 +1344,94 @@ exports.remove = function (array, el) {
 	var i = array.indexOf(el);
 	if (-1 < i) array.splice(i, 1);
 	return array;
+};
+
+exports.cssFormat = function (key) {
+	return SHADOW[key] || COLOR[key];
+};
+
+/**
+ 
+ * Converts comma separated values to array.
+ * @public
+ * @param  {String} val Value of required animation in any property.
+ * @param  {Number} length [description]
+ * @param  {[type]} format [description]
+ * @return {Number[]}     Create array from val.
+ */
+exports.formatCSSValues = function (val, length, format) {
+	var res;
+	if (format) {
+		if (val.indexOf('rgb') === 0) {
+			res = this.formatCSSValues(val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1]));
+		} else {
+			res = this.formatCSSValues(val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,''));
+		}
+	} else {
+		res = val.toString().split(",").map(function(v) {
+			return parseFloat(v, 10);
+		});
+	}
+	return length ? res.concat(Array(length - res.length).fill(0)): res;
+};
+
+/**
+ * Validates if property is a transform property.
+ * @public
+ * @param  {String} transform Any transform property, for which we want to identify whether or not the property is transform.
+ * @return {Number}           Value of the required transform property.
+ */
+exports.isTransform = function (transform) {
+	return TRANSFORM[transform];
+};
+
+exports.toPropertyValue = function (prop, val, ret) {
+	ret = ret || {};
+	if (COLOR[prop]) {
+		val = val.map(function(v) { return parseInt(v, 10);});
+		val = 'rgb('+ val + ')';
+	} else if(INT_UNIT[prop]) {
+		val = parseInt(val[0], 10);
+	} else if (BORDER[prop]) {
+		val = val[0] + '%';
+	} else if (OPACITY[prop]) {
+		val = val[0].toFixed(6);
+		val = (val <= 0) ? '0.000001' : val;
+	} else if (SHADOW[prop]) {
+		val = 'rgb('+ val.slice(0, 3).map(function(v) { return parseInt(v, 10);})
+			+ ') ' + val.slice(3).map(function(v) {return v + 'px'}).join(' ');
+	} else {
+		val = val[0] + 'px';
+	}
+
+	ret[prop] = val;
+	return ret;
+};
+
+/**
+ * Gets a style property applied from the DOM element.
+ * @public
+ * @param  {HTMLElement}  style Computed style of a DOM.
+ * @param  {String}       key   Property name for which style has to be fetched.
+ * @return {Number|HTMLElement} 
+ */
+exports.getStyleValue = function (style, key) {
+	var v = style.getPropertyValue(key) || style[key];
+	if (!v || v === "auto") {
+		return 0;
+	}
+	if (SHADOW[key]) {
+		if (v === 'none') return Array(7).fill(0);
+		return v.split(')')[0].replace(/^\w*\(/, '').concat(v.split(')')[1].split(' ').join(','));
+	}
+	if (COLOR[key]) {
+		return v.replace(/^\w*\(/, '').replace(')', '');
+	}
+	if (isNaN(v)) {
+		return 0;
+	}
+	v = parseFloat(v, 10);
+	return v;
 };
 
 /**

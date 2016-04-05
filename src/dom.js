@@ -7,7 +7,10 @@ require('enyo');
 var
 	roots = require('./roots'),
 	utils = require('./utils'),
-	platform = require('./platform');
+	platform = require('./platform'),
+	
+	Vector = require('./AnimationSupport/Vector'),
+	Matrix = require('./AnimationSupport/Matrix');
 
 var dom = module.exports = {
 
@@ -529,6 +532,55 @@ var dom = module.exports = {
 	},
 
 	/**
+	 * Get DOM node animation properties.
+	 * @public
+	 * @param  {HTMLElement} node    DOM node
+	 * @param  {Object}      props   Properties to fetch from DOM.
+	 * @param  {Object}      initial Default properties to be applied.
+	 * @return {Object}              Object with various animation properties.
+	 */     
+	getAnimatedProperty: function (node, props, initial) {
+		if(!node) return;
+
+		var eP = {},
+			sP = initial ? utils.mixin({}, initial) : {},
+			tP = {},
+			dP = {},
+			m, k, v,
+			s = initial ? undefined : this.getComputedStyle(node);
+
+		for (k in props) {
+			v = sP[k];
+			if (!utils.isTransform(k)) {
+				v = v || utils.getStyleValue(s || this.getComputedStyle(node), k);
+				sP[k] = utils.formatCSSValues(v);
+				eP[k] = utils.formatCSSValues(props[k], sP[k].length, utils.cssFormat(k));
+			} else {
+				v = utils.formatCSSValues(props[k]);
+				//tP[k] = k == 'rotate' ? Vector.toQuant(v) : v;
+				tP[k] = v;
+			}
+		}
+
+		if (initial) {
+			dP.translate = initial.translate;
+			dP.rotate = initial.rotate.length < 4 ? Vector.toQuant(initial.rotate) : initial.rotate;
+			dP.scale = initial.scale;
+			dP.skew = initial.skew;
+			dP.perspective = initial.perspective;
+		} else {
+			m = Matrix.getMatrix(s || this.getComputedStyle(node)) || Matrix.identity();
+			Matrix.decomposeMatrix(m, dP);
+		}
+
+		for(k in dP) {
+			sP[k] = dP[k];
+			eP[k] = tP[k] || dP[k];
+		}
+		return {_startAnim: sP, _endAnim: eP, _transform: dP, currentState: dP, matrix: m, props: props};
+	},
+
+	/**
 	* @private
 	*/
 	_bodyClasses: null,
@@ -633,6 +685,7 @@ dom.calcCanAccelerate = function() {
 	}
 	return false;
 };
+
 /**
 * @private
 */
@@ -658,6 +711,19 @@ dom.getStyleTransformProp = function() {
 			return this._styleTransformProp;
 		}
 	}
+};
+
+/**
+* @private
+*/
+dom.toTransformValue = function(matrix, ret) {
+	var mat = Matrix.toString(matrix);
+
+	ret = ret || {};
+	for (var i = 0, p; (p = styleTransformProps[i]); i++) {
+		ret[p] = mat;
+	}
+	return ret;
 };
 
 /**
@@ -792,15 +858,13 @@ dom.transformValue = function(control, transform, value) {
 * directly, to be applied to `translateZ(value)`.
 *
 * @param {module:enyo/Control~Control} control - The {@link module:enyo/Control~Control} to accelerate.
-* @param {(String|Number)} [value] - An optional value to apply to the acceleration transform
-*	property.
+* @param {(String|Number)} [value] - An optional value to apply to the acceleration transform property.
 * @public
 */
 dom.accelerate = function(control, value) {
 	var v = value == 'auto' ? this.canAccelerate() : value;
 	this.transformValue(control, 'translateZ', v ? 0 : null);
 };
-
 
 /**
  * The CSS `transition` property name for the current browser/platform, e.g.:

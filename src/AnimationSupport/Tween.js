@@ -1,7 +1,7 @@
 require('enyo');
 
 var
-    frame = require('./Frame'),
+    Dom = require('../dom'),
     Easings = require('./Easings'),
     Vector = require('./Vector'),
     Matrix = require('./Matrix'),
@@ -24,7 +24,7 @@ module.exports = {
     init: function (actor, pose, initial) {
         if (!(actor && pose && pose.animate)) return;
         node = actor.hasNode();
-        utils.mixin(pose, frame.getComputedProperty(node, pose.animate, initial || actor.currentState));
+        utils.mixin(pose, Dom.getAnimatedProperty(node, pose.animate, initial || actor.currentState));
         actor.currentState = pose.currentState;
         return pose;
     },
@@ -83,8 +83,8 @@ module.exports = {
                     cState = fn.call(this, oldState, newState, ease(t, d), cState);
                 }
                 
-                if (!frame.isTransform(k)) {
-                    domCSS = frame.toPropertyValue(k, cState, domCSS);
+                if (!utils.isTransform(k)) {
+                    domCSS = utils.toPropertyValue(k, cState, domCSS);
                 }
                 state[k] = cState;
             }
@@ -97,7 +97,7 @@ module.exports = {
             this.traversePath(t, path, state.translate);
         }
 
-        matrix = frame.recomposeMatrix(
+        matrix = Matrix.recomposeMatrix(
             state.translate,
             state.rotate,
             state.scale,
@@ -106,9 +106,9 @@ module.exports = {
         );
         state.matrix = matrix;
         actor.currentState = pose.currentState = state;
-        domCSS = frame.toTransformValue(matrix, domCSS);
+        domCSS = Dom.toTransformValue(matrix, domCSS);
 
-        frame.toDom(actor, domCSS);
+        actor.addStyles(domCSS);
     },
 
     halt: function (actor, pose) {
@@ -171,7 +171,7 @@ module.exports = {
 
         dot = Math.min(Math.max(dot, -1.0), 1.0);
         if (dot == 1.0) {
-            qR = frame.copy(qA);
+            qR = utils.cloneArray(qA);
             return qR;
         }
         theta = Math.acos(dot);
@@ -311,7 +311,7 @@ module.exports = {
                 a = parseFloat(ease[key]);
                 eD.pop(); // remove angle from end point.
                 eD[eD.length] = a;
-                q = Vector.toQuant(frame.copy(eD));
+                q = Vector.toQuant(utils.clone(eD));
                 quats.push(q);
                 time.push(t);
             }
