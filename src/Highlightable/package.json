@@ -1,0 +1,6 @@
+{
+	"main": "Highlightable.js",
+	"styles": [
+		"Highlightable.less"
+	]
+}
