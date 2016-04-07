@@ -553,8 +553,8 @@ var dom = module.exports = {
 			v = sP[k];
 			if (!utils.isTransform(k)) {
 				v = v || utils.getStyleValue(s || this.getComputedStyle(node), k);
-				sP[k] = utils.formatCSSValues(v);
-				eP[k] = utils.formatCSSValues(props[k], sP[k].length, utils.cssFormat(k));
+				sP[k] = utils.formatCSSValues(v, utils.cssFormat(k));
+				eP[k] = utils.formatCSSValues(props[k], utils.cssFormat(k), sP[k].length);
 			} else {
 				v = utils.formatCSSValues(props[k]);
 				//tP[k] = k == 'rotate' ? Vector.toQuant(v) : v;
