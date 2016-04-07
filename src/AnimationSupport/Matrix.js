@@ -515,7 +515,9 @@ module.exports = {
 	parseMatrix3D: function (v) {
 		var m = this.identity();
 		v = v.replace(/^\w*\(/, '').replace(')', '');
-		v = this.parseValue(v);
+		v = v.split(",").map(function(v) {
+			return parseFloat(v, 10);
+		});
 		if (v.length <= 6) {
 			m[0] = v[0];
 			m[1] = v[1];

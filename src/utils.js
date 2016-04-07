@@ -1361,6 +1361,9 @@ exports.cssFormat = function (key) {
  */
 exports.formatCSSValues = function (val, length, format) {
 	var res;
+	if (typeof val == 'function') {
+		return val;
+	}
 	if (format) {
 		if (val.indexOf('rgb') === 0) {
 			res = this.formatCSSValues(val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1]));
@@ -1372,7 +1375,7 @@ exports.formatCSSValues = function (val, length, format) {
 			return parseFloat(v, 10);
 		});
 	}
-	return length ? res.concat(Array(length - res.length).fill(0)): res;
+	return length && length >= res.length ? res.concat(Array(length - res.length).fill(0)): res;
 };
 
 /**
