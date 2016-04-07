@@ -276,6 +276,19 @@ kind.extendMethods(p, {
 	},
 
 	/**
+	* Calculates the scroll position for the given record index. Can be called
+	* after the [DataGridList]{@link module:enyo/DataGridList~DataGridList} is resized.
+	*
+	* @method
+	* @private
+	*/
+	adjustScrollPosition: function (list, i) {
+		var rowIndex = Math.ceil((i+1)/list.columns)-1,
+			scrollPosition = list.tileHeight*rowIndex+(list.spacing*rowIndex);
+		this.setScrollPosition(list, scrollPosition);
+	},
+
+	/**
 	* The delegate's `resize` {@glossary event} handler.
 	*
 	* @method
@@ -283,7 +296,9 @@ kind.extendMethods(p, {
 	*/
 	didResize: function (list) {
 		// store the previous stats for comparative purposes
-		var prev = list.boundsCache;
+		var prev = list.boundsCache,
+			prevCPP = list.controlsPerPage,
+			range = this.getVisibleControlRange(list);
 
 		// flag the list to have its bounds updated
 		list._updateBounds = true;
@@ -300,9 +315,16 @@ kind.extendMethods(p, {
 			return;
 		}
 
+		if (prevCPP !== list.controlsPerPage) {
+			// since we are now using a different number of controls per page,
+			// we need to invalidate our cached page metrics
+			list.metrics.pages = {};
+		}
+
 		// it is necessary to update the content of the list according to our
 		// new sizing
 		this.refresh(list);
+		this.adjustScrollPosition(list, range.start);
 	},
 
 	/**
