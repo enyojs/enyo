@@ -1,6 +1,5 @@
 var
 	Actor = require('./Actor'),
-	director = require('./Director'),
 	utils = require('../utils');
 
 /**
@@ -114,26 +113,5 @@ Scene.link = function(actors, scene) {
 			actorScene = Actor(scene, act);
 			acts[i].scene = actorScene;
 		}
-	}
-};
-
-
-/**
- * Disconnects an actor/s from a scene.
- * (Actors could be delinked during the animation 
- * however they will current their state when delinked)
- * @memberOf module:enyo/AnimationSupport/Scene
- * @public
- * @param  {Object} actors - The elements which needs to be animated
- * @param  {Object} scene  - The instance of the Scene we've created in the application
- */
-Scene.delink = function(actors, scene) {
-	var parent, acts = utils.isArray(actors) ? actors : [actors],
-		actor;
-
-	if (typeof scene == 'function') parent = scene;
-	for (var i = 0; i < acts.length; i++) {
-		director.reject(parent, actor.scene);
-		actor.scene = undefined;
 	}
 };

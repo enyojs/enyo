@@ -41,7 +41,8 @@ var AnimationSupport = {
 	 */
 	destroy: kind.inherit(function(sup) {
 		return function() {
-			scene.delink(this, this.scene);
+			this.scene && this.scene.stop();
+			this.scene = undefined;
 			sup.apply(this, arguments);
 		};
 	})

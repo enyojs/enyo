@@ -1,5 +1,5 @@
 var
-	director = require('./Director'),
+	tween = require('./Tween'),
 	editor = require('./Editor'),
 	animation = require('../animation'),
 	utils = require('../utils');
@@ -40,9 +40,7 @@ Actor.makeScene = function(actor) {
 
 		_actor = actor,
 
-		
-
-		action = function(ts, pose) {
+		_start = function(ts, pose) {
 			var past, index, tm,
 				dur = this.span;
 
@@ -53,22 +51,39 @@ Actor.makeScene = function(actor) {
 					index = Actor.animateAtTime(_poses, tm);
 					pose = this.getAnimation(index);
 					past = index ? this.getAnimation(index - 1).span : 0;
-					director.action(pose, _actor, tm - past, pose.span - past);
+					_update(pose, _actor, tm - past, pose.span - past);
 					this.step && this.step(_actor);
 				} else {
-					this.timeline = this.span;
-					this.cut();
-					this.completed && this.completed(_actor);
-					if (this.repeat) {
-						this.replay();
-					}
+					this. timeline = this.repeat ? 0 : this.span;
+					if(!this.repeat) this.cut();
 				}
 			}
 			return pose;
 		},
 
-		cut = function () {
-			this.handleLayers && director.cut(this, _actor);
+		_end = function () {
+			if (this.handleLayers) {
+				this.speed = 0;
+				if (this.active) {
+					this.active = false;
+					tween.halt(actor);
+				}
+			}
+			this.animating = false;
+			this.completed && this.completed(_actor);
+		},
+
+		_update = function(pose, actor, since, dur) {
+			var t;
+			if (!pose._startAnim) tween.init(actor, pose);
+
+			if (since < 0) since = 0;
+			if (since <= dur && dur !== 0) {
+				t = since / dur;
+				tween.step(actor, pose, ( t > 0.98) ? 1 : t, dur);
+			} else {
+				tween.step(actor, pose, 1, dur);
+			}
 		},
 
 		/**
@@ -76,12 +91,12 @@ Actor.makeScene = function(actor) {
 		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @private
 		 */
-		loop = function() {
+		_loop = function() {
 			if (this.animating) {
 				_ts = utils.perfNow();
 				_ts = _ts - (_wasts !== undefined ? _wasts : _ts);
 				_ts = (_ts > _framerate) ? _framerate : _ts;
-				director.take(this, _ts);
+				this.action(_ts);
 				_wasts = _ts;
 				this.trigger(true);
 			} else {
@@ -136,9 +151,9 @@ Actor.makeScene = function(actor) {
 		 * @memberOf module:enyo/AnimationSupport/Actor
 		 * @private
 		 */
-		action: action,
+		action: _start,
 
-		cut: cut,
+		cut: _end,
 
 		/**
 		 * Cancel the animation
@@ -157,7 +172,7 @@ Actor.makeScene = function(actor) {
 		 */
 		trigger: function(force) {
 			if (force || !this.animating) {
-				_req = animation.requestAnimationFrame(utils.bindSafely(this, loop));
+				_req = animation.requestAnimationFrame(utils.bindSafely(this, _loop));
 			}
 		},
 

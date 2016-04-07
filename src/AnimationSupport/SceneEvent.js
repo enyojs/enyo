@@ -188,8 +188,8 @@ var EventAction = {
 
 	/**
 	 * To get event changes captured, for delta values of x, y and z.
-     * @return {Object}  delta    - pose
-     * @memberOf module:enyo/AnimationSupport/SceneEvent
+	 * @return {Object}  delta    - pose
+	 * @memberOf module:enyo/AnimationSupport/SceneEvent
 	 * @public
 	 */
 	getAnimationDelta: function() {
@@ -198,8 +198,8 @@ var EventAction = {
 
 	/**
 	 * To be when an virtual event has to be triggered for the last event captured.
-     * @return {void}
-     * @memberOf module:enyo/AnimationSupport/SceneEvent
+	 * @return {void}
+	 * @memberOf module:enyo/AnimationSupport/SceneEvent
 	 * @public
 	 */
 	triggerEvent: function() {
@@ -211,9 +211,9 @@ var EventAction = {
 	 * To be used when an actor is registerd for event tracking.
 	 * Its keeps track of only on actor which is refered as
 	 * the originator.
-     * @param  {Object} actor - Component on which events will be captured.
-     * @return {void}
-     * @memberOf module:enyo/AnimationSupport/SceneEvent
+	 * @param  {Object} actor - Component on which events will be captured.
+	 * @return {void}
+	 * @memberOf module:enyo/AnimationSupport/SceneEvent
 	 * @public
 	 */
 	register: function (actor) {
@@ -224,19 +224,19 @@ var EventAction = {
 	},
 
 	/**
-     * Overridden function initiates action on the animation
-     * for the given scene event.
-     * @param  {number} ts   - timespan
-     * @param  {Object} pose - pose from the animation list
-     * @return {Object}      - pose
-     * @memberOf module:enyo/AnimationSupport/SceneEvent
-     * @private
-     * @override
-     */
+	 * Overridden function initiates action on the animation
+	 * for the given scene event.
+	 * @param  {number} ts   - timespan
+	 * @param  {Object} pose - pose from the animation list
+	 * @return {Object}      - pose
+	 * @memberOf module:enyo/AnimationSupport/SceneEvent
+	 * @private
+	 * @override
+	 */
 	action: function (ts, pose) {
 		if (_isTriggered && _triggerer && this.handlers && this.handlers[_triggerer] !== undefined) {
 			if (this.handlers[_triggerer] === "") {
-				ts = director.shot(this, ts);
+				ts = this.shot(this, ts);
 				pose = sup.call(this, ts, pose);
 				if(ts === 0) _isTriggered = false;
 			} else {
@@ -244,6 +244,54 @@ var EventAction = {
 			}
 		}
 		return pose;
+	},
+
+	/**
+	 * <code>shot</code> method is invloved in distance based animation in which the distance definite and 
+	 * indefinite (Event based animations). This method calculates the distance to which the actor has to
+	 * be animated based on the delta and the acceleration.
+	 * @param  {@link module:enyo/AnimationSupport/Scene} scene <code>scene</code> applied for achieving animation
+	 * @param  {Number} ts    delta distance
+	 * @return {Number}       The distance to which the actor has to be transformed
+	 */
+	shot: function(scene, ts) {
+		var v1, s, a, v = 0,
+			t = ts,
+			dt = scene.getAnimationDelta(),
+			dir = this.angle(scene.direction),
+			v0 = dt.velocity || 0;
+		
+		v1 = dt[dir] / t;
+		if (v1 === 0) {
+			dt[dir] = 0;
+			dt.velocity = 0;
+		} else {
+			a = (v1 - v0) / t;
+			s = 0.5 * a * t * t;
+			v = (a < 0 ? -s : s);
+			dt[dir] = dt[dir] - v;
+			if (a > -0.001 && a < 0.001) {
+				dt[dir] = 0;
+			}
+			dt.velocity = v1;
+		}
+		return dt[dir] > 0 ? v : -v;
+	},
+
+	/**
+	 * @private
+	 */
+	angle: function (direction) {
+		switch(direction) {
+		case "X" :
+			return "dX";
+		case "Y" :
+			return "dY";
+		case "Z" :
+			return "dZ";
+		default: 
+			return "dX";
+		}
 	}
 };
 
