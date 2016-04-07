@@ -65,7 +65,7 @@ var Highlightable = {
 			SpatialNavigation.init();
 
 			if (!SpatialNavigation.enable('default')) { // if we cannot enable, it does not exist
-				sections['default'] = '.highlightable';
+				sections['default'] = '.highlightable:not(.disabled)';
 			}
 
 			for (id in sections) { // add sections
