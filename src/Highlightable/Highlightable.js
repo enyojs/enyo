@@ -6,7 +6,8 @@
 */
 
 var
-	kind = require('enyo/kind');
+	kind = require('enyo/kind'),
+	dispatcher = require('enyo/dispatcher');
 
 var
 	SpatialNavigation = require('js-spatial-navigation');
@@ -65,7 +66,7 @@ var Highlightable = {
 			SpatialNavigation.init();
 
 			if (!SpatialNavigation.enable('default')) { // if we cannot enable, it does not exist
-				sections['default'] = '.highlightable:not(.disabled)';
+				sections['default'] = '.highlightable';
 			}
 
 			for (id in sections) { // add sections
@@ -75,6 +76,13 @@ var Highlightable = {
 				});
 				SpatialNavigation.makeFocusable(id);
 			}
+
+			// global config for disabled elements
+			SpatialNavigation.set({
+				navigableFilter: function (elem) {
+					if (dispatcher.$[elem.id].disabled) return false; // pretty hacky, but demonstrating direct access testing
+				}
+			});
 
 			SpatialNavigation.focus();
 		};
