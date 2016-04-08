@@ -6,8 +6,7 @@
 */
 
 var
-	kind = require('enyo/kind'),
-	dispatcher = require('enyo/dispatcher');
+	kind = require('enyo/kind');
 
 var
 	SpatialNavigation = require('js-spatial-navigation');
@@ -80,7 +79,7 @@ var Highlightable = {
 			// global config for disabled elements
 			SpatialNavigation.set({
 				navigableFilter: function (elem) {
-					if (dispatcher.$[elem.id].disabled) return false; // pretty hacky, but demonstrating direct access testing
+					if (elem.getAttribute('data-disabled')) return false; // more semantic and standard approach
 				}
 			});
 
