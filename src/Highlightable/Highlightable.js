@@ -40,6 +40,17 @@ var Highlightable = {
 	navigableSections: undefined,
 
 	/**
+	* Whether or not navigation should be restricted to this control (and its children). This will
+	* only apply to elements that are descendants of this control and are part of the default set of
+	* higlight-able items.
+	*
+	* @type {Boolean}
+	* @default false
+	* @public
+	*/
+	restrictNavigation: undefined,
+
+	/**
 	* @method
 	* @private
 	*/
@@ -47,6 +58,7 @@ var Highlightable = {
 		return function () {
 			sup.apply(this, arguments);
 			this.navigableSections = (this.navigableSections === undefined) ? {} : this.navigableSections;
+			this.restrictNavigation = (this.restrictNavigation === undefined) ? false : this.restrictNavigation;
 		};
 	}),
 
@@ -71,7 +83,8 @@ var Highlightable = {
 			for (id in sections) { // add sections
 				SpatialNavigation.add({
 					selector: sections[id],
-					id: id
+					id: id,
+					restrict: id != 'default' && this.restrictNavigation ? 'self-only' : 'none'
 				});
 				SpatialNavigation.makeFocusable(id);
 			}
@@ -84,6 +97,21 @@ var Highlightable = {
 			});
 
 			SpatialNavigation.focus();
+		};
+	}),
+
+	/**
+	* @private
+	*/
+	showingChanged: kind.inherit(function (sup) {
+		return function (was, is) {
+			if (is) {
+				SpatialNavigation.disable('default');
+			} else {
+				SpatialNavigation.enable('default');
+			}
+
+			sup.apply(this, arguments);
 		};
 	})
 };
