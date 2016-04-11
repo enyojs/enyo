@@ -92,7 +92,15 @@ exports.cancelRequestAnimationFrame = function(inId) {
 *
 * @public
 */
-exports.easing = /** @lends module:enyo/animation~easing.prototype */ {
+var easing = exports.easing = /** @lends module:enyo/animation~easing.prototype */ {
+	/**
+	* linear
+	*
+	* @public
+	*/
+	linear: function(n) {
+		return n;
+	},
 	/**
 	* cubicIn
 	*
@@ -129,14 +137,417 @@ exports.easing = /** @lends module:enyo/animation~easing.prototype */ {
 		}
 		return -1 * ((--n) * (n - 2) - 1) / 2;
 	},
+
 	/**
-	* linear
-	*
-	* @public
-	*/
-	linear: function(n) {
-		return n;
-	}
+     * EaseInQuad
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number} - calculated time
+     */
+    easeInQuad: function(t, d) {
+        t = t * d;
+        return (t /= d) * t;
+    },
+
+    /**
+     * EaseOutQuad 
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutQuad: function(t, d) {
+        t = t * d;
+        return -1 * (t /= d) * (t - 2);
+    },
+
+    /**
+     * EaseInOutQuad 
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutQuad: function(t, d) {
+        t = t * d;
+        if ((t /= d / 2) < 1) return 0.5 * t * t;
+        return -0.5 * ((--t) * (t - 2) - 1);
+    },
+
+    /**
+     * EaseInCubic 
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInCubic: function(t, d) {
+        t = t * d;
+        return (t /= d) * t * t;
+    },
+
+    /**
+     * EaseOutCubic 
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutCubic: function(t, d) {
+        t = t * d;
+        return (t = t / d - 1) * t * t + 1;
+    },
+
+    /**
+     * EaseInOutCubic
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutCubic: function(t, d) {
+        t = t * d;
+        if ((t /= d / 2) < 1) return 0.5 * t * t * t;
+        return 0.5 * ((t -= 2) * t * t + 2);
+    },
+
+    /**
+     * EaseInQuart
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInQuart: function(t, d) {
+        t = t * d;
+        return (t /= d) * t * t * t;
+    },
+
+    /**
+     * EaseOutQuart
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutQuart: function(t, d) {
+        t = t * d;
+        return -1 * ((t = t / d - 1) * t * t * t - 1);
+    },
+
+    /**
+     * EaseInOutQuart
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutQuart: function(t, d) {
+        t = t * d;
+        if ((t /= d / 2) < 1) return 0.5 * t * t * t * t;
+        return -0.5 * ((t -= 2) * t * t * t - 2);
+    },
+
+    /**
+     * EaseInQuint
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInQuint: function(t, d) {
+        t = t * d;
+        return (t /= d) * t * t * t * t;
+    },
+    /**
+     * EaseOutQuint
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutQuint: function(t, d) {
+        t = t * d;
+        return (t = t / d - 1) * t * t * t * t + 1;
+    },
+
+    /**
+     * EaseInOutQuint
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutQuint: function(t, d) {
+        t = t * d;
+        if ((t /= d / 2) < 1) return 0.5 * t * t * t * t * t;
+        return 0.5 * ((t -= 2) * t * t * t * t + 2);
+    },
+
+    /**
+     * EaseInSine
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInSine: function(t, d) {
+        t = t * d;
+        return -1 * Math.cos(t / d * (Math.PI / 2)) + 1;
+    },
+
+    /**
+     * EaseOutSine
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutSine: function(t, d) {
+        t = t * d;
+        return Math.sin(t / d * (Math.PI / 2));
+    },
+
+    /**
+     * EaseInOutSine
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutSine: function(t, d) {
+        t = t * d;
+        return -0.5 * (Math.cos(Math.PI * t / d) - 1);
+    },
+
+    /**
+     * EaseInExpo
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInExpo: function(t, d) {
+        t = t * d;
+        return (t === 0) ? 0 : Math.pow(2, 10 * (t / d - 1));
+    },
+
+    /**
+     * EaseOutExpo
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutExpo: function(t, d) {
+        t = t * d;
+        return (t === d) ? 1 : -Math.pow(2, -10 * t / d) + 1;
+    },
+
+    /**
+     * EaseInOutExpo
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutExpo: function(t, d) {
+        t = t * d;
+        if (t === 0) return 0;
+        if (t === d) return 1;
+        if ((t /= d / 2) < 1) return 0.5 * Math.pow(2, 10 * (t - 1));
+        return 0.5 * (-Math.pow(2, -10 * --t) + 2);
+    },
+
+    /**
+     * EaseInCirc
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInCirc: function(t, d) {
+        t = t * d;
+        return -1 * (Math.sqrt(1 - (t /= d) * t) - 1);
+    },
+
+    /**
+     * EaseOutCirc
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutCirc: function(t, d) {
+        t = t * d;
+        return Math.sqrt(1 - (t = t / d - 1) * t);
+    },
+
+    /**
+     * EaseInOutCirc
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutCirc: function(t, d) {
+        t = t * d;
+        if ((t /= d / 2) < 1) return -0.5 * (Math.sqrt(1 - t * t) - 1);
+        return 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1);
+    },
+
+    /**
+     * EaseInElastic
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInElastic: function(t, d) {
+        var a = 1,
+            p = 0,
+            s = 1.70158;
+        t = t * d;
+        if (t === 0) return 0;
+        if ((t /= d) === 1) return 1;
+        if (!p) p = d * 0.3;
+        if (a < Math.abs(1)) {
+            a = 1;
+            s = p / 4;
+        } else s = p / (2 * Math.PI) * Math.asin(1 / a);
+        return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p));
+    },
+
+    /**
+     * EaseOutElastic
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutElastic: function(t, d) {
+        var a = 1,
+            p = 0,
+            s = 1.70158;
+        t = t * d;
+        if (t === 0) return 0;
+        if ((t /= d) === 1) return 1;
+        if (!p) p = d * 0.3;
+        if (a < Math.abs(1)) {
+            a = 1;
+            s = p / 4;
+        } else s = p / (2 * Math.PI) * Math.asin(1 / a);
+        return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + 1;
+    },
+
+    /**
+     * EaseInOutElastic
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutElastic: function(t, d) {
+        var a = 1,
+            p = 0,
+            s = 1.70158;
+        t = t * d;
+        if (t === 0) return 0;
+        if ((t /= d / 2) === 2) return 1;
+        if (!p) p = d * (0.3 * 1.5);
+        if (a < Math.abs(1)) {
+            a = 1;
+            s = p / 4;
+        } else s = p / (2 * Math.PI) * Math.asin(1 / a);
+        if (t < 1) return -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p));
+        return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * 0.5 + 1;
+    },
+
+    /**
+     * EaseInBack
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInBack: function(t, d, s) {
+        t = t * d;
+        if (!s) s = 1.70158;
+        return (t /= d) * t * ((s + 1) * t - s);
+    },
+
+    /**
+     * EaseOutBack
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutBack: function(t, d, s) {
+        t = t * d;
+        if (s === undefined) s = 1.70158;
+        return (t = t / d - 1) * t * ((s + 1) * t + s) + 1;
+    },
+
+    /**
+     * EaseInOutBack
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutBack: function(t, d, s) {
+        t = t * d;
+        if (s === undefined) s = 1.70158;
+        if ((t /= d / 2) < 1) return 0.5 * (t * t * (((s *= (1.525)) + 1) * t - s));
+        return 0.5 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2);
+    },
+
+    /**
+     * EaseInBounce
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInBounce: function(t, d) {
+        t = t * d;
+        return 1 - easing.easeOutBounce((d - t) / d, d);
+    },
+
+    /**
+     * EaseOutBounce
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeOutBounce: function(t, d) {
+        t = t * d;
+        if ((t /= d) < (1 / 2.75)) {
+            return 7.5625 * t * t;
+        } else if (t < (2 / 2.75)) {
+            return 7.5625 * (t -= (1.5 / 2.75)) * t + 0.75;
+        } else if (t < (2.5 / 2.75)) {
+            return 7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375;
+        } else {
+            return 7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375;
+        }
+    },
+
+    /**
+     * EaseInOutBounce
+     * @public
+     * @param  {number} t - current time 
+     * @param  {number} d - duration
+     * @return {number}   calculated time
+     */
+    easeInOutBounce: function(t, d) {
+        t = t * d;
+        if (t < d / 2) return easing.easeInBounce((t * 2) / d, d) * 0.5;
+        return easing.easeOutBounce((t * 2 - d) / d, d) * 0.5 + 0.5;
+    }
 };
 
 /**

@@ -2,7 +2,6 @@ require('enyo');
 
 var
     Dom = require('../dom'),
-    Easings = require('./Easings'),
     Vector = require('./Vector'),
     Matrix = require('./Matrix'),
     utils = require('../utils');
@@ -201,7 +200,7 @@ module.exports = {
             lastIndex = (c - 1),
             startPoint = points[0],
             endPoint = points[lastIndex],
-            values = Easings.getBezierValues(t, lastIndex);
+            values = this.getBezierValues(t, lastIndex);
 
         for (i = 0; i < l; i++) {
             vR[i] = 0;
@@ -240,7 +239,7 @@ module.exports = {
         for (var key in easeObj) {
             t = parseFloat(key) / 100;
             a = parseFloat(easeObj[key]) / 100;
-            bValues = Easings.getBezierValues(t, order);
+            bValues = this.getBezierValues(t, order);
             bValues.shift();
             m1.push(a - bValues.pop());
             m2.push(bValues);
@@ -250,7 +249,11 @@ module.exports = {
         m4 = Matrix.multiplyN(m3, m1);
         l = m4.length;
         for (var i = 0; i < l; i++) {
-            points.push([m4[i], m4[i], m4[i]]);
+            var pValues = [];
+            for( var j = 0; j < endPoint.length; j++) {
+                pValues.push(m4[i]);
+            }
+            points.push(pValues);
         }
 
         points.push(endPoint);
@@ -273,7 +276,7 @@ module.exports = {
             c = path.length,
             l = path[0].length,
             lastIndex = (c - 1),
-            values = Easings.getBezierValues(t, lastIndex);
+            values = this.getBezierValues(t, lastIndex);
 
         for (i = 0; i < l; i++) {
             vR[i] = 0;
@@ -370,5 +373,67 @@ module.exports = {
         } else
             vR = this.slerp(pts[0], pts[1], t);
         return vR;
+    },
+
+    /**
+     * This function returns the coefficents based on the order and the current position
+     * @private
+     * @param  {number} n - order
+     * @param  {number} k - current position
+     * @return {object}   - coefficients
+     */
+    getCoeff: function(n, k) {
+        n = parseInt(n, 10);
+        k = parseInt(k, 10);
+        // Credits
+        // https://math.stackexchange.com/questions/202554/how-do-i-compute-binomial-coefficients-efficiently#answer-927064
+        if (isNaN(n) || isNaN(k))
+            return void 0;
+        if ((n < 0) || (k < 0))
+            return void 0;
+        if (k > n)
+            return void 0;
+        if (k === 0)
+            return 1;
+        if (k === n)
+            return 1;
+        if (k > n / 2)
+            return this.getCoeff(n, n - k);
+
+        return n * this.getCoeff(n - 1, k - 1) / k;
+    },
+
+    /**
+     * Function to get the bezier coeffients based on the time and order
+     * @public
+     * @param  {number} t - time
+     * @param  {number} n - order
+     * @return {object}   - bezier coefficients
+     */
+    getBezierValues: function(t, n) {
+        t = parseFloat(t, 10),
+            n = parseInt(n, 10);
+
+        if (isNaN(t) || isNaN(n))
+            return void 0;
+        if ((t < 0) || (n < 0))
+            return void 0;
+        if (t > 1)
+            return void 0;
+
+        var c,
+            values = [],
+
+            x = (1 - t),
+            y = t;
+        //
+        // Binomial theorem to expand (x+y)^n
+        //
+        for (var k = 0; k <= n; k++) {
+            c = this.getCoeff(n, k) * Math.pow(x, (n - k)) * Math.pow(y, k);
+            values.push(c);
+        }
+
+        return values;
     }
 };
