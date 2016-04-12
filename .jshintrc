@@ -1,22 +1,26 @@
 {
-    "globals": {
-        "enyo": false,
-        "$L": false
-    },
-    "es3": true,
-    "evil": false,
-    "regexdash": true,
-    "browser": true,
-    "wsh": false,
-    "trailing": false,
-    "sub": true,
-    "eqnull": true,
-    "laxbreak": true,
-	"laxcomma": true,
-    "curly": false,
-    "indent": 4,
-    "newcap": true,
-    "undef": true,
-	"expr": true,
-    "unused": "vars"
+  "globals": {
+    "global": false,
+    "require": false,
+    "exports": true,
+    "module": true,
+    "module.exports": true,
+    "JSON": false
+  },
+  "es3": true,
+  "evil": false,
+  "regexdash": true,
+  "browser": true,
+  "wsh": false,
+  "trailing": false,
+  "sub": true,
+  "eqnull": true,
+  "laxbreak": true,
+  "laxcomma": true,
+  "curly": false,
+  "indent": 4,
+  "newcap": false,
+  "undef": true,
+  "expr": true,
+  "unused": "vars"
 }

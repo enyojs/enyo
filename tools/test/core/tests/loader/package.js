@@ -1,1 +1,0 @@
-enyo.depends("loader3.js", "nothere.js");

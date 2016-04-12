@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>enyojs/enyo | unit tests</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8"/>
+		<meta name="apple-mobile-web-app-capable" content="yes"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<link rel="stylesheet" href="../node_modules/mocha/mocha.css"/>
+		<link rel="stylesheet" href="dist/enyo.css"/>
+	</head>
+	<body>
+		<div id="mocha"></div>
+		<script src="../node_modules/mocha/mocha.js"></script>
+		<script src="../node_modules/chai/chai.js"></script>
+		<script src="../node_modules/sinon-chai/lib/sinon-chai.js"></script>
+		<script src="../node_modules/sinon/pkg/sinon.js"></script>
+		<script>
+		mocha.setup('bdd');
+		expect = chai.expect;
+		</script>
+		<script src="dist/enyo.js"></script>
+		<script src="dist/tests.js"></script>
+		<script>
+		function upload() {
+			if(window.__coverage__) {
+				var xhr = new XMLHttpRequest();
+				xhr.open("post","/coverage/client", false);
+				xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+				xhr.send(JSON.stringify(__coverage__));
+			}
+		}
+		if (window.mochaPhantomJS) {
+			mocha.run = mocha.run.bind(mocha, upload);	// Hack, mochaPhantomJS.run does not
+			// accept args.  See https://github.com/metaskills/mocha-phantomjs/issues/159
+			mochaPhantomJS.run();
+		} else {
+			mocha.run(upload);
+		}
+		</script>
+	</body>
+</html>
