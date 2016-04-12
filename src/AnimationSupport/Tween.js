@@ -2,9 +2,8 @@ require('enyo');
 
 var
     Dom = require('../dom'),
-    Vector = require('./Vector'),
-    Matrix = require('./Matrix'),
-    utils = require('../utils');
+    utils = require('../utils'),
+    Transform = require('./Transform');
 
 var fn, state, ease, points, path, oldState, newState, node, matrix, cState = [], domCSS = {};
 /**
@@ -62,7 +61,7 @@ module.exports = {
                 
                 if (ease && (typeof ease !== 'function')) {
                     if (k == 'rotate') {
-                        newState = Vector.toQuant(newState);
+                        newState = Transform.toQuant(newState);
                         points[k] = points[k] || 
                             this.bezierSPoints(ease, oldState, newState, pose.props[k], points[k]);
                         fn = this.bezierSpline;
@@ -74,7 +73,7 @@ module.exports = {
                     cState = fn.call(this, t, points[k], cState);
                 } else {
                     if (k == 'rotate') {
-                        newState = Vector.toQuant(newState);
+                        newState = Transform.toQuant(newState);
                         fn = this.slerp;
                     } else {
                         fn = this.lerp;
@@ -96,7 +95,7 @@ module.exports = {
             this.traversePath(t, path, state.translate);
         }
 
-        matrix = Matrix.recomposeMatrix(
+        matrix = Transform.recomposeMatrix(
             state.translate,
             state.rotate,
             state.scale,
@@ -165,7 +164,7 @@ module.exports = {
         var a,
             b,
             theta,
-            dot = Vector.quantDot(qA, qB),
+            dot = Transform.quantDot(qA, qB),
             l = qA.length;
 
         dot = Math.min(Math.max(dot, -1.0), 1.0);
@@ -245,8 +244,8 @@ module.exports = {
             m2.push(bValues);
         }
 
-        m3 = Matrix.inverseN(m2, bValues.length);
-        m4 = Matrix.multiplyN(m3, m1);
+        m3 = Transform.inverseN(m2, bValues.length);
+        m4 = Transform.multiplyN(m3, m1);
         l = m4.length;
         for (var i = 0; i < l; i++) {
             var pValues = [];
@@ -303,7 +302,7 @@ module.exports = {
             quats = [startQuat];
 
         var t, a, q, n, _a, aI, bN,
-            eD = frame.parseValue(endPoint);
+            eD = utils.formatCSSValues(endPoint);
 
         splinePoints = splinePoints || {};
         quats.push(startQuat);
@@ -314,7 +313,7 @@ module.exports = {
                 a = parseFloat(ease[key]);
                 eD.pop(); // remove angle from end point.
                 eD[eD.length] = a;
-                q = Vector.toQuant(utils.clone(eD));
+                q = Transform.toQuant(utils.clone(eD));
                 quats.push(q);
                 time.push(t);
             }

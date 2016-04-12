@@ -1,10 +1,9 @@
 require('enyo');
 
-var Vector = require('./Vector');
 /**
- * Matrix module for matrix related calculation
+ * Transform module for transform related calculation
  * 
- * @module enyo/AnimationSupport/Matrix
+ * @module enyo/AnimationSupport/Transform
  */
 module.exports = {
 	/**
@@ -17,9 +16,9 @@ module.exports = {
 	},
 
 	/**
-	 * To create Identity Matrix3d (4X4 order).
+	 * To create Identity Matrix2d (3X3 order).
 	 * @public
-	 * @return {Number[]} Identity Matrix3d
+	 * @return {Number[]} Identity Matrix2d
 	 */
 	identity2D: function() {
 		return [1,0,0,0,1,0,0,0,1];
@@ -380,29 +379,29 @@ module.exports = {
 			]);
 		}
 
-		scV[0] = Vector.len(row[0]);
-		row[0] = Vector.normalize(row[0]);
-		skV[0] = Vector.dot(row[0], row[1]);
-		row[1] = Vector.combine(row[1], row[0], 1.0, -skV[0]);
+		scV[0] = this.len(row[0]);
+		row[0] = this.normalize(row[0]);
+		skV[0] = this.dot(row[0], row[1]);
+		row[1] = this.combine(row[1], row[0], 1.0, -skV[0]);
 
-		scV[1] = Vector.len(row[1]);
-		row[1] = Vector.normalize(row[1]);
+		scV[1] = this.len(row[1]);
+		row[1] = this.normalize(row[1]);
 		skV[0] /= scV[1];
 
 		// Compute XZ and YZ shears, orthogonalized 3rd row
-		skV[1] = Vector.dot(row[0], row[2]);
-		row[2] = Vector.combine(row[2], row[0], 1.0, -skV[1]);
-		skV[2] = Vector.dot(row[1], row[2]);
-		row[2] = Vector.combine(row[2], row[1], 1.0, -skV[2]);
+		skV[1] = this.dot(row[0], row[2]);
+		row[2] = this.combine(row[2], row[0], 1.0, -skV[1]);
+		skV[2] = this.dot(row[1], row[2]);
+		row[2] = this.combine(row[2], row[1], 1.0, -skV[2]);
 
 		// Next, get Z scale and normalize 3rd row.
-		scV[2] = Vector.len(row[2]);
-		row[2] = Vector.normalize(row[2]);
+		scV[2] = this.len(row[2]);
+		row[2] = this.normalize(row[2]);
 		skV[1] /= scV[2];
 		skV[2] /= scV[2];
 
-		pdum3 = Vector.cross(row[1], row[2]);
-		if (Vector.dot(row[0], pdum3) < 0) {
+		pdum3 = this.cross(row[1], row[2]);
+		if (this.dot(row[0], pdum3) < 0) {
 			for (i = 0; i < 3; i++) {
 				scV[i] *= -1;
 				row[i][0] *= -1;
@@ -562,5 +561,129 @@ module.exports = {
 		}
 		ms += m[m.length -1] + ')';
 		return ms;
-	}
+	},
+
+    /**
+     * Length of a vector
+     * @param  {Number[]} v - vector
+     * @return {Number} resultant length
+     * @public
+     */
+    len: function (v) {
+        return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    },
+
+	/**
+     * Divides vector with a scalar value.
+     * @param  {Number[]} v - vector
+     * @param  {Number} s - scalar value to divide
+     * @return {Number[]} resultant vector
+     * @public
+     */
+    divide: function (v, s) {
+        return [v[0] / s, v[1] / s, v[2] / s];
+    },
+
+    /**
+     * Gives the direction of motion from one vector to other.
+     * Returns true if moving towards positive direction.
+     * @param  {Number[]} v1 - quant
+     * @param  {Number[]} v2 - quant
+     * @return {boolean} true if positive, false otherwise.
+     * @public
+     */
+    direction: function (q1, q2) {
+        return (q1[0] - q2[0]) < 0 || (q1[1] - q2[1]) < 0 || (q1[2] - q2[2]) < 0;
+    },
+
+    /**
+     * Dot product of 3D vectors
+     * @param  {Number[]} v1 - vector
+     * @param  {Number[]} v2 - vector
+     * @return {Number} resultant dot product
+     * @public
+     */
+    dot: function (v1, v2) {
+        return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]) + (v1[3] !== undefined && v2[3] !== undefined ? (v1[3] * v2[3]) : 0);
+    },
+
+    /**
+     * Dot product of 3D quanterion
+     * @param  {Number[]} q1 - quanterion
+     * @param  {Number[]} q2 - quanterion
+     * @return {Number} resultant dot product
+     * @public
+     */
+    quantDot: function (q1, q2) {
+        return (q1[0] * q2[0]) + (q1[1] * q2[1]) + (q1[2] * q2[2]) + (q1[3] * q2[3]);
+    },
+
+    /**
+     * Cross product of two vectors
+     * @param  {Number[]} v1 - vector
+     * @param  {Number[]} v2 - vector
+     * @return {Number[]} resultant cross product
+     * @public
+     */
+    cross: function (v1, v2) {
+        return [
+            v1[1] * v2[2] - v1[2] * v2[1],
+            v1[2] * v2[0] - v1[0] * v2[2],
+            v1[0] * v2[1] - v1[1] * v2[0]
+        ];
+    },
+
+    /**
+     * Normalizing a vector is obtaining another unit vector in the same direction.
+     * To normalize a vector, divide the vector by its magnitude.
+     * @param  {Number[]} q1 - quanterion
+     * @return {Number[]} resultant quanterion
+     * @public
+     */
+    normalize: function (q) {
+        return this.divide(q, this.len(q));
+    },
+
+    /**
+     * Combine scalar values with two vectors.
+     * Required during parsing scaler values matrix.
+     * @param  {Number[]} a - first vector
+     * @param  {Number[]} b - second vector
+     * @param  {Number[]} ascl - first vector scalar
+     * @param  {Number[]} bscl - second vector scalar
+     * @return {Number[]} resultant vector
+     * @public
+     */
+    combine: function (a, b, ascl, bscl) {
+        return [
+            (ascl * a[0]) + (bscl * b[0]), (ascl * a[1]) + (bscl * b[1]), (ascl * a[2]) + (bscl * b[2])
+        ];
+    },
+
+    /**
+     * Converts a rotation vector to a quaternion vector.
+     * @param  {Number[]} v - vector
+     * @return {Number[]} resultant quaternion
+     * @public
+     */
+    toQuant: function (v) {
+        if (!v) v = [];
+        var q = [],
+            p = parseFloat(v[1] || 0) * Math.PI / 360,
+            y = parseFloat(v[2] || 0) * Math.PI / 360,
+            r = parseFloat(v[0] || 0) * Math.PI / 360,
+            c1 = Math.cos(p),
+            c2 = Math.cos(y),
+            c3 = Math.cos(r),
+            s1 = Math.sin(p),
+            s2 = Math.sin(y),
+            s3 = Math.sin(r);
+
+        q[3] = Math.round((c1 * c2 * c3 - s1 * s2 * s3) * 100000) / 100000;
+        q[0] = Math.round((s1 * s2 * c3 + c1 * c2 * s3) * 100000) / 100000;
+        q[1] = Math.round((s1 * c2 * c3 + c1 * s2 * s3) * 100000) / 100000;
+        q[2] = Math.round((c1 * s2 * c3 - s1 * c2 * s3) * 100000) / 100000;
+        return q;
+    }
+    //TODO: Acheive the same fucntionality for other 11 choices XYX, XZX, XZY, YXY, YXZ, YZX, YZY, ZXY, ZXZ, ZYX, ZYZ 
 };
