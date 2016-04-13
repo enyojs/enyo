@@ -1,5 +1,7 @@
 require('enyo');
 
+var Transform = require('./AnimationSupport/Transform');
+
 /**
 * A collection of utilities
 * @module enyo/utils
@@ -1347,7 +1349,7 @@ exports.remove = function (array, el) {
 };
 
 exports.cssFormat = function (key) {
-	return SHADOW[key] || COLOR[key];
+	if (SHADOW[key] || COLOR[key]) return 'rgb';
 };
 
 /**
@@ -1364,7 +1366,7 @@ exports.formatCSSValues = function (val, format, length) {
 	if (typeof val == 'function') {
 		return val;
 	}
-	if (format) {
+	if (format === 'rgb') {
 		if (val === 'none') {
 			return Array(7).fill(0);
 		}
@@ -1372,6 +1374,19 @@ exports.formatCSSValues = function (val, format, length) {
 			res = this.formatCSSValues(val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1].split(' ').join()));
 		} else {
 			res = this.formatCSSValues(val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,''));
+		}
+	} else if (format === 'matrix') {
+		res = Transform.identity();
+		val = this.formatCSSValues(val.replace(/^\w*\(/, '').replace(')', ''));
+		if (val.length <= 6) {
+			res[0] = val[0];
+			res[1] = val[1];
+			res[4] = val[2];
+			res[5] = val[3];
+			res[12] = val[4];
+			res[13] = val[5];
+		} else {
+			res = val;
 		}
 	} else {
 		if (!val || val === "auto" || val === 'none') {

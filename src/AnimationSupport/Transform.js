@@ -33,7 +33,7 @@ module.exports = {
 	 * @return {Number[]}   Matrix3d
 	 */
 	translate: function (x, y, z) {
-		return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y ? y : 0, z ? z : 0, 1];
+		return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x ? x : 0, y ? y : 0, z ? z : 0, 1];
 	},
 
 	/**
@@ -75,7 +75,7 @@ module.exports = {
 	 * @return {Number[]}   Matrix3d
 	 */
 	scale: function (x, y, z) {
-		return [x, 0, 0, 0, 0, y ? y : 1, 0, 0, 0, 0, z ? z : 1, 0, 0, 0, 0, 1];
+		return [x ? x : 1, 0, 0, 0, 0, y ? y : 1, 0, 0, 0, 0, z ? z : 1, 0, 0, 0, 0, 1];
 	},
 
 	/**
@@ -99,7 +99,7 @@ module.exports = {
 	 */
 	rotateX: function (a) {
 		var cosa, sina;
-		a = a * Math.PI / 180;
+		a = a ? a * Math.PI / 180 : 0;
 		cosa = Math.cos(a);
 		sina = Math.sin(a);
 		return [1, 0, 0, 0, 0, cosa, -sina, 0, 0, sina, cosa, 0, 0, 0, 0, 1];
@@ -113,7 +113,7 @@ module.exports = {
 	 */
 	rotateY: function (b) {
 		var cosb, sinb;
-		b = b * Math.PI / 180;
+		b = b ? b * Math.PI / 180 : 0;
 		cosb = Math.cos(b);
 		sinb = Math.sin(b);
 		return [cosb, 0, sinb, 0, 0, 1, 0, 0, -sinb, 0, cosb, 0, 0, 0, 0, 1];
@@ -127,7 +127,7 @@ module.exports = {
 	 */
 	rotateZ: function (g) {
 		var cosg, sing;
-		g = g * Math.PI / 180;
+		g = g ? g * Math.PI / 180 : 0;
 		cosg = Math.cos(g);
 		sing = Math.sin(g);
 		return [cosg, -sing, 0, 0, sing, cosg, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -142,16 +142,17 @@ module.exports = {
 	 * @return {Number[]}   Matrix3d
 	 */
 	rotate: function (a, b, g) {
-		a = a * Math.PI / 180;
-		b = b * Math.PI / 180;
-		g = g * Math.PI / 180;
-		var ca = Math.cos(a);
-		var sa = Math.sin(a);
-		var cb = Math.cos(b);
-		var sb = Math.sin(b);
-		var cg = Math.cos(g);
-		var sg = Math.sin(g);
-		var m = [
+		var ca, sa, cb, sb, cg, sg, m;
+		a = a ? a * Math.PI / 180 : 0;
+		b = b ? b * Math.PI / 180 : 0;
+		g = g ? g * Math.PI / 180 : 0;
+		ca = Math.cos(a);
+		sa = Math.sin(a);
+		cb = Math.cos(b);
+		sb = Math.sin(b);
+		cg = Math.cos(g);
+		sg = Math.sin(g);
+		m = [
 			cb * cg,
 			ca * sg + sa * sb * cg,
 			sa * sg - ca * sb * cg,
@@ -177,6 +178,8 @@ module.exports = {
 	 * @return {Number[]}    Resultant Matrix3d
 	 */
 	multiply: function(m1, m2) {
+		if (m1.constructor !== Array || m2.constructor !== Array) return;
+		if (m1.length !==16 || m2.length !==16) return;
 		return [
 			m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2],
 			m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2],
@@ -205,6 +208,7 @@ module.exports = {
 	 * @return {Number[]}    Resultant Matrix of order N
 	 */
 	multiplyN: function(m1, m2) {
+		if (m1.constructor !== Array || m2.constructor !== Array) return;
 		var i, j, sum,
 			m = [],
 			l1 = m1.length,
@@ -228,8 +232,8 @@ module.exports = {
 	 * @return {Number[]}        Inverted Matrix
 	 */
 	inverseN: function(matrix, n) {
+		if (matrix.constructor !== Array) return;
 		var i, j, k, r, t,
-			precision = 100000,
 			result = [],
 			row = [];
 		for (i = 0; i < n; i++) {
@@ -243,11 +247,8 @@ module.exports = {
 			for (j = 0; j < n; j++) {
 				if (i != j) {
 					r = matrix[j][i] / matrix[i][i];
-					r = Math.round(r * precision) / precision;
 					for (k = 0; k < 2 * n; k++) {
-						t = Math.round(matrix[j][k] * precision) / precision;
-						t -= Math.round((r * matrix[i][k]) * precision) / precision;
-						matrix[j][k] = t;
+						matrix[j][k] -= r * matrix[i][k];
 					}
 				}
 			}
@@ -282,6 +283,11 @@ module.exports = {
 	 * @return {Number[]}      Final Matrix3d for particular frame
 	 */
 	recomposeMatrix: function (trns, rot, sc, sq, per) {
+		if (trns.constructor !== Array) return;
+		if (rot.constructor !== Array) return;
+		if (sc.constructor !== Array) return;
+		if (sq.constructor !== Array) return;
+		if (per.constructor !== Array) return;
 		var i,
 			x = rot[0],
 			y = rot[1],
@@ -290,6 +296,7 @@ module.exports = {
 			m = this.identity(),
 			sM = this.identity(),
 			rM = this.identity();
+			
 
 		// apply perspective
 		if(per) {
@@ -351,6 +358,7 @@ module.exports = {
 	 * @return {Boolean}         true, if matrix exists else false.
 	 */
 	decomposeMatrix: function (matrix, ret) {
+		if (matrix.constructor !== Array || matrix[15] === 0) return false;
 		var i,
 			tV = [],
 			rV = [],
@@ -359,8 +367,6 @@ module.exports = {
 			scV = [],
 			row = [],
 			pdum3 = {};
-
-		if (matrix[15] === 0) return false;
 
 		for (i = 0; i < 16; i++)
 			matrix[0] /= matrix[15];
@@ -435,12 +441,13 @@ module.exports = {
 	 * @return {Boolean}  ret    To store various transformation properties like translate, angle and matrix.
 	 */
 	decompose2DMatrix: function (m, ret) {
-		var row0x = m[0],
+		if (m.constructor !== Array) return;
+		var scale = [],
+			matrix = [],
+			row0x = m[0],
 			row0y = m[1],
 			row1x = m[4],
 			row1y = m[5],
-			scale = [],
-			matrix = [],
 			det, angle, sn, cs,
 			m11, m12, m21, m22;
 
@@ -504,50 +511,7 @@ module.exports = {
 
 		return ret;
 	},
-
-	/**
-	 * Reform matrix 2D to 3D
-	 * @public
-	 * @param  {Number[]} v Matrix(2d)
-	 * @return {Number[]}   Matrix3d
-	 */
-	parseMatrix3D: function (v) {
-		var m = this.identity();
-		v = v.replace(/^\w*\(/, '').replace(')', '');
-		v = v.split(",").map(function(v) {
-			return parseFloat(v, 10);
-		});
-		if (v.length <= 6) {
-			m[0] = v[0];
-			m[1] = v[1];
-			m[4] = v[2];
-			m[5] = v[3];
-			m[12] = v[4];
-			m[13] = v[5];
-		} else {
-			m = v;
-		}
-		return m;
-	},
-
-	/**
-	 * Gets a matrix for DOM element.
-	 * @public
-	 * @param  {HTMLElement} style CSS style declaration.
-	 * @return {Number[]}          Matrix3d
-	 */
-	getMatrix: function (style) {
-		var m = style.getPropertyValue('transform') ||
-				style.getPropertyValue('-moz-transform') ||
-				style.getPropertyValue('-webkit-transform') ||
-				style.getPropertyValue('-ms-transform') ||
-				style.getPropertyValue('-o-transform');
-		if (m === undefined || m === null || m == "none") {
-			return "";
-		}
-		return this.parseMatrix3D(m);
-	},
-
+	
 	/**
 	 * Convert Matrix3d array to Matrix3d String
 	 * @public
@@ -555,8 +519,8 @@ module.exports = {
 	 * @return {String}     Matrix3d String
 	 */
 	toString: function (m) {
-		var ms = m.length > 10 ? 'matrix3d(' : 'matrix(';
-		for (var i = 0; i < m.length -1; i++) {
+		var i, ms = m.length > 10 ? 'matrix3d(' : 'matrix(';
+		for (i = 0; i < m.length -1; i++) {
 			ms += (m[i] < 0.000001 && m[i] > -0.000001) ? '0,' : m[i] + ',';
 		}
 		ms += m[m.length -1] + ')';

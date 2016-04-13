@@ -566,7 +566,8 @@ var dom = module.exports = {
 			dP.skew = initial.skew;
 			dP.perspective = initial.perspective;
 		} else {
-			m = Transform.getMatrix(s || this.getComputedStyle(node)) || Transform.identity();
+			m = utils.getStyleValue(s || this.getComputedStyle(node), this.getCssTransformProp());
+			m = utils.formatCSSValues(m, 'matrix');
 			Transform.decomposeMatrix(m, dP);
 		}
 
