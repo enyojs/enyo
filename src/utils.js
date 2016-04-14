@@ -1385,7 +1385,8 @@ exports.formatCSSValues = function (val, format, length) {
 			res[5] = val[3];
 			res[12] = val[4];
 			res[13] = val[5];
-		} else {
+		}
+		if (val.length == 16){
 			res = val;
 		}
 	} else {
