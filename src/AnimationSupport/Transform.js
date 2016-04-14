@@ -7,21 +7,43 @@ require('enyo');
  */
 module.exports = {
 	/**
-	 * To create Identity Matrix3d (4X4 order).
+	 * To create Identity Matrix3d as array.
 	 * @public
-	 * @return {Number[]} Identity Matrix3d
+	 * @return {Number[]} Identity Matrix3d as array
 	 */
-	identity: function() {
-		return [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+	identity: function () {
+		return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 	},
 
 	/**
-	 * To create Identity Matrix2d (3X3 order).
+	 * To create Identity Matrix2d as array.
 	 * @public
-	 * @return {Number[]} Identity Matrix2d
+	 * @return {Number[]} Identity Matrix2d as array
 	 */
-	identity2D: function() {
-		return [1,0,0,0,1,0,0,0,1];
+	identity2D: function () {
+		return [1, 0, 0, 0, 1, 0, 0, 0, 1];
+	},
+
+	/**
+	 * To create Identity Matrix (NXN order).
+	 * @public
+	 * @param  {Number}   N Order of Identity Matrix
+	 * @return {Number[][]} Identity Matrix of order N
+	 */
+	identityMatrix: function (N) {
+		var i, j, row, result = [];
+		for (i = 0; i < N; i++) {
+			row = [];
+			for (j = 0; j < N; j++) {
+				if (i === j) {
+					row.push(1);
+				} else {
+					row.push(0);
+				}
+			}
+			result.push(row);
+		}
+		return result;
 	},
 
 	/**
@@ -177,7 +199,7 @@ module.exports = {
 	 * @param  {Number[]} m2 2nd Matrix3d
 	 * @return {Number[]}    Resultant Matrix3d
 	 */
-	multiply: function(m1, m2) {
+	multiply: function (m1, m2) {
 		if (m1.constructor !== Array || m2.constructor !== Array) return;
 		if (m1.length !==16 || m2.length !==16) return;
 		return [
@@ -207,7 +229,7 @@ module.exports = {
 	 * @param  {Number[]} m2 2nd Matrix of order N
 	 * @return {Number[]}    Resultant Matrix of order N
 	 */
-	multiplyN: function(m1, m2) {
+	multiplyN: function (m1, m2) {
 		if (m1.constructor !== Array || m2.constructor !== Array) return;
 		var i, j, sum,
 			m = [],
@@ -231,24 +253,18 @@ module.exports = {
 	 * @param  {Number}   n      Order of the matrix
 	 * @return {Number[]}        Inverted Matrix
 	 */
-	inverseN: function(matrix, n) {
+	inverseN: function (matrix, n) {
 		if (matrix.constructor !== Array) return;
 		var i, j, k, r, t,
-			result = [],
-			row = [];
-		for (i = 0; i < n; i++) {
-			for (j = n; j < 2 * n; j++) {
-				if (i == (j - n)) matrix[i][j] = 1.0;
-				else matrix[i][j] = 0.0;
-			}
-		}
+			result = this.identityMatrix(n);
 
 		for (i = 0; i < n; i++) {
 			for (j = 0; j < n; j++) {
 				if (i != j) {
 					r = matrix[j][i] / matrix[i][i];
-					for (k = 0; k < 2 * n; k++) {
+					for (k = 0; k < n; k++) {
 						matrix[j][k] -= r * matrix[i][k];
+						result[j][k] -= r * result[i][k];
 					}
 				}
 			}
@@ -256,17 +272,10 @@ module.exports = {
 
 		for (i = 0; i < n; i++) {
 			t = matrix[i][i];
-			for (j = 0; j < 2 * n; j++) {
+			for (j = 0; j < n; j++) {
 				matrix[i][j] = matrix[i][j] / t;
+				result[i][j] = result[i][j] / t;
 			}
-		}
-		
-		for (i = 0; i < n; i++) {
-			row = [];
-			for (k = 0, j = n; j < 2 * n; j++, k++) {
-				row.push(matrix[i][j]);
-			}
-			result.push(row);
 		}
 
 		return result;
@@ -283,11 +292,11 @@ module.exports = {
 	 * @return {Number[]}      Final Matrix3d for particular frame
 	 */
 	recomposeMatrix: function (trns, rot, sc, sq, per) {
-		if (trns.constructor !== Array) return;
-		if (rot.constructor !== Array) return;
-		if (sc.constructor !== Array) return;
-		if (sq.constructor !== Array) return;
-		if (per.constructor !== Array) return;
+		if (!trns || trns.constructor !== Array) return;
+		if (!rot || rot.constructor !== Array) return;
+		if (!sc || sc.constructor !== Array) return;
+		if (!sq || sq.constructor !== Array) return;
+		if (!per || per.constructor !== Array) return;
 		var i,
 			x = rot[0],
 			y = rot[1],
@@ -358,7 +367,7 @@ module.exports = {
 	 * @return {Boolean}         true, if matrix exists else false.
 	 */
 	decomposeMatrix: function (matrix, ret) {
-		if (matrix.constructor !== Array || matrix[15] === 0) return false;
+		if (!matrix || matrix.constructor !== Array || matrix[15] === 0) return false;
 		var i,
 			tV = [],
 			rV = [],
