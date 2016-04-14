@@ -618,7 +618,9 @@ module.exports = {
      * @public
      */
     divide: function(v, s) {
-        return [v[0] / s, v[1] / s, v[2] / s];
+        var divideVector = new Float32Array([v[0] / s, v[1] / s, v[2] / s]);
+        return divideVector;
+
     },
 
     /**
@@ -663,11 +665,9 @@ module.exports = {
      * @public
      */
     cross: function(v1, v2) {
-        return [
-            v1[1] * v2[2] - v1[2] * v2[1],
-            v1[2] * v2[0] - v1[0] * v2[2],
-            v1[0] * v2[1] - v1[1] * v2[0]
-        ];
+        var crossProdMat = new Float32Array([v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]]);
+        return crossProdMat;
+
     },
 
     /**
@@ -692,9 +692,9 @@ module.exports = {
      * @public
      */
     combine: function(a, b, ascl, bscl) {
-        return [
-            (ascl * a[0]) + (bscl * b[0]), (ascl * a[1]) + (bscl * b[1]), (ascl * a[2]) + (bscl * b[2])
-        ];
+        var combineMat = new Float32Array([(ascl * a[0]) + (bscl * b[0]), (ascl * a[1]) + (bscl * b[1]), (ascl * a[2]) + (bscl * b[2])]);
+        return combineMat;
+
     },
 
     /**
@@ -705,8 +705,7 @@ module.exports = {
      */
     toQuant: function(v) {
             if (!v) v = [];
-            var q = [],
-                p = parseFloat(v[1] || 0) * Math.PI / 360,
+            var p = parseFloat(v[1] || 0) * Math.PI / 360,
                 y = parseFloat(v[2] || 0) * Math.PI / 360,
                 r = parseFloat(v[0] || 0) * Math.PI / 360,
                 c1 = Math.cos(p),
@@ -714,12 +713,16 @@ module.exports = {
                 c3 = Math.cos(r),
                 s1 = Math.sin(p),
                 s2 = Math.sin(y),
-                s3 = Math.sin(r);
+                s3 = Math.sin(r),
+                q;
 
-            q[3] = Math.round((c1 * c2 * c3 - s1 * s2 * s3) * 100000) / 100000;
-            q[0] = Math.round((s1 * s2 * c3 + c1 * c2 * s3) * 100000) / 100000;
-            q[1] = Math.round((s1 * c2 * c3 + c1 * s2 * s3) * 100000) / 100000;
-            q[2] = Math.round((c1 * s2 * c3 - s1 * c2 * s3) * 100000) / 100000;
+            q = new Float32Array([
+                Math.round((s1 * s2 * c3 + c1 * c2 * s3) * 100000) / 100000,
+                Math.round((s1 * c2 * c3 + c1 * s2 * s3) * 100000) / 100000,
+                Math.round((c1 * s2 * c3 - s1 * c2 * s3) * 100000) / 100000,
+                Math.round((c1 * c2 * c3 - s1 * s2 * s3) * 100000) / 100000
+            ]);
+
             return q;
         }
         //TODO: Acheive the same fucntionality for other 11 choices XYX, XZX, XZY, YXY, YXZ, YZX, YZY, ZXY, ZXZ, ZYX, ZYZ 
