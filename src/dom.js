@@ -8,7 +8,7 @@ var
 	roots = require('./roots'),
 	utils = require('./utils'),
 	platform = require('./platform'),
-	Transform = require('./AnimationSupport/Transform');
+	transform = require('./transform');
 
 var dom = module.exports = {
 
@@ -471,14 +471,14 @@ var dom = module.exports = {
 
 		if (initial) {
 			dP.translate = initial.translate;
-			dP.rotate = initial.rotate.length < 4 ? Transform.toQuant(initial.rotate) : initial.rotate;
+			dP.rotate = initial.rotate.length < 4 ? transform.toQuant(initial.rotate) : initial.rotate;
 			dP.scale = initial.scale;
 			dP.skew = initial.skew;
 			dP.perspective = initial.perspective;
 		} else {
 			m = utils.getStyleValue(s || this.getComputedStyle(node), this.getCssTransformProp());
 			m = utils.formatCSSValues(m, 'matrix');
-			Transform.decomposeMatrix(m, dP);
+			transform.Matrix.decompose(m, dP);
 		}
 
 		for(k in dP) {
@@ -625,7 +625,7 @@ dom.getStyleTransformProp = function() {
 * @private
 */
 dom.toTransformValue = function(matrix, ret) {
-	var mat = Transform.toString(matrix);
+	var mat = transform.Matrix.toString(matrix);
 
 	ret = ret || {};
 	for (var i = 0, p; (p = styleTransformProps[i]); i++) {
