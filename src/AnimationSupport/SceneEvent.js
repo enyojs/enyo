@@ -1,6 +1,5 @@
 var
-	Scene = require('./Scene'),
-	director = require('./Director'),
+	Scene = require('../scene'),
 	dispatcher = require('../dispatcher'),
 	emitter = require('../EventEmitter'),
 	utils = require('../utils');
