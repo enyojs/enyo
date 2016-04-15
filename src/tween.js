@@ -1,9 +1,9 @@
 require('enyo');
 
 var
-    Dom = require('../dom'),
-    utils = require('../utils'),
-    Transform = require('./Transform');
+    dom = require('./dom'),
+    utils = require('./utils'),
+    transform = require('./transform');
 
 var fn, state, ease, points, path, oldState, newState, node, matrix, cState = [], domCSS = {};
 /**
@@ -12,7 +12,7 @@ var fn, state, ease, points, path, oldState, newState, node, matrix, cState = []
  * - Interpolating current state of character.
  * - Update DOM based on current state, using matrix for tranform and styles for others.
  *
- * @module enyo/AnimationSupport/Tween
+ * @module enyo/tween
  */
 module.exports = {
 
@@ -22,7 +22,7 @@ module.exports = {
     init: function (actor, pose, initial) {
         if (!(actor && pose && pose.animate)) return;
         node = actor.hasNode();
-        utils.mixin(pose, Dom.getAnimatedProperty(node, pose.animate, initial || actor.currentState));
+        utils.mixin(pose, dom.getAnimatedProperty(node, pose.animate, initial || actor.currentState));
         actor.currentState = pose.currentState;
         return pose;
     },
@@ -33,7 +33,7 @@ module.exports = {
 	 * @param  {Object} pose - Current behavior in the animation (at a given time)
 	 * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
 	 * @param  {Number} d - Duration of the current pose
-	 * @memberOf module:enyo/AnimationSupport/Tween
+	 * @memberOf module:enyo/tween
 	 * @private
 	 */
     step: function(actor, pose, t, d) {
@@ -61,7 +61,7 @@ module.exports = {
                 
                 if (ease && (typeof ease !== 'function')) {
                     if (k == 'rotate') {
-                        newState = Transform.toQuant(newState);
+                        newState = transform.Vector.toQuant(newState);
                         points[k] = points[k] || 
                             this.bezierSPoints(ease, oldState, newState, pose.props[k], points[k]);
                         fn = this.bezierSpline;
@@ -73,7 +73,7 @@ module.exports = {
                     cState = fn.call(this, t, points[k], cState);
                 } else {
                     if (k == 'rotate') {
-                        newState = Transform.toQuant(newState);
+                        newState = transform.Vector.toQuant(newState);
                         fn = this.slerp;
                     } else {
                         fn = this.lerp;
@@ -95,7 +95,7 @@ module.exports = {
             this.traversePath(t, path, state.translate);
         }
 
-        matrix = Transform.recomposeMatrix(
+        matrix = transform.Matrix.recompose(
             state.translate,
             state.rotate,
             state.scale,
@@ -104,7 +104,7 @@ module.exports = {
         );
         state.matrix = matrix;
         actor.currentState = pose.currentState = state;
-        domCSS = Dom.toTransformValue(matrix, domCSS);
+        domCSS = dom.toTransformValue(matrix, domCSS);
 
         actor.addStyles(domCSS);
     },
@@ -164,7 +164,7 @@ module.exports = {
         var a,
             b,
             theta,
-            dot = Transform.quantDot(qA, qB),
+            dot = transform.Vector.quantDot(qA, qB),
             l = qA.length;
 
         dot = Math.min(Math.max(dot, -1.0), 1.0);
@@ -244,8 +244,8 @@ module.exports = {
             m2.push(bValues);
         }
 
-        m3 = Transform.inverseN(m2, bValues.length);
-        m4 = Transform.multiplyN(m3, m1);
+        m3 = transform.Matrix.inverseN(m2, bValues.length);
+        m4 = transform.Matrix.multiplyN(m3, m1);
         l = m4.length;
         for (var i = 0; i < l; i++) {
             var pValues = [];
@@ -313,7 +313,7 @@ module.exports = {
                 a = parseFloat(ease[key]);
                 eD.pop(); // remove angle from end point.
                 eD[eD.length] = a;
-                q = Transform.toQuant(utils.clone(eD));
+                q = transform.Vector.toQuant(utils.clone(eD));
                 quats.push(q);
                 time.push(t);
             }

@@ -1,6 +1,6 @@
 require('enyo');
 
-var Transform = require('./AnimationSupport/Transform');
+var transform = require('./transform');
 
 /**
 * A collection of utilities
@@ -1376,7 +1376,7 @@ exports.formatCSSValues = function (val, format, length) {
 			res = this.formatCSSValues(val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,''));
 		}
 	} else if (format === 'matrix') {
-		res = Transform.identity();
+		res = transform.identity();
 		val = this.formatCSSValues(val.replace(/^\w*\(/, '').replace(')', ''));
 		if (val.length <= 6) {
 			res[0] = val[0];

@@ -25,31 +25,228 @@ function inputValues (matrix, numberMat) {
  * 
  * @module enyo/AnimationSupport/Transform
  */
-module.exports = {
 
-    /**
-     * To create Identity Matrix3d as array.
-     * @public
-     * @return {Number[]} Identity Matrix3d
-     */
-    identity: function() {
-        var identityMatrix, modifiedMat;
-        identityMatrix = typedArray(64);
-        modifiedMat = inputValues(identityMatrix, new Uint8Array([0, 5, 10, 15]));
-        return identityMatrix;
-    },
 
-    /**
-     * To create Identity Matrix2d as array.
-     * @public
-     * @return {Number[]} Identity Matrix2d as array
-     */
-    identity2D: function() {
-        var identity2D, modifiedMat;
-        identity2D = typedArray(36);
-        modifiedMat = inputValues(identity2D, new Uint8Array([0, 4, 8]));
-        return identity2D;
-    },
+/**
+ * To create Identity Matrix3d as array.
+ * @public
+ * @return {Number[]} Identity Matrix3d
+ */
+var identity = exports.identity = function() {
+    var identityMatrix, modifiedMat;
+    identityMatrix = typedArray(64);
+    modifiedMat = inputValues(identityMatrix, new Uint8Array([0, 5, 10, 15]));
+    return identityMatrix;
+};
+
+/**
+ * To create Identity Matrix2d as array.
+ * @public
+ * @return {Number[]} Identity Matrix2d as array
+ */
+exports.identity2D = function() {
+    var identity2D, modifiedMat;
+    identity2D = typedArray(36);
+    modifiedMat = inputValues(identity2D, new Uint8Array([0, 4, 8]));
+    return identity2D;
+};
+
+/**
+ * To translate in any dimension based on co-ordinates.
+ * @public
+ * @param  {Number}   x Translate value in X axis
+ * @param  {Number}   y Translate value in Y axis
+ * @param  {Number}   z Translate value in Z axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.translate = function(x, y, z) {
+    var translateMat, modifiedMat;
+    translateMat = typedArray(64);
+    modifiedMat = inputValues(translateMat, new Uint8Array([0, 5, 10, 15]));
+    translateMat[12] = x;
+    translateMat[13] = y ? y : 0;
+    translateMat[14] = z ? z : 0;
+    return translateMat;
+};
+
+/**
+ * To translate in x dimension
+ * @public
+ * @param  {Number}   x Translate value in X axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.translateX = function(x) {
+    var translateX, modifiedMat;
+    translateX = typedArray(64);
+    modifiedMat = inputValues(translateX, new Uint8Array([0, 5, 10, 15]));
+    translateX[12] = x ? x : 0;
+    return translateX;
+};
+
+/**
+ * To translate in y dimension
+ * @public
+ * @param  {Number}   y Translate value in Y axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.translateY = function(y) {
+    var translateY, modifiedMat;
+    translateY = typedArray(64);
+    modifiedMat = inputValues(translateY, new Uint8Array([0, 5, 10, 15]));
+    translateY[13] = y ? y : 0;
+    return translateY;
+};
+
+/**
+ * To translate in z dimension
+ * @public
+ * @param  {Number}   z Translate value in Z axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.translateZ = function(z) {
+    var translateZ, modifiedMat;
+    translateZ = typedArray(64);
+    modifiedMat = inputValues(translateZ, new Uint8Array([0, 5, 10, 15]));
+    translateZ[14] = z ? z : 0;
+    return translateZ;
+};
+
+/**
+ * To scale in any dimension
+ * @public
+ * @param  {Number}   x Scale value in X axis
+ * @param  {Number}   y Scale value in Y axis
+ * @param  {Number}   z Scale value in Z axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.scale = function(x, y, z) {
+    var scaleMat = typedArray(64);
+    scaleMat[0] = x;
+    scaleMat[5] = y ? y : 1;
+    scaleMat[10] = z ? z : 1;
+    scaleMat[15] = 1;
+    return scaleMat;
+};
+
+/**
+ * To skew in any dimension (skew can only happen in 2d)
+ * @public
+ * @param  {Number}   a Skew value in X axis
+ * @param  {Number}   b Skew value in Y axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.skew =function(a, b) {
+    var skewMat, modifiedMat;
+    a = a ? Math.tan(a * Math.PI / 180) : 0;
+    b = b ? Math.tan(b * Math.PI / 180) : 0;
+
+    skewMat = typedArray(64);
+    modifiedMat = inputValues(skewMat, new Uint8Array([0, 5, 10, 15]));
+    skewMat[1] = b;
+    skewMat[4] = a;
+    return skewMat;
+};
+
+/**
+ * To rotate in x-axis
+ * @public
+ * @param  {Number}   a Rotate value in X axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.rotateX = function(a) {
+    var cosa, sina, rotateXMat, modifiedMat;
+    a = a ? a * Math.PI / 180 : 0;
+    cosa = Math.cos(a);
+    sina = Math.sin(a);
+
+    rotateXMat = typedArray(64);
+    modifiedMat = inputValues(rotateXMat, new Uint8Array([0, 15]));
+    rotateXMat[5] = cosa;
+    rotateXMat[6] = -sina;
+    rotateXMat[9] = sina;
+    rotateXMat[10] = cosa;
+    return rotateXMat;
+};
+
+/**
+ * To rotate in y-axis
+ * @public
+ * @param  {Number}   b Rotate value in Y axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.rotateY = function(b) {
+    var cosb, sinb, rotateYMat, modifiedMat;
+    b = b ? b * Math.PI / 180 : 0;
+    cosb = Math.cos(b);
+    sinb = Math.sin(b);
+
+    rotateYMat = typedArray(64);
+    modifiedMat = inputValues(rotateYMat, new Uint8Array([5, 15]));
+    rotateYMat[0] = cosb;
+    rotateYMat[2] = sinb;
+    rotateYMat[8] = -sinb;
+    rotateYMat[10] = cosb;
+    return rotateYMat;
+};
+
+/**
+ * To rotate in z-axis
+ * @public
+ * @param  {Number}   g Rotate value in Z axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.rotateZ = function(g) {
+    var cosg, sing, rotateZMat;
+    g = g ? g * Math.PI / 180 : 0;
+    cosg = Math.cos(g);
+    sing = Math.sin(g);
+
+    rotateZMat = typedArray(64);
+    rotateZMat[0] = cosg;
+    rotateZMat[1] = -sing;
+    rotateZMat[4] = sing;
+    rotateZMat[5] = cosg;
+    rotateZMat[15] = 1;
+    return rotateZMat;
+};
+
+/**
+ * To rotate in any dimension
+ * @public
+ * @param  {Number}   a Rotate value in X axis
+ * @param  {Number}   b Rotate value in Y axis
+ * @param  {Number}   g Rotate value in Z axis
+ * @return {Number[]}   Matrix3d
+ */
+exports.rotate = function(a, b, g) {
+    var ca, sa, cb, sb, cg, sg, rotateMat;
+    a = a ? a * Math.PI / 180 : 0;
+    b = b ? b * Math.PI / 180 : 0;
+    g = g ? g * Math.PI / 180 : 0;
+    ca = Math.cos(a);
+    sa = Math.sin(a);
+    cb = Math.cos(b);
+    sb = Math.sin(b);
+    cg = Math.cos(g);
+    sg = Math.sin(g);
+
+    rotateMat = typedArray(64);
+    rotateMat[0] = cb * cg;
+    rotateMat[1] = ca * sg + sa * sb * cg;
+    rotateMat[2] = sa * sg - ca * sb * cg;
+    rotateMat[4] = -cb * sg;
+    rotateMat[5] = ca * cg - sa * sb * sg;
+    rotateMat[6] = sa * cg + ca * sb * sg;
+    rotateMat[8] = sb;
+    rotateMat[9] = -sa * cb;
+    rotateMat[10] = ca * cb;
+    rotateMat[15] = 1;
+    return rotateMat;
+};
+
+
+
+var matrix = exports.Matrix = {
 
     /**
      * To create Identity Matrix (NXN order).
@@ -72,200 +269,6 @@ module.exports = {
         }
         return result;
     },
-
-    /**
-     * To translate in any dimension based on co-ordinates.
-     * @public
-     * @param  {Number}   x Translate value in X axis
-     * @param  {Number}   y Translate value in Y axis
-     * @param  {Number}   z Translate value in Z axis
-     * @return {Number[]}   Matrix3d
-     */
-    translate: function(x, y, z) {
-        var translateMat, modifiedMat;
-        translateMat = typedArray(64);
-        modifiedMat = inputValues(translateMat, new Uint8Array([0, 5, 10, 15]));
-        translateMat[12] = x;
-        translateMat[13] = y ? y : 0;
-        translateMat[14] = z ? z : 0;
-        return translateMat;
-    },
-
-    /**
-     * To translate in x dimension
-     * @public
-     * @param  {Number}   x Translate value in X axis
-     * @return {Number[]}   Matrix3d
-     */
-    translateX: function(x) {
-        var translateX, modifiedMat;
-        translateX = typedArray(64);
-        modifiedMat = inputValues(translateX, new Uint8Array([0, 5, 10, 15]));
-        translateX[12] = x ? x : 0;
-        return translateX;
-    },
-
-    /**
-     * To translate in y dimension
-     * @public
-     * @param  {Number}   y Translate value in Y axis
-     * @return {Number[]}   Matrix3d
-     */
-    translateY: function(y) {
-        var translateY, modifiedMat;
-        translateY = typedArray(64);
-        modifiedMat = inputValues(translateY, new Uint8Array([0, 5, 10, 15]));
-        translateY[13] = y ? y : 0;
-        return translateY;
-    },
-
-    /**
-     * To translate in z dimension
-     * @public
-     * @param  {Number}   z Translate value in Z axis
-     * @return {Number[]}   Matrix3d
-     */
-    translateZ: function(z) {
-        var translateZ, modifiedMat;
-        translateZ = typedArray(64);
-        modifiedMat = inputValues(translateZ, new Uint8Array([0, 5, 10, 15]));
-        translateZ[14] = z ? z : 0;
-        return translateZ;
-    },
-
-    /**
-     * To scale in any dimension
-     * @public
-     * @param  {Number}   x Scale value in X axis
-     * @param  {Number}   y Scale value in Y axis
-     * @param  {Number}   z Scale value in Z axis
-     * @return {Number[]}   Matrix3d
-     */
-    scale: function(x, y, z) {
-        var scaleMat = typedArray(64);
-        scaleMat[0] = x;
-        scaleMat[5] = y ? y : 1;
-        scaleMat[10] = z ? z : 1;
-        scaleMat[15] = 1;
-        return scaleMat;
-    },
-
-    /**
-     * To skew in any dimension (skew can only happen in 2d)
-     * @public
-     * @param  {Number}   a Skew value in X axis
-     * @param  {Number}   b Skew value in Y axis
-     * @return {Number[]}   Matrix3d
-     */
-    skew: function(a, b) {
-        var skewMat, modifiedMat;
-        a = a ? Math.tan(a * Math.PI / 180) : 0;
-        b = b ? Math.tan(b * Math.PI / 180) : 0;
-
-        skewMat = typedArray(64);
-        modifiedMat = inputValues(skewMat, new Uint8Array([0, 5, 10, 15]));
-        skewMat[1] = b;
-        skewMat[4] = a;
-        return skewMat;
-    },
-
-    /**
-     * To rotate in x-axis
-     * @public
-     * @param  {Number}   a Rotate value in X axis
-     * @return {Number[]}   Matrix3d
-     */
-    rotateX: function(a) {
-        var cosa, sina, rotateXMat, modifiedMat;
-        a = a ? a * Math.PI / 180 : 0;
-        cosa = Math.cos(a);
-        sina = Math.sin(a);
-
-        rotateXMat = typedArray(64);
-        modifiedMat = inputValues(rotateXMat, new Uint8Array([0, 15]));
-        rotateXMat[5] = cosa;
-        rotateXMat[6] = -sina;
-        rotateXMat[9] = sina;
-        rotateXMat[10] = cosa;
-        return rotateXMat;
-    },
-
-    /**
-     * To rotate in y-axis
-     * @public
-     * @param  {Number}   b Rotate value in Y axis
-     * @return {Number[]}   Matrix3d
-     */
-    rotateY: function(b) {
-        var cosb, sinb, rotateYMat, modifiedMat;
-        b = b ? b * Math.PI / 180 : 0;
-        cosb = Math.cos(b);
-        sinb = Math.sin(b);
-
-        rotateYMat = typedArray(64);
-        modifiedMat = inputValues(rotateYMat, new Uint8Array([5, 15]));
-        rotateYMat[0] = cosb;
-        rotateYMat[2] = sinb;
-        rotateYMat[8] = -sinb;
-        rotateYMat[10] = cosb;
-        return rotateYMat;
-    },
-
-    /**
-     * To rotate in z-axis
-     * @public
-     * @param  {Number}   g Rotate value in Z axis
-     * @return {Number[]}   Matrix3d
-     */
-    rotateZ: function(g) {
-        var cosg, sing, rotateZMat;
-        g = g ? g * Math.PI / 180 : 0;
-        cosg = Math.cos(g);
-        sing = Math.sin(g);
-
-        rotateZMat = typedArray(64);
-        rotateZMat[0] = cosg;
-        rotateZMat[1] = -sing;
-        rotateZMat[4] = sing;
-        rotateZMat[5] = cosg;
-        rotateZMat[15] = 1;
-        return rotateZMat;
-    },
-
-    /**
-     * To rotate in any dimension
-     * @public
-     * @param  {Number}   a Rotate value in X axis
-     * @param  {Number}   b Rotate value in Y axis
-     * @param  {Number}   g Rotate value in Z axis
-     * @return {Number[]}   Matrix3d
-     */
-    rotate: function(a, b, g) {
-        var ca, sa, cb, sb, cg, sg, rotateMat;
-        a = a ? a * Math.PI / 180 : 0;
-        b = b ? b * Math.PI / 180 : 0;
-        g = g ? g * Math.PI / 180 : 0;
-        ca = Math.cos(a);
-        sa = Math.sin(a);
-        cb = Math.cos(b);
-        sb = Math.sin(b);
-        cg = Math.cos(g);
-        sg = Math.sin(g);
-
-        rotateMat = typedArray(64);
-        rotateMat[0] = cb * cg;
-        rotateMat[1] = ca * sg + sa * sb * cg;
-        rotateMat[2] = sa * sg - ca * sb * cg;
-        rotateMat[4] = -cb * sg;
-        rotateMat[5] = ca * cg - sa * sb * sg;
-        rotateMat[6] = sa * cg + ca * sb * sg;
-        rotateMat[8] = sb;
-        rotateMat[9] = -sa * cb;
-        rotateMat[10] = ca * cb;
-        rotateMat[15] = 1;
-        return rotateMat;
-    },
-
     /**
      * To multiply 2 Martix3d (4x4 order)
      * @public
@@ -358,15 +361,15 @@ module.exports = {
      * @param  {Number[]} per  Perspective vector
      * @return {Number[]}      Final Matrix3d for particular frame
      */
-    recomposeMatrix: function(trns, rot, sc, sq, per) {
+    recompose: function(trns, rot, sc, sq, per) {
         var i,
             x = rot[0],
             y = rot[1],
             z = rot[2],
             w = rot[3],
-            m = this.identity(),
-            sM = this.identity(),
-            rM = this.identity();
+            m = identity.call(),
+            sM = identity.call(),
+            rM = identity.call();
 
 
         // apply perspective
@@ -428,7 +431,7 @@ module.exports = {
      * @param  {Object}   ret    To store various transformation properties like translate, rotate, scale, skew and perspective.
      * @return {Boolean}         true, if matrix exists else false.
      */
-    decomposeMatrix: function(matrix, ret) {
+    decompose: function(matrix, ret) {
         if (matrix[15] === 0) return false;
         var i,
             tV = [],
@@ -456,29 +459,29 @@ module.exports = {
             ]);
         }
 
-        scV[0] = this.len(row[0]);
-        row[0] = this.normalize(row[0]);
-        skV[0] = this.dot(row[0], row[1]);
-        row[1] = this.combine(row[1], row[0], 1.0, -skV[0]);
+        scV[0] = vector.len(row[0]);
+        row[0] = vector.normalize(row[0]);
+        skV[0] = vector.dot(row[0], row[1]);
+        row[1] = vector.combine(row[1], row[0], 1.0, -skV[0]);
 
-        scV[1] = this.len(row[1]);
-        row[1] = this.normalize(row[1]);
+        scV[1] = vector.len(row[1]);
+        row[1] = vector.normalize(row[1]);
         skV[0] /= scV[1];
 
         // Compute XZ and YZ shears, orthogonalized 3rd row
-        skV[1] = this.dot(row[0], row[2]);
-        row[2] = this.combine(row[2], row[0], 1.0, -skV[1]);
-        skV[2] = this.dot(row[1], row[2]);
-        row[2] = this.combine(row[2], row[1], 1.0, -skV[2]);
+        skV[1] = vector.dot(row[0], row[2]);
+        row[2] = vector.combine(row[2], row[0], 1.0, -skV[1]);
+        skV[2] = vector.dot(row[1], row[2]);
+        row[2] = vector.combine(row[2], row[1], 1.0, -skV[2]);
 
         // Next, get Z scale and normalize 3rd row.
-        scV[2] = this.len(row[2]);
-        row[2] = this.normalize(row[2]);
+        scV[2] = vector.len(row[2]);
+        row[2] = vector.normalize(row[2]);
         skV[1] /= scV[2];
         skV[2] /= scV[2];
 
-        pdum3 = this.cross(row[1], row[2]);
-        if (this.dot(row[0], pdum3) < 0) {
+        pdum3 = vector.cross(row[1], row[2]);
+        if (vector.dot(row[0], pdum3) < 0) {
             for (i = 0; i < 3; i++) {
                 scV[i] *= -1;
                 row[i][0] *= -1;
@@ -511,7 +514,7 @@ module.exports = {
      * @param  {Object}   ret    To store various transformation properties like translate, angle and matrix.
      * @return {Boolean}  ret    To store various transformation properties like translate, angle and matrix.
      */
-    decompose2DMatrix: function(m, ret) {
+    decompose2D: function(m, ret) {
         var scale = [],
             matrix = [],
             row0x = m[0],
@@ -595,8 +598,10 @@ module.exports = {
         }
         ms += m[m.length - 1] + ')';
         return ms;
-    },
+    }
+};
 
+var vector = exports.Vector = {
     /**
      * Length of a vector
      * @param  {Number[]} v - vector

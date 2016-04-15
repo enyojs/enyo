@@ -1,5 +1,5 @@
 var
-	tween = require('./Tween'),
+	tween = require('../tween'),
 	editor = require('./Editor'),
 	animation = require('../animation'),
 	utils = require('../utils');
