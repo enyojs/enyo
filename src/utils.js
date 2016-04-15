@@ -1283,8 +1283,11 @@ exports.merge = function (/* _arrays_ */) {
 * @public
 */
 var cloneArray = exports.cloneArray = function (array, offset, initialArray) {
-	var ret = initialArray || [];
-	for(var i = offset || 0, l = array.length; i<l; i++){
+	var
+		ret = initialArray || [],
+		_offset = offset ? offset : 0;
+
+	for(var i = _offset || 0, l = array.length; i<l; i++){
 		ret.push(array[i]);
 	}
 	// Alternate smarter implementation:
