@@ -22,7 +22,7 @@ var
 * module.exports = kind({
 * 	name: 'App',
 * 	components: [
-* 		{kind: 'Signals', onvisibilitychange: 'visibilitychanged'}
+* 		{kind: Signals, onvisibilitychange: 'visibilitychanged'}
 * 	],
 * 	visibilitychanged: function() {
 * 		if(enyo.hidden){

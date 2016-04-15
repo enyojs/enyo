@@ -2,6 +2,9 @@ require('enyo');
 
 /**
 * Contains the declaration for the {@link module:enyo/VirtualDataRepeater~VirtualDataRepeater} kind.
+*
+* @wip
+* @public
 * @module enyo/VirtualDataRepeater
 */
 
@@ -12,18 +15,57 @@ var
 	DataRepeater = require('./DataRepeater');
 
 /**
+* Like {@link module:enyo/DataRepeater~DataRepeater},
+* {@link module:enyo/VirtualDataRepeater~VirtualDataRepeater} repeats the
+* {@link module:enyo/Control~Control} provided in the `components` block over
+* the elements of the data set provided in the `collection` property (which
+* may be an instance of {@link module:enyo/Collection~Collection} or a plain
+* old JavaScript array).
+*
+* However, unlike {@link module:enyo/DataRepeater~DataRepeater},
+* {@link module:enyo/VirtualDataRepeater~VirtualDataRepeater} only generates
+* children for a given range of items in the provided collection.
+*
+* To specify the range of items to be generated, provide the initial index via
+* the `first` property and the maximum number of items to generate via the
+* `numItems` property. The repeater will refresh automatically when you change
+* either of these properties.
+*
 * @class VirtualDataRepeater
 * @extends module:enyo/DataRepeater~DataRepeater
+* @wip
 * @public
 */
-module.exports = kind({
+module.exports = kind(
+	/** @lends module:enyo/VirtualDataRepeater~VirtualDataRepeater.prototype */ {
 	name: 'enyo.VirtualDataRepeater',
 	kind: DataRepeater,
+	/**
+	* The maximum number of items to generate. Fewer items will be
+	* generated if the provided collection does not contain enough
+	* elements (that is, if the length of the collection minus
+	* the `first` index is less than `numItems`).
+	*
+	* @type {Number}
+	* @default 10
+	* @public
+	*/
 	numItems: 10,
+	/**
+	* The zero-based index of the provided collection from which
+	* the repeater should start repeating children. This property will
+	* be coerced to a legal value if you provide a value that is outside
+	* the range of the collection.
+	*
+	* @type {Number}
+	* @default 0
+	* @public
+	*/
 	first: 0,
 	// TODO: Decide whether we want to implement node reordering
 	// reorderNodes: false,
 
+	// Not including JSDoc info here, as we want the inherited doc to be used.
 	reset: function () {
 		// If we are showing, go ahead and reset...
 		if (this.getAbsoluteShowing()) {
@@ -46,6 +88,9 @@ module.exports = kind({
 		}
 	},
 
+	/**
+	* @private
+	*/
 	init: function () {
 		this.orderedChildren = [],
 		this.orderedChildren_alt = [],
@@ -57,6 +102,9 @@ module.exports = kind({
 		this.hasInitialized = true;
 	},
 
+	/**
+	* @private
+	*/
 	setExtent: function(first, numItems) {
 		var pf = this.first,
 			pn = this.numItems;
@@ -81,6 +129,7 @@ module.exports = kind({
 		}
 	},
 
+	// Not including JSDoc info here, as we want the inherited doc to be used.
 	refresh: function (immediate) {
 		// If we haven't initialized, we need to reset instead
 		if (!this.hasInitialized) return this.reset();
@@ -153,15 +202,29 @@ module.exports = kind({
 		};
 	}),
 
+	// Not including JSDoc info here, as we want the inherited doc to be used.
 	childForIndex: function(idx) {
 		return this.childrenByIndex[idx];
 	},
 
+	/**
+	* Attempts to return the [control]{@link module:enyo/Control~Control} representation of a particular
+	* model (which may be an instance of [enyo/Model]{@link module:enyo/Model~Model} or a plain old
+	* JavaScript object).
+	*
+	* @param {Number} idx - The model whose [control]{@link module:enyo/Control~Control} you want to retrieve.
+	* @returns {module:enyo/Control~Control|undefined} The [control]{@link module:enyo/Control~Control} representing
+	* the specified model, or `undefined` if there is not currently a control representing the model.
+	* @public
+	*/
 	childForModel: function(model) {
 		var idx = this.orderedModels.indexOf(model);
 		return this.orderedChildren[idx];
 	},
 
+	/**
+	* @private
+	*/
 	assignChild: function(model, index, child) {
 		var pMod = child.model,
 			pIdx = child.index,
@@ -187,6 +250,9 @@ module.exports = kind({
 		child.show();
 	},
 
+	/**
+	* @private
+	*/
 	doIt: function() {
 		var dd = this.get('data'),
 			f = this.first,
@@ -284,14 +350,21 @@ module.exports = kind({
 		}
 	},
 
+	/**
+	* @private
+	*/
 	fwd: function() {
 		this.set('first', this.first + 1);
 	},
 
+	/**
+	* @private
+	*/
 	bak: function() {
 		this.set('first', this.first - 1);
 	},
 
+	// Not including JSDoc info here, as we want the inherited doc to be used.
 	set: kind.inherit(function (sup) {
 		return function (prop, val) {
 			if (prop === 'first') {
@@ -306,6 +379,9 @@ module.exports = kind({
 		};
 	}),
 
+	/**
+	* @private
+	*/
 	stabilizeExtent: function() {
 		var f = this.first,
 			n = this.numItems,
@@ -320,6 +396,9 @@ module.exports = kind({
 		}
 	},
 
+	/**
+	* @private
+	*/
 	dataChanged: function() {
 		if (this.get('data') && this.hasRendered) {
 			this.reset();

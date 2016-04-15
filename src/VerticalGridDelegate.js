@@ -18,7 +18,7 @@ var
 var p = utils.clone(VerticalDelegate);
 kind.extendMethods(p, {
 	/** @lends enyo/VerticalGridDelegate */
-	
+
 	/**
 	* Once the list is initially rendered, it will generate its [scroller]{@link module:enyo/Scroller~Scroller}
 	* (so we know that is available). Now we need to cache our initial size values and apply
@@ -38,7 +38,7 @@ kind.extendMethods(p, {
 		// want to do any more initialization
 		if (list.collection && list.collection.length) { this.reset(list); }
 	},
-	
+
 	/**
 	* Resets the page, setting `canAddResetClass` flag if appropriate.
 	*
@@ -53,7 +53,7 @@ kind.extendMethods(p, {
 			}
 		};
 	}),
-	
+
 	/**
 	* Unlike in {@link module:enyo/DataList~DataList}, we can calculate the page height since we know
 	* the structure and layout of the page precisely.
@@ -219,8 +219,8 @@ kind.extendMethods(p, {
 	* Takes a given page and arbitrarily positions its children according to the pre-computed
 	* metrics of the list.
 
-	* TODO: This could be optimized to use requestAnimationFrame as well as render not by child 
-	* index but by row, thus cutting down some of the over-calculation when iterating over every 
+	* TODO: This could be optimized to use requestAnimationFrame as well as render not by child
+	* index but by row, thus cutting down some of the over-calculation when iterating over every
 	* child.
 	*
 	* @method
@@ -262,23 +262,19 @@ kind.extendMethods(p, {
 	* @private
 	*/
 	adjustBuffer: function (list) {
-		var pc = this.pageCount(list),
-			ds = this.defaultPageSize(list),
+		var cs = this.childSize(list),
+			count = list.collection ? list.collection.length : 0,
 			bs = 0, sp = list.psizeProp, ss = list.ssizeProp,
-			n = list.$.buffer.node || list.$.buffer.hasNode(), p;
+			n = list.$.buffer.node || list.$.buffer.hasNode();
 		if (n) {
-			for (var i=0; i<pc; ++i) {
-				p = list.metrics.pages[i];
-				bs += (p && p[sp]) || ds;
-			}
-			bs += list.spacing;
+			bs = Math.ceil(count / list.columns) * cs;
 			list.bufferSize = bs;
 			n.style[sp] = bs + 'px';
 			n.style[ss] = this[ss](list) + 'px';
 			list.$.scroller.remeasure();
 		}
 	},
-	
+
 	/**
 	* The delegate's `resize` {@glossary event} handler.
 	*
@@ -288,11 +284,11 @@ kind.extendMethods(p, {
 	didResize: function (list) {
 		// store the previous stats for comparative purposes
 		var prev = list.boundsCache;
-		
+
 		// flag the list to have its bounds updated
 		list._updateBounds = true;
 		this.updateMetrics(list);
-		
+
 		// if no change it the viewport then we didn't update anything size-wise
 		// and do not need to refresh at all
 		if (
@@ -303,7 +299,7 @@ kind.extendMethods(p, {
 		) {
 			return;
 		}
-		
+
 		// it is necessary to update the content of the list according to our
 		// new sizing
 		this.refresh(list);

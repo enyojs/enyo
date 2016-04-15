@@ -1,6 +1,7 @@
 /**
-* Contains the declaration for the {@link module:enyo/RelationalModel~RelationalCollection} kind.
-* @module enyo/RelationalModel
+* Contains the declaration for the {@link module:enyo/RelationalModel~Collection} kind.
+* @module enyo/RelationalModel/Collection
+* @private
 */
 
 var
@@ -8,23 +9,24 @@ var
 	Collection = require('../Collection');
 
 var
-	RelationalModel = require('./RelationalModel');
+	Model = require('./Model');
 
 /**
 * Private class for a collection with a default model kind of
 * {@link module:enyo/RelationalModel~RelationalModel} as opposed to {@link module:enyo/Model~Model}.
 * 
-* @class RelationalCollection
+* @class Collection
+* @name module:enyo/RelationalModel~Collection
 * @extends module:enyo/Collection~Collection
 * @private
 */
 module.exports = kind(
-	/** @lends module:enyo/RelationalModel~RelationalCollection.prototype */ {
+	/** @lends module:enyo/RelationalModel~Collection.prototype */ {
 		
 	/**
 	* @private
 	*/
-	name: "RelationalCollection",
+	name: 'Collection',
 	
 	/**
 	* @private
@@ -34,5 +36,5 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	model: RelationalModel
+	model: Model
 });

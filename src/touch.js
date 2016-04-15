@@ -1,3 +1,9 @@
+/**
+* This module has no exports. It merely extends {@link module:enyo/gesture} to enable touch events.
+*
+* @private
+* @module enyo/touch
+*/
 require('enyo');
 
 var
@@ -31,7 +37,7 @@ Dom.requiresWindow(function() {
 	var oldevents = gesture.events;
 	
 	/**
-	* @private
+	* @ignore
 	*/
 	gesture.events.touchstart = function (e) {
 		// for duration of this touch, only handle touch events.  Old event
@@ -41,16 +47,18 @@ Dom.requiresWindow(function() {
 	};
 	
 	/**
-	* @private
+	* @ignore
 	*/
 	var touchGesture = {
 
 		/**
+		* @ignore
 		* @private
 		*/
 		_touchCount: 0,
 
 		/**
+		* @ignore
 		* @private
 		*/
 		touchstart: function (e) {
@@ -67,6 +75,7 @@ Dom.requiresWindow(function() {
 		},
 
 		/**
+		* @ignore
 		* @private
 		*/
 		touchmove: function (e) {
@@ -99,6 +108,7 @@ Dom.requiresWindow(function() {
 		},
 
 		/**
+		* @ignore
 		* @private
 		*/
 		touchend: function (e) {
@@ -124,6 +134,7 @@ Dom.requiresWindow(function() {
 		* back to default; this works as long as no one did a `preventDefault()` on
 		* the touch events.
 		* 
+		* @ignore
 		* @private
 		*/
 		mouseup: function () {
@@ -134,6 +145,7 @@ Dom.requiresWindow(function() {
 		},
 
 		/**
+		* @ignore
 		* @private
 		*/
 		makeEvent: function (e) {
@@ -147,6 +159,7 @@ Dom.requiresWindow(function() {
 		},
 
 		/**
+		* @ignore
 		* @private
 		*/
 		calcNodeOffset: function (node) {
@@ -162,6 +175,7 @@ Dom.requiresWindow(function() {
 		},
 
 		/**
+		* @ignore
 		* @private
 		*/
 		findTarget: function (e) {
@@ -172,6 +186,7 @@ Dom.requiresWindow(function() {
 		* NOTE: Will find only 1 element under the touch and will fail if an element is 
 		* positioned outside the bounding box of its parent.
 		* 
+		* @ignore
 		* @private
 		*/
 		findTargetTraverse: function (node, x, y) {
@@ -196,16 +211,13 @@ Dom.requiresWindow(function() {
 		},
 
 		/**
+		* @ignore
 		* @private
 		*/
 		connect: function () {
 			utils.forEach(['touchstart', 'touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'], function(e) {
-				if(platform.ie < 9){
-					document['on' + e] = dispatch;
-				} else {
-					// on iOS7 document.ongesturechange is never called
-					document.addEventListener(e, dispatch, false);
-				}
+				// on iOS7 document.ongesturechange is never called
+				document.addEventListener(e, dispatch, false);
 			});
 
 			if (platform.androidChrome <= 18 || platform.silk === 2) {

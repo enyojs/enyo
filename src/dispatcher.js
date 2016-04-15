@@ -8,8 +8,7 @@ require('enyo');
 var
 	logger = require('./logger'),
 	master = require('./master'),
-	utils = require('./utils'),
-	platform = require('./platform');
+	utils = require('./utils');
 
 var
 	Dom = require('./dom');
@@ -34,10 +33,6 @@ var
 /**
 * @private
 */
-
-/**
-* @private
-*/
 var dispatcher = module.exports = dispatcher = {
 
 	$: {},
@@ -47,17 +42,17 @@ var dispatcher = module.exports = dispatcher = {
 	*
 	* @private
 	*/
-	events: ["mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel",
-		"click", "dblclick", "change", "keydown", "keyup", "keypress", "input",
-		"paste", "copy", "cut", "webkitTransitionEnd", "transitionend", "webkitAnimationEnd", "animationend",
-		"webkitAnimationStart", "animationstart", "webkitAnimationIteration", "animationiteration"],
+	events: ['mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'mousewheel',
+		'click', 'dblclick', 'change', 'keydown', 'keyup', 'keypress', 'input',
+		'paste', 'copy', 'cut', 'webkitTransitionEnd', 'transitionend', 'webkitAnimationEnd', 'animationend',
+		'webkitAnimationStart', 'animationstart', 'webkitAnimationIteration', 'animationiteration'],
 
 	/**
 	* These events come from window
 	*
 	* @private
 	*/
-	windowEvents: ["resize", "load", "unload", "message", "hashchange", "popstate", "focus", "blur"],
+	windowEvents: ['resize', 'load', 'unload', 'message', 'hashchange', 'popstate', 'focus', 'blur'],
 
 	/**
 	* Feature plugins (aka filters)
@@ -76,8 +71,8 @@ var dispatcher = module.exports = dispatcher = {
 		}
 		for (i=0; (n=d.windowEvents[i]); i++) {
 			// Chrome Packaged Apps don't like "unload"
-			if(n === "unload" &&
-				(typeof global.chrome === "object") &&
+			if(n === 'unload' &&
+				(typeof global.chrome === 'object') &&
 				global.chrome.app) {
 				continue;
 			}
@@ -90,40 +85,14 @@ var dispatcher = module.exports = dispatcher = {
 	* @private
 	*/
 	listen: function(inListener, inEventName, inHandler) {
-		if (inListener.addEventListener) {
-			this.listen = function(inListener, inEventName, inHandler) {
-				inListener.addEventListener(inEventName, inHandler || dispatch, false);
-			};
-		} else {
-			//enyo.log("IE8 COMPAT: using 'attachEvent'");
-			this.listen = function(inListener, inEvent, inHandler) {
-				inListener.attachEvent("on" + inEvent, function(e) {
-					e.target = e.srcElement;
-					if (!e.preventDefault) {
-						e.preventDefault = this.iePreventDefault;
-					}
-					return (inHandler || dispatch)(e);
-				});
-			};
-		}
-		this.listen(inListener, inEventName, inHandler);
+		inListener.addEventListener(inEventName, inHandler || dispatch, false);
 	},
 
 	/**
 	* @private
 	*/
 	stopListening: function(inListener, inEventName, inHandler) {
-		if (inListener.addEventListener) {
-			this.stopListening = function(inListener, inEventName, inHandler) {
-				inListener.removeEventListener(inEventName, inHandler || dispatch, false);
-			};
-		} else {
-			//enyo.log("IE8 COMPAT: using 'detachEvent'");
-			this.stopListening = function(inListener, inEvent, inHandler) {
-				inListener.detachEvent("on" + inEvent, inHandler || dispatch);
-			};
-		}
-		this.stopListening(inListener, inEventName, inHandler);
+		inListener.removeEventListener(inEventName, inHandler || dispatch, false);
 	},
 
 	/**
@@ -188,7 +157,7 @@ var dispatcher = module.exports = dispatcher = {
 	*/
 	dispatchBubble: function(e, c) {
 		var type = e.type;
-		type = e.customEvent ? type : "on" + type;
+		type = e.customEvent ? type : 'on' + type;
 		return c.bubble(type, e, c);
 	}
 };
@@ -196,6 +165,9 @@ var dispatcher = module.exports = dispatcher = {
 /**
 * Called in the context of an event.
 *
+* @name module:enyo/dispatcher.iePreventDefault
+* @static
+* @method
 * @private
 */
 dispatcher.iePreventDefault = function() {
@@ -215,29 +187,26 @@ function dispatch (inEvent) {
 }
 
 /**
+* @name module:enyo/dispatcher.bubble
+* @static
+* @method
 * @private
 */
 dispatcher.bubble = function(inEvent) {
-	// '|| window.event' clause needed for IE8
-	var e = inEvent || global.event;
-	if (e) {
-		// We depend on e.target existing for event tracking and dispatching.
-		if (!e.target) {
-			e.target = e.srcElement;
-		}
-		dispatcher.dispatch(e);
+	if (inEvent) {
+		dispatcher.dispatch(inEvent);
 	}
 };
 
 // This string is set on event handlers attributes for DOM elements that
 // don't normally bubble (like onscroll) so that they can participate in the
 // Enyo event system.
-dispatcher.bubbler = "enyo.bubble(arguments[0])";
+dispatcher.bubbler = 'enyo.bubble(arguments[0])';
 
 // The code below helps make Enyo compatible with Google Packaged Apps
 // Content Security Policy(http://developer.chrome.com/extensions/contentSecurityPolicy.html),
 // which, among other things, forbids the use of inline scripts.
-// We replace online scripting with equivalent means, leaving enyo.bubbler
+// We replace online scripting with equivalent means, leaving dispatcher.bubbler
 // for backward compatibility.
 (function() {
 	var bubbleUp = function() {
@@ -247,13 +216,15 @@ dispatcher.bubbler = "enyo.bubble(arguments[0])";
 	/**
 	* Makes given events bubble on a specified Enyo control.
 	*
+	* @name: module:enyo/dispatcher.makeBubble
+	* @method
 	* @private
 	*/
 	dispatcher.makeBubble = function() {
 		var args = Array.prototype.slice.call(arguments, 0),
 			control = args.shift();
 
-		if((typeof control === "object") && (typeof control.hasNode === "function")) {
+		if((typeof control === 'object') && (typeof control.hasNode === 'function')) {
 			utils.forEach(args, function(event) {
 				if(this.hasNode()) {
 					dispatcher.listen(this.node, event, bubbleUp);
@@ -264,15 +235,17 @@ dispatcher.bubbler = "enyo.bubble(arguments[0])";
 
 	/**
 	* Removes the event listening and bubbling initiated by
-	* [enyo.makeBubble()]{@link enyo.makeBubble} on a specific control.
+	* [makeBubble()]{@link module:enyo/dispatcher.makeBubble} on a specific control.
 	*
+	* @name: module:enyo/dispatcher.unmakeBubble
+	* @method
 	* @private
 	*/
 	dispatcher.unmakeBubble = function() {
 		var args = Array.prototype.slice.call(arguments, 0),
 			control = args.shift();
 
-		if((typeof control === "object") && (typeof control.hasNode === "function")) {
+		if((typeof control === 'object') && (typeof control.hasNode === 'function')) {
 			utils.forEach(args, function(event) {
 				if(this.hasNode()) {
 					dispatcher.stopListening(this.node, event, bubbleUp);
@@ -295,12 +268,12 @@ Dom.requiresWindow(dispatcher.connect);
 */
 dispatcher.features.push(
 	function (e) {
-		if ("click" === e.type) {
+		if ('click' === e.type) {
 			if (e.clientX === 0 && e.clientY === 0 && !e.detail) {
 				// this allows the click to dispatch as well
 				// but note the tap event will fire first
 				var cp = utils.clone(e);
-				cp.type = "tap";
+				cp.type = 'tap';
 				cp.preventDefault = utils.nop;
 				dispatcher.dispatch(cp);
 			}
@@ -319,19 +292,20 @@ var _xy = {};
 dispatcher.features.push(
 	function (e) {
 		if (
-			(e.type == "mousemove")  ||
-			(e.type == "tap")        ||
-			(e.type == "click")      ||
-			(e.type == "touchmove")
+			(e.type == 'mousemove')  ||
+			(e.type == 'tap')        ||
+			(e.type == 'click')      ||
+			(e.type == 'touchmove')
 		) {
-			_xy.clientX = e.clientX;
-			_xy.clientY = e.clientY;
+			var evt = (e.type == 'touchmove') ? e.touches[0] : e;
+			_xy.clientX = evt.clientX;
+			_xy.clientY = evt.clientY;
 			// note only ie8 does not support pageX/pageY
-			_xy.pageX   = e.pageX;
-			_xy.pageY   = e.pageY;
+			_xy.pageX   = evt.pageX;
+			_xy.pageY   = evt.pageY;
 			// note ie8 and opera report these values incorrectly
-			_xy.screenX = e.screenX;
-			_xy.screenY = e.screenY;
+			_xy.screenX = evt.screenX;
+			_xy.screenY = evt.screenY;
 		}
 	}
 );
@@ -342,35 +316,27 @@ dispatcher.features.push(
 * `clientY`, `pageX`, `pageY`, `screenX`, and `screenY` properties. It is
 * important to note that IE8 and Opera have improper reporting for the
 * `screenX` and `screenY` properties (they both use CSS pixels as opposed to
-* device pixels) and IE8 has no support for the `pageX` and `pageY` properties,
-* so they are facaded.
+* device pixels).
 *
 * @returns {module:enyo/dispatcher~CursorCoordinates} An [object]{@glossary Object} describing the
 *	the last known coordinates of the cursor or user-interaction point in touch environments.
 * @public
 */
 dispatcher.getPosition = function () {
-	var p = utils.clone(_xy);
-	// if we are in ie8 we facade the _pageX, pageY_ properties
-	if (platform.ie < 9) {
-		var d = (document.documentElement || document.body.parentNode || document.body);
-		p.pageX = (p.clientX + d.scrollLeft);
-		p.pageY = (p.clientY + d.scrollTop);
-	}
-	return p;
+	return utils.clone(_xy);
 };
 
 
 /**
 * Key mapping feature: Adds a `keySymbol` property to key [events]{@glossary event},
 * based on a global key mapping. Use
-* [enyo.dispatcher.registerKeyMap()]{@link enyo.dispatcher.registerKeyMap} to add
+* [registerKeyMap()]{@link module:enyo/dispatcher.registerKeyMap} to add
 * keyCode-to-keySymbol mappings via a simple hash. This method may be called
 * multiple times from different libraries to mix different maps into the global
 * mapping table; if conflicts arise, the last-in wins.
 *
 * ```
-* enyo.dispatcher.registerKeyMap({
+* dispatcher.registerKeyMap({
 * 	415 : 'play',
 * 	413 : 'stop',
 * 	19  : 'pause',
@@ -378,7 +344,7 @@ dispatcher.getPosition = function () {
 * 	417 : 'fastforward'
 * });
 * ```
-* 
+*
 * @private
 */
 dispatcher.features.push(function(e) {
@@ -402,8 +368,8 @@ utils.mixin(dispatcher, {
 
 /**
 * Event modal capture feature. Capture events to a specific control via
-* [enyo.dispatcher.capture(inControl, inShouldForward)]{@linkcode enyo.dispatcher.capture};
-* release events via [enyo.dispatcher.release()]{@link enyo.dispatcher.release}.
+* [capture(inControl, inShouldForward)]{@linkcode module:enyo/dispatcher.capture};
+* release events via [release()]{@link module:enyo/dispatcher.release}.
 *
 * @private
 */
@@ -427,7 +393,7 @@ dispatcher.features.push(function(e) {
 
 //
 //        NOTE: This object is a plug-in; these methods should
-//        be called on `enyo.dispatcher`, and not on the plug-in itself.
+//        be called on `enyo/dispatcher`, and not on the plug-in itself.
 //
 utils.mixin(dispatcher, {
 
@@ -441,7 +407,7 @@ utils.mixin(dispatcher, {
 	*/
 	captures: [],
 
-	/** 
+	/**
 	* Captures [events]{@glossary event} for `inTarget`, where `inEvents` is specified as a
 	* hash of event names mapped to callback handler names to be called on `inTarget` (or,
 	* optionally, `inScope`). The callback is called when any of the captured events are
@@ -458,7 +424,7 @@ utils.mixin(dispatcher, {
 
 	/**
 	* Removes the specified target from the capture list.
-	* 
+	*
 	* @private
 	*/
 	release: function(inTarget) {
@@ -473,7 +439,7 @@ utils.mixin(dispatcher, {
 
 	/**
 	* Sets the information for a captured {@glossary event}.
-	* 
+	*
 	* @private
 	*/
 	setCaptureInfo: function(inInfo) {
@@ -487,28 +453,23 @@ utils.mixin(dispatcher, {
 (function () {
 	/**
 	* Dispatcher preview feature
-	* 
+	*
 	* Allows {@link module:enyo/Control~Control} ancestors of the {@glossary event} target
 	* a chance (eldest first) to react by implementing `previewDomEvent`.
 	*
+	* @todo Revisit how/if we document this
 	* @private
 	*/
 	var fn = 'previewDomEvent';
-	var preview = 
-		/** @lends enyo.dispatcher.features */ {
+	var preview = {
 
-		/**
-		* @private
-		*/
 		feature: function(e) {
 			preview.dispatch(e, e.dispatchTarget);
 		},
 
-		/**
+		/*
 		* @returns {(Boolean|undefined)} Handlers return `true` to abort preview and prevent default
 		*	event processing.
-		*
-		* @private
 		*/
 		dispatch: function(evt, control) {
 			var i, l,
@@ -521,12 +482,10 @@ utils.mixin(dispatcher, {
 			}
 		},
 
-		/**
+		/*
 		* We ascend, making a list of Enyo [controls]{@link module:enyo/Control~Control}.
 		*
 		* Note that a control is considered to be its own ancestor.
-		*
-		* @private
 		*/
 		buildLineage: function(control) {
 			var lineage = [],

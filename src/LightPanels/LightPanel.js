@@ -1,5 +1,10 @@
 /**
 * Contains the declaration for the {@link module:enyo/LightPanels~LightPanel} kind.
+*
+* Note: LightPanel is exported from {@link module:enyo/LightPanels}. This module should not be
+* required directly.
+* @wip
+* @ignore
 * @module enyo/LightPanels
 */
 
@@ -28,8 +33,10 @@ var States = {
 * between child components.
 *
 * @class LightPanel
+* @name module:enyo/LightPanels~LightPanel
 * @extends module:enyo/Control~Control
 * @ui
+* @wip
 * @public
 */
 module.exports = kind(

@@ -19,7 +19,7 @@ var
 *
 * @event module:enyo/ScrollMath~ScrollMath#onScrollStart
 * @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
 *	propagated the {@glossary event}.
 * @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 *	event information.
@@ -31,7 +31,7 @@ var
 *
 * @event module:enyo/ScrollMath~ScrollMath#onScroll
 * @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
 *	propagated the {@glossary event}.
 * @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 *	event information.
@@ -43,7 +43,7 @@ var
 *
 * @event module:enyo/ScrollMath~ScrollMath#onScrollStop
 * @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
 *	propagated the {@glossary event}.
 * @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 *	event information.
@@ -54,7 +54,7 @@ var
 * {@link module:enyo/ScrollMath~ScrollMath} implements a scrolling dynamics simulation. It is a
 * helper [kind]{@glossary kind} used by other [scroller]{@link module:enyo/Scroller~Scroller}
 * kinds, such as {@link module:enyo/TouchScrollStrategy~TouchScrollStrategy}.
-* 
+*
 * `enyo/ScrollMath` is not typically created in application code.
 *
 * @class ScrollMath
@@ -73,10 +73,10 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/ScrollMath~ScrollMath.prototype */ {
 
-		/** 
+		/**
 		* Set to `true` to enable vertical scrolling.
 		*
 		* @type {Boolean}
@@ -85,7 +85,7 @@ module.exports = kind(
 		*/
 		vertical: true,
 
-		/** 
+		/**
 		* Set to `true` to enable horizontal scrolling.
 		*
 		* @type {Boolean}
@@ -106,95 +106,95 @@ module.exports = kind(
 	},
 
 	/**
-	* "Spring" damping returns the scroll position to a value inside the boundaries. Lower 
+	* "Spring" damping returns the scroll position to a value inside the boundaries. Lower
 	* values provide faster snapback.
 	*
 	* @private
 	*/
 	kSpringDamping: 0.93,
 
-	/** 
-	* "Drag" damping resists dragging the scroll position beyond the boundaries. Lower values 
+	/**
+	* "Drag" damping resists dragging the scroll position beyond the boundaries. Lower values
 	* provide more resistance.
 	*
 	* @private
 	*/
 	kDragDamping: 0.5,
-	
-	/** 
+
+	/**
 	* "Friction" damping reduces momentum over time. Lower values provide more friction.
 	*
 	* @private
 	*/
 	kFrictionDamping: 0.97,
 
-	/** 
-	* Additional "friction" damping applied when momentum carries the viewport into overscroll. 
+	/**
+	* Additional "friction" damping applied when momentum carries the viewport into overscroll.
 	* Lower values provide more friction.
 	*
 	* @private
 	*/
 	kSnapFriction: 0.9,
-	
-	/** 
+
+	/**
 	* Scalar applied to `flick` event velocity.
 	*
 	* @private
 	*/
 	kFlickScalar: 15,
 
-	/** 
-	* Limits the maximum allowable flick. On Android > 2, we limit this to prevent compositing 
+	/**
+	* Limits the maximum allowable flick. On Android > 2, we limit this to prevent compositing
 	* artifacts.
 	*
 	* @private
 	*/
 	kMaxFlick: platform.android > 2 ? 2 : 1e9,
-	
-	/** 
-	* The value used in [friction()]{@link module:enyo/ScrollMath~ScrollMath#friction} to determine if the delta 
+
+	/**
+	* The value used in [friction()]{@link module:enyo/ScrollMath~ScrollMath#friction} to determine if the delta
 	* (e.g., y - y0) is close enough to zero to consider as zero.
 	*
 	* @private
 	*/
 	kFrictionEpsilon: platform.webos >= 4 ? 1e-1 : 1e-2,
-	
-	/** 
+
+	/**
 	* Top snap boundary, generally `0`.
 	*
 	* @private
 	*/
 	topBoundary: 0,
-	
-	/** 
+
+	/**
 	* Right snap boundary, generally `(viewport width - content width)`.
 	*
 	* @private
 	*/
 	rightBoundary: 0,
-	
-	/** 
+
+	/**
 	* Bottom snap boundary, generally `(viewport height - content height)`.
 	*
 	* @private
 	*/
 	bottomBoundary: 0,
-	
-	/** 
+
+	/**
 	* Left snap boundary, generally `0`.
 	*
 	* @private
 	*/
 	leftBoundary: 0,
-	
-	/** 
+
+	/**
 	* Animation time step.
 	*
 	* @private
 	*/
 	interval: 20,
-	
-	/** 
+
+	/**
 	* Flag to enable frame-based animation; if `false`, time-based animation is used.
 	*
 	* @private
@@ -267,7 +267,7 @@ module.exports = kind(
 	},
 
 	/**
-	* Boundary damping function. Returns damped `value` based on `coeff` on one side of 
+	* Boundary damping function. Returns damped `value` based on `coeff` on one side of
 	* `origin`.
 	*
 	* @private
@@ -289,7 +289,7 @@ module.exports = kind(
 	},
 
 	/**
-	* Dual-boundary damping function. Returns damped `value` based on `coeff` when exceeding 
+	* Dual-boundary damping function. Returns damped `value` based on `coeff` when exceeding
 	* either boundary.
 	*
 	* @private
@@ -334,7 +334,7 @@ module.exports = kind(
 		this[ex] = this[ex0] + c * dp;
 	},
 
-	/** 
+	/**
 	* One unit of time for simulation.
 	*
 	* @private
@@ -466,7 +466,7 @@ module.exports = kind(
 		});
 		this.job = animation.requestAnimationFrame(fn);
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -483,7 +483,7 @@ module.exports = kind(
 	stop: function (fire) {
 		var job = this.job;
 		if (job) {
-			this.job = animation.cancelRequestAnimationFrame(job);
+			this.job = animation.cancelAnimationFrame(job);
 		}
 		if (fire) {
 			this.doScrollStop();
@@ -533,7 +533,7 @@ module.exports = kind(
 		if (this.dragging) {
 			v = this.canScrollY();
 			h = this.canScrollX();
-		
+
 			dy = v ? e.pageY - this.my : 0;
 			this.uy = dy + this.py;
 			// provides resistance against dragging into overscroll
@@ -643,7 +643,7 @@ module.exports = kind(
 			dX = dY;
 			dY = 0;
 		}
-		
+
 		if (dY && canY) {
 			tY = -(refY + (dY * m));
 			shouldScroll = true;
@@ -670,7 +670,7 @@ module.exports = kind(
 	// NOTE: Yip/Orvell method for determining scroller instantaneous velocity
 	// FIXME: incorrect if called when scroller is in overscroll region
 	// because does not account for additional overscroll damping.
-	
+
 	/**
 	* Scrolls to the specified position.
 	*
@@ -754,7 +754,7 @@ module.exports = kind(
 	setScrollPosition: function (pos) {
 		this.setScrollY(pos);
 	},
-	
+
 	canScrollX: function() {
 		return this.horizontal && this.rightBoundary < 0;
 	},
@@ -764,9 +764,9 @@ module.exports = kind(
 	},
 
 
-	/** 
+	/**
 	* Determines whether or not the [scroller]{@link module:enyo/Scroller~Scroller} is actively moving.
-	* 
+	*
 	* @return {Boolean} `true` if actively moving; otherwise, `false`.
 	* @private
 	*/
@@ -774,9 +774,9 @@ module.exports = kind(
 		return Boolean(this.job);
 	},
 
-	/** 
+	/**
 	* Determines whether or not the [scroller]{@link module:enyo/Scroller~Scroller} is in overscroll.
-	* 
+	*
 	* @return {Boolean} `true` if in overscroll; otherwise, `false`.
 	* @private
 	*/

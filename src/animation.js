@@ -10,18 +10,21 @@ var
 	utils = require('./utils'),
     easing = require('./easing');
 
-var ms = Math.round(1000/60);
-var prefix = ['webkit', 'moz', 'ms', 'o', ''];
-var r = 'requestAnimationFrame';
-var c = 'cancel' + utils.cap(r);
+var ms = Math.round(1000/60),
+	prefix = ['', 'webkit', 'moz', 'ms', 'o'],
+	rAF = 'requestAnimationFrame',
+	cRAF = 'cancelRequestAnimationFrame',
+	cAF = 'cancelAnimationFrame',
+	i, pl, p, wcRAF, wrAF, wcAF,
+	_requestFrame, _cancelFrame, cancelFrame;
 
 /*
 * Fallback on setTimeout
 *
 * @private
 */
-var _requestFrame = function(inCallback) {
-	return global.setTimeout(inCallback, ms);
+_requestFrame = function(callback) {
+	return global.setTimeout(callback, ms);
 };
 
 /*
@@ -29,23 +32,26 @@ var _requestFrame = function(inCallback) {
 *
 * @private
 */
-var _cancelFrame = function(inId) {
-	return global.clearTimeout(inId);
+_cancelFrame = function(id) {
+	return global.clearTimeout(id);
 };
 
-for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
-	// if we're on ios 6 just use setTimeout, requestAnimationFrame has some kinks currently
-	if (platform.ios >= 6) {
+for (i = 0, pl = prefix.length; (p = prefix[i]) || i < pl; i++) {
+	// if we're on ios 6 just use setTimeout, requestAnimationFrame has some kinks
+	if (platform.ios === 6) {
 		break;
 	}
 
 	// if prefixed, becomes Request and Cancel
-	wc = p ? (p + utils.cap(c)) : c;
-	wr = p ? (p + utils.cap(r)) : r;
+	wrAF = p ? (p + utils.cap(rAF)) : rAF;
+	wcRAF = p ? (p + utils.cap(cRAF)) : cRAF;
+	wcAF = p ? (p + utils.cap(cAF)) : cAF;
+
 	// Test for cancelRequestAnimationFrame, because some browsers (Firefix 4-10) have a request without a cancel
-	if (global[wc]) {
-		_cancelFrame = global[wc];
-		_requestFrame = global[wr];
+	cancelFrame = global[wcAF] || global[wcRAF];
+	if (cancelFrame) {
+		_cancelFrame = cancelFrame;
+		_requestFrame = global[wrAF];
 		if (p == 'webkit') {
 			/*
 				Note: In Chrome, the first return value of webkitRequestAnimationFrame is 0.
@@ -77,10 +83,21 @@ exports.requestAnimationFrame = function(callback, node) {
 /**
 * Cancels a requested animation callback with the specified id.
 *
+* @param {Number} id - The identifier of an animation request we wish to cancel.
+* @deprecated since 2.7.0
 * @public
 */
-exports.cancelRequestAnimationFrame = function(inId) {
-	return _cancelFrame(inId);
+exports.cancelRequestAnimationFrame = function(id) {
+	return _cancelFrame(id);
+};
+/**
+* Cancels a requested animation callback with the specified id.
+*
+* @param {Number} id - The identifier of an animation request we wish to cancel.
+* @public
+*/
+exports.cancelAnimationFrame = function(id) {
+	return _cancelFrame(id);
 };
 
 /**

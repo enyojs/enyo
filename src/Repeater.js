@@ -15,7 +15,7 @@ var
 * The extended {@glossary event} [object]{@glossary Object} that is provided
 * when the [onSetupItem]{@link module:enyo/Repeater~Repeater#onSetupItem} event is fired.
 *
-* @typedef {Object} enyo.Repeater~SetupItemEvent
+* @typedef {Object} module:enyo/Repeater~Repeater~SetupItemEvent
 * @property {Number} index - The item's index.
 * @property {Object} item - The item control, for decoration.
 */
@@ -95,7 +95,7 @@ var OwnerProxy = kind(
 * 	Repeater = require('enyo/Repeater');
 *
 * {kind: Repeater, count: 2, onSetupItem: 'setImageSource', components: [
-* 	{kind: 'Image'}
+* 	{kind: Image}
 * ]}
 *
 * setImageSource: function(inSender, inEvent) {

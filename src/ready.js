@@ -56,7 +56,7 @@ init = function (event) {
 			flush();
 		}
 	}
-	// for an IE8 fallback and legacy WebKit (including webOS 3.x and less) and assurance
+	// for legacy WebKit (including webOS 3.x and less) and assurance
 	if ((ready = ("complete" === doc.readyState || "loaded" === doc.readyState))) {
 		remove(event.type, init);
 		flush();
@@ -67,18 +67,14 @@ init = function (event) {
 * @private
 */
 add = function (event, fn) {
-	var name = doc.addEventListener? "addEventListener": "attachEvent";
-	var on = name === "attachEvent"? "on": "";
-	doc[name](on + event, fn, false);
+	doc.addEventListener(event, fn, false);
 };
 
 /**
 * @private
 */
 remove = function (event, fn) {
-	var name = doc.addEventListener? "removeEventListener": "detachEvent";
-	var on = name === "detachEvent"? "on": "";
-	doc[name](on + event, fn, false);
+	doc.removeEventListener(event, fn, false);
 };
 
 /**

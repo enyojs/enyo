@@ -44,7 +44,7 @@ var
 * var c = new Component({
 *	name: 'me',
 *	components: [
-*		{kind: 'Component', name: 'other'}
+*		{kind: Component, name: 'other'}
 *	]
 * });
 *
@@ -56,7 +56,7 @@ var
 * var c = new Component({
 *	name: 'me',
 *	components: [
-*		{kind: 'Component', name: 'other'}
+*		{kind: Component, name: 'other'}
 *	]
 * });
 *
@@ -84,7 +84,7 @@ var
 * var c = new Component({
 *	name: 'me',
 *	components: [
-*		{kind: 'Component', name: 'other', publish: true}
+*		{kind: Component, name: 'other', publish: true}
 *	]
 * });
 *

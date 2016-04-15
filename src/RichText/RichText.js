@@ -19,14 +19,14 @@ var
 /**
 * The type of change to apply. Possible values are `'move'` and `'extend'`.
 *
-* @typedef {String} enyo.RichText~ModifyType
+* @typedef {String} module:enyo/RichText~RichText~ModifyType
 */
 
 /**
 * The direction in which to apply the change. Possible values include: `'forward'`,
 * `'backward'`, `'left'`, and `'right'`.
 *
-* @typedef {String} enyo.RichText~ModifyDirection
+* @typedef {String} module:enyo/RichText~RichText~ModifyDirection
 */
 
 /**
@@ -34,7 +34,7 @@ var
 * `'sentence'`, `'line'`, `'paragraph'`, `'lineboundary'`, `'sentenceboundary'`,
 * `'paragraphboundary'`, and `'documentboundary'`.
 *
-* @typedef {String} enyo.RichText~ModifyAmount
+* @typedef {String} module:enyo/RichText~RichText~ModifyAmount
 */
 
 /**
@@ -277,6 +277,7 @@ var RichText = module.exports = kind(
 	* @param {module:enyo/RichText~ModifyType} type - The type of change to apply.
 	* @param {module:enyo/RichText~ModifyDirection} dir - The direction in which to apply the change.
 	* @param {module:enyo/RichText~ModifyAmount} amount - The granularity of the change.
+	* @deprecated since version 2.7
 	* @public
 	*/
 	modifySelection: function (type, dir, amount) {
@@ -291,6 +292,7 @@ var RichText = module.exports = kind(
 	*
 	* @param {module:enyo/RichText~ModifyDirection} dir - The direction in which to apply the change.
 	* @param {module:enyo/RichText~ModifyAmount} amount - The granularity of the change.
+	* @deprecated since version 2.7
 	* @public
 	*/
 	moveCursor: function (dir, amount) {
@@ -300,6 +302,7 @@ var RichText = module.exports = kind(
 	/**
 	* Moves the cursor to end of text field.
 	*
+	* @deprecated since version 2.7
 	* @public
 	*/
 	moveCursorToEnd: function () {
@@ -309,6 +312,7 @@ var RichText = module.exports = kind(
 	/**
 	* Moves the cursor to start of text field.
 	*
+	* @deprecated since version 2.7
 	* @public
 	*/
 	moveCursorToStart: function () {

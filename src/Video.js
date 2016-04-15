@@ -120,7 +120,7 @@ var
 * ```
 *
 * To play a video, call `this.$.video.play()`.
-* 
+*
 * To get a reference to the actual HTML 5 Video element, call `this.$.video.hasNode()`.
 *
 * @class Video
@@ -144,12 +144,12 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Video~Video.prototype */ {
 
 		/**
 		* Source URL of the video file; may be relative to the application's HTML file.
-		* 
+		*
 		* @type {String}
 		* @default ''
 		* @public
@@ -159,7 +159,7 @@ module.exports = kind(
 		/**
 		* An [object]{@glossary Object} that may be used to specify multiple sources for the
 		* same video file.
-		* 
+		*
 		* @type {Object}
 		* @default null
 		* @public
@@ -168,7 +168,7 @@ module.exports = kind(
 
 		/**
 		* Source of image file to show when video is not available.
-		* 
+		*
 		* @type {String}
 		* @default ''
 		* @public
@@ -177,7 +177,7 @@ module.exports = kind(
 
 		/**
 		* If `true`, controls for starting and stopping the video player are shown.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -190,7 +190,7 @@ module.exports = kind(
 		* - `'auto'`: Preload the video data as soon as possible.
 		* - `'metadata'`: Preload only the video metadata.
 		* - `'none'`: Do not preload any video data.
-		* 
+		*
 		* @type {String}
 		* @default 'metadata'
 		* @public
@@ -199,7 +199,7 @@ module.exports = kind(
 
 		/**
 		* If `true`, video will automatically start playing.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -209,7 +209,7 @@ module.exports = kind(
 		/**
 		* If `true`, when playback is finished, the video player will restart from
 		* the beginning.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -218,7 +218,7 @@ module.exports = kind(
 
 		/**
 		* If `true`, video will be stretched to fill the entire window (webOS only).
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -227,7 +227,7 @@ module.exports = kind(
 
 		/**
 		* The video aspect ratio, expressed as `width:height`.
-		* 
+		*
 		* @type {Number}
 		* @default 0
 		* @public
@@ -236,7 +236,7 @@ module.exports = kind(
 
 		/**
 		* Number of seconds to jump forward or backward.
-		* 
+		*
 		* @type {Number}
 		* @default 30
 		* @public
@@ -245,7 +245,7 @@ module.exports = kind(
 
 		/**
 		* Video playback rate.
-		* 
+		*
 		* @type {Number}
 		* @default 1
 		* @public
@@ -262,7 +262,7 @@ module.exports = kind(
 		*	slowRewind: ['-1/2', '-1']
 		* }
 		* ```
-		* 
+		*
 		* @type {Object}
 		* @default {
 		*	fastForward: ['2', '4', '8', '16'],
@@ -443,10 +443,10 @@ module.exports = kind(
 			return;
 		}
 	},
-	
+
 	/**
 	* Loads the current video [source]{@link module:enyo/Video~Video#src}.
-	* 
+	*
 	* @public
 	*/
 	load: function () {
@@ -456,7 +456,7 @@ module.exports = kind(
 	/**
 	* Unloads the current video [source]{@link module:enyo/Video~Video#src}, stopping all
 	* playback and buffering.
-	* 
+	*
 	* @public
 	*/
 	unload: function() {
@@ -469,7 +469,7 @@ module.exports = kind(
 
 	/**
 	* Initiates playback of the video data.
-	* 
+	*
 	* @public
 	*/
 	play: function () {
@@ -484,7 +484,7 @@ module.exports = kind(
 
 	/**
 	* Pauses video playback.
-	* 
+	*
 	* @public
 	*/
 	pause: function () {
@@ -556,7 +556,7 @@ module.exports = kind(
 
 	/**
 	* Changes the playback speed via [selectPlaybackRate()]{@link module:enyo/Video~Video#selectPlaybackRate}.
-	* 
+	*
 	* @public
 	*/
 	rewind: function () {
@@ -667,9 +667,9 @@ module.exports = kind(
 	},
 
 	/**
-	* Jumps to beginning of media [source]{@link module:enyo/Video~Video#src} and sets 
+	* Jumps to beginning of media [source]{@link module:enyo/Video~Video#src} and sets
 	* [playbackRate]{@link module:enyo/Video~Video#playbackRate} to `1`.
-	* 
+	*
 	* @public
 	*/
 	jumpToStart: function () {
@@ -686,9 +686,9 @@ module.exports = kind(
 	},
 
 	/**
-	* Jumps to end of media [source]{@link module:enyo/Video~Video#src} and sets 
+	* Jumps to end of media [source]{@link module:enyo/Video~Video#src} and sets
 	* [playbackRate]{@link module:enyo/Video~Video#playbackRate} to `1`.
-	* 
+	*
 	* @public
 	*/
 	jumpToEnd: function () {
@@ -705,7 +705,7 @@ module.exports = kind(
 	},
 
 	/**
-	* Sets the playback rate type (from the [keys]{@glossary Object.keys} of 
+	* Sets the playback rate type (from the [keys]{@glossary Object.keys} of
 	* [playbackRateHash]{@link module:enyo/Video~Video#playbackRateHash}).
 	*
 	* @param {String} cmd - Key of the playback rate type.
@@ -716,7 +716,7 @@ module.exports = kind(
 	},
 
 	/**
-	* Changes [playbackRate]{@link module:enyo/Video~Video#playbackRate} to a valid value when initiating 
+	* Changes [playbackRate]{@link module:enyo/Video~Video#playbackRate} to a valid value when initiating
 	* fast forward or rewind.
 	*
 	* @param {Number} idx - The index of the desired playback rate.
@@ -743,7 +743,7 @@ module.exports = kind(
 
 	/**
 	* Sets [playbackRate]{@link module:enyo/Video~Video#playbackRate}.
-	* 
+	*
 	* @param {String} rate - The desired playback rate.
 	* @public
 	*/
@@ -810,7 +810,7 @@ module.exports = kind(
 	* @public
 	*/
 	setCurrentTime: function (time) {
-		if ((typeof time === 'number') && this.hasNode()) {
+		if ((typeof time === 'number' && time !== Infinity) && this.hasNode()) {
 			this.node.currentTime = time;
 		}
 	},
@@ -847,7 +847,7 @@ module.exports = kind(
 
 	/**
 	* Implements custom rewind functionality (until browsers support negative playback rate).
-	* 
+	*
 	* @private
 	*/
 	beginRewind: function () {
@@ -857,7 +857,7 @@ module.exports = kind(
 
 	/**
 	* Calculates the time that has elapsed since
-	* 
+	*
 	* @private
 	*/
 	_rewind: function () {
@@ -874,7 +874,7 @@ module.exports = kind(
 
 	/**
 	* Starts rewind job.
-	* 
+	*
 	* @private
 	*/
 	startRewindJob: function () {
@@ -884,7 +884,7 @@ module.exports = kind(
 
 	/**
 	* Stops rewind job.
-	* 
+	*
 	* @private
 	*/
 	stopRewindJob: function () {
@@ -893,7 +893,7 @@ module.exports = kind(
 
 	/**
 	* Calculates numeric value of playback rate (with support for fractions).
-	* 
+	*
 	* @private
 	*/
 	calcNumberValueOfPlaybackRate: function (rate) {
@@ -902,7 +902,7 @@ module.exports = kind(
 	},
 
 	/**
-	* 
+	*
 	* Updates the [aspectRatio]{@link module:enyo/Video~Video#aspectRatio} property when the
 	* video's metadata is received.
 	*
@@ -980,7 +980,6 @@ module.exports = kind(
 			this.doStart();
 		}
 		return {
-			srcElement: node,
 			duration: node.duration,
 			currentTime: node.currentTime,
 			playbackRate: this.getPlaybackRate()
@@ -989,7 +988,7 @@ module.exports = kind(
 
 	/**
 	* Normalizes Enyo-generated `onPlay` [events]{@glossary event}.
-	* 
+	*
 	* @fires module:enyo/Video~Video#doPlay
 	* @private
 	*/
@@ -1007,7 +1006,7 @@ module.exports = kind(
 
 	/**
 	* All HTML5 [video]{@glossary video} [events]{@glossary event}.
-	* 
+	*
 	* @private
 	*/
 	hookupVideoEvents: function () {

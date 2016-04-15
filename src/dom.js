@@ -72,40 +72,10 @@ var dom = module.exports = {
 	},
 
 	/**
-	* This is designed to be copied into the `computedStyle` object.
-	*
-	* @private
-	*/
-	_ie8GetComputedStyle: function(prop) {
-		var re = /(\-([a-z]){1})/g;
-		if (prop === 'float') {
-			prop = 'styleFloat';
-		} else if (re.test(prop)) {
-			prop = prop.replace(re, function () {
-				return arguments[2].toUpperCase();
-			});
-		}
-		return this[prop] !== undefined ? this[prop] : null;
-	},
-
-	/**
 	* @private
 	*/
 	getComputedStyle: function(node) {
-		if(platform.ie < 9 && node && node.currentStyle) {
-			//simple global.getComputedStyle polyfill for IE8
-			var computedStyle = utils.clone(node.currentStyle);
-			computedStyle.getPropertyValue = this._ie8GetComputedStyle;
-			computedStyle.setProperty = function() {
-				return node.currentStyle.setExpression.apply(node.currentStyle, arguments);
-			};
-			computedStyle.removeProperty = function() {
-				return node.currentStyle.removeAttribute.apply(node.currentStyle, arguments);
-			};
-			return computedStyle;
-		} else {
-			return global.getComputedStyle && node && global.getComputedStyle(node, null);
-		}
+		return global.getComputedStyle && node && global.getComputedStyle(node, null);
 	},
 
 	/**
@@ -119,9 +89,9 @@ var dom = module.exports = {
 
 		if (nIE) {
 			var oConversion = {
-				'thin'   : (nIE > 8 ? 2 : 1) + 'px',
-				'medium' : (nIE > 8 ? 4 : 3) + 'px',
-				'thick'  : (nIE > 8 ? 6 : 5) + 'px',
+				'thin'   : '2px',
+				'medium' : '4px',
+				'thick'  : '6px',
 				'none'   : '0'
 			};
 			if (typeof oConversion[s] != 'undefined') {
@@ -217,64 +187,11 @@ var dom = module.exports = {
 	/**
 	* @private
 	*/
-	// Workaround for lack of compareDocumentPosition support in IE8
-	// Code MIT Licensed, John Resig; source: http://ejohn.org/blog/comparing-document-position/
-	compareDocumentPosition: function(a, b) {
-		return a.compareDocumentPosition ?
-		a.compareDocumentPosition(b) :
-		a.contains ?
-			(a != b && a.contains(b) && 16) +
-			(a != b && b.contains(a) && 8) +
-			(a.sourceIndex >= 0 && b.sourceIndex >= 0 ?
-				(a.sourceIndex < b.sourceIndex && 4) +
-				(a.sourceIndex > b.sourceIndex && 2) :
-				1) +
-			0 :
-			0;
-	},
-
-	/**
-	* @private
-	*/
-	// moved from FittableLayout.js into common protected code
-	_ieCssToPixelValue: function(node, value) {
-		var v = value;
-		// From the awesome hack by Dean Edwards
-		// http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
-		var s = node.style;
-		// store style and runtime style values
-		var l = s.left;
-		var rl = node.runtimeStyle && node.runtimeStyle.left;
-		// then put current style in runtime style.
-		if (rl) {
-			node.runtimeStyle.left = node.currentStyle.left;
-		}
-		// apply given value and measure its pixel value
-		s.left = v;
-		v = s.pixelLeft;
-		// finally restore previous state
-		s.left = l;
-		if (rl) {
-			s.runtimeStyle.left = rl;
-		}
-		return v;
-	},
-
-	/**
-	* @private
-	*/
-	_pxMatch: /px/i,
 	getComputedBoxValue: function(node, prop, boundary, computedStyle) {
 		var s = computedStyle || this.getComputedStyle(node);
-		if (s && (!platform.ie || platform.ie >= 9)) {
+		if (s) {
 			var p = s.getPropertyValue(prop + '-' + boundary);
 			return p === 'auto' ? 0 : parseInt(p, 10);
-		} else if (node && node.currentStyle) {
-			var v = node.currentStyle[prop + utils.cap(boundary)];
-			if (!v.match(this._pxMatch)) {
-				v = this._ieCssToPixelValue(node, v);
-			}
-			return parseInt(v, 0);
 		}
 		return 0;
 	},
@@ -362,8 +279,7 @@ var dom = module.exports = {
 		if (node.offsetParent) {
 			do {
 				// Adjust the offset if relativeToNode is a child of the offsetParent
-				// For IE 8 compatibility, have to use integer 8 instead of Node.DOCUMENT_POSITION_CONTAINS
-				if (relativeToNode && this.compareDocumentPosition(relativeToNode, node.offsetParent) & 8) {
+				if (relativeToNode && relativeToNode.compareDocumentPosition(node.offsetParent) & Node.DOCUMENT_POSITION_CONTAINS) {
 					offsetAdjustLeft = relativeToNode.offsetLeft;
 					offsetAdjustTop = relativeToNode.offsetTop;
 				}
@@ -378,11 +294,7 @@ var dom = module.exports = {
 				}
 				// Need to correct for borders if any exist on parent elements
 				if (node !== targetNode) {
-					if (node.currentStyle) {
-						// Oh IE, we do so love working around your incompatibilities
-						borderLeft = parseInt(node.currentStyle.borderLeftWidth, 10);
-						borderTop = parseInt(node.currentStyle.borderTopWidth, 10);
-					} else if (global.getComputedStyle) {
+					if (global.getComputedStyle) {
 						borderLeft = parseInt(global.getComputedStyle(node, '').getPropertyValue('border-left-width'), 10);
 						borderTop = parseInt(global.getComputedStyle(node, '').getPropertyValue('border-top-width'), 10);
 					} else {
@@ -398,8 +310,7 @@ var dom = module.exports = {
 					}
 				}
 				// Continue if we have an additional offsetParent, and either don't have a relativeToNode or the offsetParent is contained by the relativeToNode (if offsetParent contains relativeToNode, then we have already calculated up to the node, and can safely exit)
-				// For IE 8 compatibility, have to use integer 16 instead of Node.DOCUMENT_POSITION_CONTAINED_BY
-			} while ((node = node.offsetParent) && (!relativeToNode || this.compareDocumentPosition(relativeToNode, node) & 16));
+			} while ((node = node.offsetParent) && (!relativeToNode || relativeToNode.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_CONTAINED_BY));
 		}
 		return {
 			'top': top,
@@ -418,8 +329,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	removeNode: function (node) {
-		if (node.remove) node.remove();
-		else if (node.parentNode) node.parentNode.removeChild(node);
+		if (node.parentNode) node.parentNode.removeChild(node);
 	},
 
 	/**
@@ -626,7 +536,7 @@ var dom = module.exports = {
 };
 
 // override setInnerHtml for Windows 8 HTML applications
-if (typeof global.MSApp !== 'undefined') {
+if (typeof global.MSApp !== 'undefined' && typeof global.MSApp.execUnsafeLocalFunction !== 'undefined') {
 	dom.setInnerHtml = function(node, html) {
 		global.MSApp.execUnsafeLocalFunction(function() {
 			node.innerHTML = html;

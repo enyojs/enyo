@@ -7,8 +7,7 @@ require('enyo');
 
 var
 	kind = require('../kind'),
-	utils = require('../utils'),
-	platform = require('../platform');
+	utils = require('../utils');
 var
 	Input = require('../Input');
 
@@ -60,36 +59,36 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Checkbox~Checkbox.prototype */ {
-		
+
 		/**
 		* Value of the checkbox; will be `true` if checked.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		checked: false,
-		
+
 		/**
 		* A [Group API]{@link module:enyo/Group~Group} requirement for determining the selected item.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		active: false,
-		
+
 		/**
 		* @private
 		*/
 		type: 'checkbox'
 	},
-	
+
 	/**
 	* Disable classes inherited from {@link module:enyo/Input~Input}.
-	* 
+	*
 	* @private
 	*/
 	kindClasses: "",
@@ -98,8 +97,7 @@ module.exports = kind(
 	* @private
 	*/
 	handlers: {
-		onchange: 'change',
-		onclick: 'click'
+		onchange: 'change'
 	},
 
 	/**
@@ -129,7 +127,7 @@ module.exports = kind(
 	* The [active]{@link module:enyo/Checkbox~Checkbox#active} property and `onActivate`
 	* {@glossary event} are part of the [GroupItem]{@link module:enyo/GroupItem~GroupItem}
 	* interface supported by this [object]{@glossary Object}.
-	* 
+	*
 	* @private
 	*/
 	activeChanged: function () {
@@ -139,7 +137,7 @@ module.exports = kind(
 	},
 
 	/**
-	* All [input]{@link module:enyo/Input~Input} type [controls]{@link module:enyo/Control~Control} support the 
+	* All [input]{@link module:enyo/Input~Input} type [controls]{@link module:enyo/Control~Control} support the
 	* [value]{@link module:enyo/Input~Input#value} property.
 	*
 	* @param {Boolean} val - Whether or not the [checkbox]{@link module:enyo/Checkbox~Checkbox} should
@@ -167,30 +165,17 @@ module.exports = kind(
 	* @private
 	*/
 	valueChanged: function () {
+		// inherited behavior is to set "value" attribute and node-property
+		// which does not apply to checkbox (uses "checked") so
+		// we squelch the inherited method
+	},
 
 	/**
 	* @private
 	*/
-	// inherited behavior is to set "value" attribute and node-property
-	// which does not apply to checkbox (uses "checked") so
-	// we squelch the inherited method
-	},
 	change: function () {
 		var nodeChecked = utils.isTrue(this.getNodeProperty('checked'));
 		this.setActive(nodeChecked);
-	},
-
-	/**
-	* @private
-	*/
-	click: function (sender, e) {
-		// Various versions of IE (notably IE8) do not fire 'onchange' for
-		// checkboxes, so we discern change via 'click'.
-		// Note: keyboard interaction (e.g. pressing space when focused) fires
-		// a click event.
-		if (platform.ie <= 8) {
-			this.bubble('onchange', e);
-		}
 	},
 
 	// Accessibility

@@ -47,7 +47,7 @@ var
 */
 
 /**
-* The extended {@glossary event} [object]{@glossary Object} that is provided 
+* The extended {@glossary event} [object]{@glossary Object} that is provided
 * when a scroll event is fired.
 *
 * @typedef {Object} module:enyo/Scroller~Scroller~ScrollEvent
@@ -59,7 +59,7 @@ var
 *
 * @event module:enyo/Scroller~Scroller#onScrollStart
 * @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
 *	propagated the {@glossary event}.
 * @property {module:enyo/Scroller~Scroller~ScrollEvent} event - An [object]{@glossary Object} containing
 *	event information.
@@ -71,9 +71,9 @@ var
 *
 * @event module:enyo/Scroller~Scroller#onScroll
 * @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
 *	propagated the {@glossary event}.
-* @property {Object} event - An [object]{@glossary Object} containing 
+* @property {Object} event - An [object]{@glossary Object} containing
 *	event information.
 * @public
 */
@@ -83,9 +83,9 @@ var
 *
 * @event module:enyo/Scroller~Scroller#onScrollStop
 * @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
 *	propagated the {@glossary event}.
-* @property {Object} event - An [object]{@glossary Object} containing 
+* @property {Object} event - An [object]{@glossary Object} containing
 *	event information.
 * @public
 */
@@ -93,14 +93,14 @@ var
 /**
 * {@link module:enyo/Scroller~Scroller} is a scroller suitable for use in both desktop and mobile
 * applications.
-* 
+*
 * In some mobile environments, a default scrolling solution is not implemented for
 * DOM elements. In such cases, `enyo/Scroller` implements a touch-based scrolling
 * solution, which may be opted into either globally (by setting
 * [touchScrolling]{@link module:enyo/Scroller~Scroller#touchScrolling} to `true`) or on a
 * per-instance basis (by specifying a [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind}
 * of `'TouchScrollStrategy'`).
-* 
+*
 * For more information, see the documentation on
 * [Scrollers]{@linkplain $dev-guide/building-apps/layout/scrollers.html} in the
 * Enyo Developer Guide.
@@ -110,22 +110,22 @@ var
 */
 var Scroller = module.exports = kind(
 	/** @lends module:enyo/Scroller~Scroller.prototype */ {
-	
+
 	name: 'enyo.Scroller',
-	
+
 	kind: Control,
-	
+
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Scroller~Scroller.prototype */ {
 
 		/**
 		* Specifies how to horizontally scroll.  Acceptable values are `'scroll'`, `'auto'`,
 		* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
 		* scroll strategy.
-		* 
+		*
 		* @type {String}
 		* @default 'default'
 		* @public
@@ -136,7 +136,7 @@ var Scroller = module.exports = kind(
 		* Specifies how to vertically scroll.  Acceptable values are `'scroll'`, `'auto'`,
 		* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
 		* scroll strategy.
-		* 
+		*
 		* @type {String}
 		* @default 'default'
 		* @public
@@ -145,7 +145,7 @@ var Scroller = module.exports = kind(
 
 		/**
 		* The vertical scroll position.
-		* 
+		*
 		* @type {Number}
 		* @default 0
 		* @public
@@ -154,7 +154,7 @@ var Scroller = module.exports = kind(
 
 		/**
 		* The horizontal scroll position.
-		* 
+		*
 		* @type {Number}
 		* @default 0
 		* @public
@@ -163,7 +163,7 @@ var Scroller = module.exports = kind(
 
 		/**
 		* Maximum height of the scroll content.
-		* 
+		*
 		* @type {Number}
 		* @default null
 		* @memberof enyo/Scroller~Scroller.prototype
@@ -172,41 +172,40 @@ var Scroller = module.exports = kind(
 		maxHeight: null,
 
 		/**
-		* Set to `true` to make this [scroller]{@link module:enyo/Scroller~Scroller} select a 
-		* platform-appropriate touch-based scrolling strategy. Note that if you specify a value 
+		* Set to `true` to make this [scroller]{@link module:enyo/Scroller~Scroller} select a
+		* platform-appropriate touch-based scrolling strategy. Note that if you specify a value
 		* for [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind}, that will take precedence over
 		* this setting.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		touch: false,
 		/**
-		* Specifies a type of scrolling. The [scroller]{@link module:enyo/Scroller~Scroller} will attempt to 
+		* Specifies a type of scrolling. The [scroller]{@link module:enyo/Scroller~Scroller} will attempt to
 		* automatically select a strategy compatible with the runtime environment. Alternatively,
 		* you may choose to use a specific strategy:
-		* 
-		* - [ScrollStrategy]{@link module:enyo/ScrollStrategy~ScrollStrategy} is the default and implements no 
-		*	scrolling, relying instead on the environment to scroll properly.
-		* - [TouchScrollStrategy]{@link module:enyo/TouchScrollStrategy~TouchScrollStrategy} implements a touch scrolling 
-		*	mechanism.
-		* - [TranslateScrollStrategy]{@link module:enyo/TranslateScrollStrategy~TranslateScrollStrategy} implements a touch 
-		*	scrolling mechanism using translations; it is currently recommended only for Android
-		*	3 and 4, and Windows Phone 8.
-		* - [TransitionScrollStrategy]{@link module:enyo/TransitionScrollStrategy~TransitionScrollStrategy} implements a touch 
-		*	scrolling mechanism using CSS transitions; it is currently recommended only for iOS 
-		*	5 and later.
 		*
-		* @type {String}
-		* @default 'ScrollStrategy'
+		* - [ScrollStrategy]{@link module:enyo/ScrollStrategy~ScrollStrategy} is the default and implements no
+		*	scrolling, relying instead on the environment to scroll properly.
+		* - [TouchScrollStrategy]{@link module:enyo/TouchScrollStrategy~TouchScrollStrategy} implements a touch scrolling
+		*	mechanism.
+		* - [TranslateScrollStrategy]{@link module:enyo/TranslateScrollStrategy~TranslateScrollStrategy} implements a touch
+		*	scrolling mechanism using translations; it is currently recommended only for Android
+		*	3+, iOS 5+ and Windows Phone 8.
+		* - [TransitionScrollStrategy]{@link module:enyo/TransitionScrollStrategy~TransitionScrollStrategy} implements a touch
+		*	scrolling mechanism using CSS transitions;
+		*
+		* @type {Object}
+		* @default module:enyo/ScrollStrategy~ScrollStrategy
 		* @public
 		*/
 		strategyKind: ScrollStrategy,
 
 		/**
 		* Set to `true` to display a scroll thumb in touch [scrollers]{@link module:enyo/Scroller~Scroller}.
-		* 
+		*
 		* @type {Boolean}
 		* @default true
 		* @public
@@ -215,7 +214,7 @@ var Scroller = module.exports = kind(
 
 		/**
 		* If `true`, mouse wheel may be used to move the [scroller]{@link module:enyo/Scroller~Scroller}.
-		* 
+		*
 		* @type {Boolean}
 		* @default true
 		* @public
@@ -253,7 +252,7 @@ var Scroller = module.exports = kind(
 	touchOverscroll: true,
 
 	/**
-	* If `true`, the [scroller]{@link module:enyo/Scroller~Scroller} will not propagate `dragstart` 
+	* If `true`, the [scroller]{@link module:enyo/Scroller~Scroller} will not propagate `dragstart`
 	* [events]{@glossary event} that cause it to start scrolling.
 	*
 	* @type {Boolean}
@@ -263,7 +262,7 @@ var Scroller = module.exports = kind(
 	preventDragPropagation: true,
 
 	/**
-	* If `true`, the [scroller]{@link module:enyo/Scroller~Scroller} will not propagate scroll 
+	* If `true`, the [scroller]{@link module:enyo/Scroller~Scroller} will not propagate scroll
 	* [events]{@glossary event}.
 	*
 	* @type {Boolean}
@@ -274,7 +273,7 @@ var Scroller = module.exports = kind(
 
 	/**
 	* Needed to allow global mods to `enyo/Scroller.touchScrolling`.
-	* 
+	*
 	* @private
 	*/
 
@@ -295,9 +294,13 @@ var Scroller = module.exports = kind(
 	classes: 'enyo-scroller',
 
 	/**
+	* @lends module:enyo/Scroller~Scroller
 	* @private
 	*/
 	statics: {
+		/**
+		* @private
+		*/
 		osInfo: [
 			{os: 'android', version: 3},
 			{os: 'androidChrome', version: 18},
@@ -308,7 +311,7 @@ var Scroller = module.exports = kind(
 			{os: 'blackberry', version:1e9},
 			{os: 'tizen', version: 2}
 		],
-		//* Returns true if platform should have touch events.
+		/** Returns true if platform should have touch events. */
 		hasTouchScrolling: function() {
 			for (var i=0, t; (t=this.osInfo[i]); i++) {
 				if (platform[t.os]) {
@@ -321,8 +324,8 @@ var Scroller = module.exports = kind(
 			}
 		},
 		/**
-			Returns true if the platform has native div scrollers (desktop
-			browsers always have them).
+		* Returns true if the platform has native div scrollers (desktop
+		* browsers always have them).
 		*/
 		hasNativeScrolling: function() {
 			for (var i=0, t; (t=this.osInfo[i]); i++) {
@@ -332,8 +335,11 @@ var Scroller = module.exports = kind(
 			}
 			return true;
 		},
+		/**
+		* @private
+		*/
 		getTouchStrategy: function() {
-			return (platform.androidChrome >= 27) || (platform.android >= 3) || (platform.windowsPhone === 8) || (platform.webos >= 4)
+			return (platform.androidChrome >= 27) || (platform.android >= 3) || (platform.ios >= 5) || (platform.windowsPhone === 8) || (platform.webos >= 4)
 				? TranslateScrollStrategy
 				: TouchScrollStrategy;
 		}
@@ -488,7 +494,7 @@ var Scroller = module.exports = kind(
 
 	// FIXME: these properties are virtual; property changed methods are fired only if
 	// property value changes, not if getter changes.
-	
+
 	/**
 	* Sets the horizontal scroll position.
 	*
@@ -535,7 +541,7 @@ var Scroller = module.exports = kind(
 
 	/**
 	* Retrieves the scroll boundaries of the [scroller]{@link module:enyo/Scroller~Scroller}.
-	* 
+	*
 	* @returns {module:enyo/Scroller~BoundaryObject} An [object]{@glossary Object} describing the
 	*	scroll boundaries.
 	* @public
@@ -554,11 +560,11 @@ var Scroller = module.exports = kind(
 		return bounds;
 	},
 
-	/** 
+	/**
 	* Trigger a remeasurement of the scroller's metrics (specifically, the
 	* size of its viewport, the size of its contents and the difference between
 	* the two, which determines the extent to which the scroller may scroll).
-	* 
+	*
 	* You should generally not need to call this from application code, as the
 	* scroller usually remeasures automatically whenever needed. This method
 	* exists primarily to support an internal use case for
@@ -584,7 +590,7 @@ var Scroller = module.exports = kind(
 		this.$.strategy.scrollIntoView(ctl, alignWithTop);
 	},
 
-	/** 
+	/**
 	* Scrolls to the specified position.
 	*
 	* @param {Number} x - The `x` position in pixels.
@@ -596,10 +602,10 @@ var Scroller = module.exports = kind(
 	},
 
 	/**
-	* Ensures that the given [control]{@link module:enyo/Control~Control} is visible in the 
-	* [scroller's]{@link module:enyo/Scroller~Scroller} viewport. Unlike 
-	* [scrollIntoView()]{@link module:enyo/Scroller~Scroller#scrollIntoView}, which uses DOM's 
-	* [scrollIntoView()]{@glossary scrollIntoView}, this only affects the current 
+	* Ensures that the given [control]{@link module:enyo/Control~Control} is visible in the
+	* [scroller's]{@link module:enyo/Scroller~Scroller} viewport. Unlike
+	* [scrollIntoView()]{@link module:enyo/Scroller~Scroller#scrollIntoView}, which uses DOM's
+	* [scrollIntoView()]{@glossary scrollIntoView}, this only affects the current
 	* scroller.
 	*
 	* @param {module:enyo/Control~Control} ctl - The [control]{@link module:enyo/Control~Control} to make visible in the
@@ -612,7 +618,7 @@ var Scroller = module.exports = kind(
 		this.scrollToNode(ctl.hasNode(), alignWithTop);
 	},
 
-	/** 
+	/**
 	* Ensures that the given node is visible in the [scroller's]{@link module:enyo/Scroller~Scroller} viewport.
 	*
 	* @param {Node} node - The node to make visible in the [scroller's]{@link module:enyo/Scroller~Scroller}
@@ -625,9 +631,9 @@ var Scroller = module.exports = kind(
 		this.$.strategy.scrollToNode(node, alignWithTop);
 	},
 
-	/** 
+	/**
 	* Stops the scroller if it is currently animating.
-	* 
+	*
 	* @public
 	*/
 	stop: function() {
@@ -636,9 +642,9 @@ var Scroller = module.exports = kind(
 		}
 	},
 
-	/** 
+	/**
 	* Adds current values of `getScrollBounds()` to {@glossary event}.
-	* 
+	*
 	* @private
 	*/
 	decorateScrollEvent: function (e) {
@@ -670,7 +676,7 @@ var Scroller = module.exports = kind(
 		this.scrollTop  = bounds.top;
 	},
 
-	/** 
+	/**
 	* Normalizes scroll {@glossary event} to `onScroll`.
 	*
 	* @fires module:enyo/Scroller~Scroller#onScroll
@@ -710,7 +716,7 @@ var Scroller = module.exports = kind(
 		return true;
 	},
 
-	/** 
+	/**
 	* Either propagates or stops the current scroll {@glossary event}.
 	*
 	* @private
@@ -795,7 +801,7 @@ var Scroller = module.exports = kind(
 	},
 
 	/**
-	* Sends the [useMouseWheel]{@link module:enyo/Scroller~Scroller#useMouseWheel} property to the scroll 
+	* Sends the [useMouseWheel]{@link module:enyo/Scroller~Scroller#useMouseWheel} property to the scroll
 	* strategy.
 	*
 	* @private

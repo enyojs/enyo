@@ -7,8 +7,7 @@ require('enyo');
 
 var
 	kind = require('./kind'),
-	platform = require('./platform'),
-	dispatcher = require('./dispatcher');
+	platform = require('./platform');
 var
 	Control = require('./Control'),
 	/*jshint -W079*/
@@ -38,7 +37,7 @@ var
 * 	}
 * }
 * ```
-* 
+*
 * Note: This uses the [&lt;select&gt;]{@glossary select} tag, which isn't implemented for
 * native webOS applications, although it does work in the webOS Web browser.
 *
@@ -63,12 +62,12 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Select~Select.prototype */ {
-		
+
 		/**
 		* The index of the selected [option]{@link module:enyo/Option~Option} in the list.
-		* 
+		*
 		* @type {Number}
 		* @default null
 		* @public
@@ -77,7 +76,7 @@ module.exports = kind(
 
 		/**
 		* The value of the selected [option]{@link module:enyo/Option~Option}.
-		* 
+		*
 		* @type {Object}
 		* @default null
 		* @public
@@ -86,7 +85,7 @@ module.exports = kind(
 
 		/**
 		* The size of the select box in rows.
-		* 
+		*
 		* @type {Number}
 		* @default 0
 		* @public
@@ -94,8 +93,8 @@ module.exports = kind(
 		size: 0,
 
 		/**
-		* Sets whether the enyo.Select can select multiple options
-		* 
+		* Sets whether the enyo/Select can select multiple options
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -103,15 +102,15 @@ module.exports = kind(
 		multiple: false,
 
 		/**
-		* Sets whether the enyo.Select is disabled, or not
-		* 
+		* Sets whether the enyo/Select is disabled, or not
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
 		*/
 		disabled: false
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -136,10 +135,6 @@ module.exports = kind(
 	rendered: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
-			//Trick to force IE8 onchange event bubble
-			if (platform.ie == 8) {
-				this.setAttribute('onchange', dispatcher.bubbler);
-			}
 			// This makes Select.selected a higher priority than Option.selected but ensures that
 			// the former works at create time
 			if (this.selected !== null) {
@@ -169,6 +164,25 @@ module.exports = kind(
 	},
 
 	/**
+	* Updates the `selected` option matching the current value. If the option doesn't have a value,
+	* it will match its content instead.
+	*
+	* @private
+	*/
+	selectOptionByValue: function () {
+		var i, controls, l, c;
+
+		for (i = 0, controls = this.getControls(), l = controls.length; i < l; i++) {
+			c = controls[i];
+			// support 
+			if (c.value ? c.value === this.value : c.content === this.value) {
+				if (i !== this.selected) this.set('selected', i);
+				break;
+			}
+		}
+	},
+
+	/**
 	* @private
 	*/
 	selectedChanged: function () {
@@ -180,8 +194,15 @@ module.exports = kind(
 	* @private
 	*/
 	valueChanged: function () {
-		this.setNodeProperty('value', this.value);
-		this.updateSelectedFromNode();
+		// IE will clear selectedIndex when setting the value directly on the node so instead we
+		// iterate the children, find the matching value, and update selected if necessary.
+		if (platform.ie || platform.edge) {
+			this.selectOptionByValue();
+		}
+		else {
+			this.setNodeProperty('value', this.value);
+			this.updateSelectedFromNode();
+		}
 	},
 
 	/**

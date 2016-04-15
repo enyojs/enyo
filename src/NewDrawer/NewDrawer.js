@@ -1,3 +1,10 @@
+/**
+* Contains the declaration for the {@link module:enyo/NewDrawer~NewDrawer} kind.
+* @wip
+* @private
+* @module enyo/NewDrawer
+*/
+
 require('enyo');
 
 var
@@ -8,7 +15,22 @@ var
 	Control = require('../Control'),
 	NewAnimator = require('../NewAnimator');
 
-module.exports = kind({
+/**
+* {@link module:enyo/NewDrawer~NewDrawer} is an experimental
+* {@link module:enyo/Control~Control}.
+*
+* It is not a 1:1 replacement for {@link module:enyo/Drawer~Drawer}
+* and will likely never be promoted out of its experimental state.
+* Use at your own risk.
+*
+* @class NewDrawer
+* @extends module:enyo/Control~Control
+* @wip
+* @private
+* @ui
+*/
+module.exports = kind(
+	/** @lends module:enyo/NewDrawer~NewDrawer.prototype */ {
 	name: 'enyo.NewDrawer',
 	kind: Control,
 	classes: 'enyo-new-drawer',

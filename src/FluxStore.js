@@ -1,5 +1,6 @@
 /**
 * Contains the declaration for the {@link module:enyo/FluxStore~FluxStore} kind.
+* @wip
 * @module enyo/FluxStore
 */
 
@@ -50,13 +51,6 @@ module.exports = kind(
 	*/
 	kind: CoreObject,
 
-
-	/**
-	* @private
-	*/
-	data: {},
-
-
 	/**
 	* How a store is identitified to the Flux Dispatcher. This ID is used for
 	* subscribing to a store's state notification change.
@@ -67,6 +61,9 @@ module.exports = kind(
 	*/
 	id: -1,
 
+	/**
+	* @private
+	*/
 	mixins: [EventEmitter, StateSupport],
 
 	/**
@@ -78,6 +75,10 @@ module.exports = kind(
 	*/
 	source: '',
 
+	/**
+	* @private
+	* @lends module:enyo/FluxStore~FluxStore.prototype
+	*/
 	published: {
 
 		/**
@@ -98,6 +99,7 @@ module.exports = kind(
 	constructor: kind.inherit(function (sup) {
 		return function () {
 			sup.apply(this, arguments);
+			this.reset();
 			//id the store with the dispatcher
 			this.id = FluxDispatcher.subscribe();
 

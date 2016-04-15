@@ -43,8 +43,6 @@ exports.$L = new utils.Extensible(function (str) {
 * `i18n.updateLocale()`. The default implementation of `i18n.updateLocale()` is a stub, but an
 * i18n library may override it to update its internal state before the `onlocalechange` signal
 * is broadcast.
-* 
-* This feature is not supported on IE8, which doesn't support `addEventListener()`.
 *
 * @private
 */

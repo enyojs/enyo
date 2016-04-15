@@ -1,6 +1,5 @@
 var
 	dispatcher = require('../dispatcher'),
-	platform = require('../platform'),
 	utils = require('../utils');
 
 var
@@ -307,11 +306,6 @@ module.exports = {
 		e.shiftKey = inEvent.shiftKey;
 		e.srcEvent = inEvent.srcEvent;
 		// };
-		//Fix for IE8, which doesn't include pageX and pageY properties
-		if(platform.ie==8 && e.target) {
-			e.pageX = e.clientX + e.target.scrollLeft;
-			e.pageY = e.clientY + e.target.scrollTop;
-		}
 		e.preventDefault = gestureUtil.preventDefault;
 		e.disablePrevention = gestureUtil.disablePrevention;
 		return e;
@@ -586,7 +580,7 @@ module.exports = {
 			}
 			this._pulsing = true;
 			dispatcher.dispatch(e);
-			n = this._next = this._unsent.shift();
+			n = this._next = this._unsent && this._unsent.shift();
 		}
 	},
 

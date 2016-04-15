@@ -1,7 +1,7 @@
-language: node_js
 sudo: false
+language: node_js
 node_js:
-  - "0.12"
+  - "node"
 cache:
   directories:
   - $HOME/.npm

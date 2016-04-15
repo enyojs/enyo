@@ -40,6 +40,15 @@ var RepeaterChildSupport = {
 	selected: false,
 
 	/**
+	* The CSS class applied to the child when selected
+	*
+	* @name module:enyo/RepeaterChildSupport~RepeaterChildSupport#selectedClass
+	* @type {String}
+	* @default null
+	* @public
+	*/
+
+	/**
 	* Setting cachePoint: true ensures that events from the repeater child's subtree will
 	* always bubble up through the child, allowing the events to be decorated with repeater-
 	* related metadata and references.
@@ -49,7 +58,7 @@ var RepeaterChildSupport = {
 	* @private
 	*/
 	cachePoint: true,
-	
+
 	/*
 	* @method
 	* @private
@@ -109,9 +118,9 @@ var RepeaterChildSupport = {
 		}
 	},
 	/**
-	* Deliberately used to supersede the default method and set 
-	* [owner]{@link module:enyo/Component~Component#owner} to this [control]{@link module:enyo/Control~Control} so that there 
-	* are no name collisions in the instance [owner]{@link module:enyo/Component~Component#owner}, and also so 
+	* Deliberately used to supersede the default method and set
+	* [owner]{@link module:enyo/Component~Component#owner} to this [control]{@link module:enyo/Control~Control} so that there
+	* are no name collisions in the instance [owner]{@link module:enyo/Component~Component#owner}, and also so
 	* that [bindings]{@link module:enyo/Binding~Binding} will correctly map to names.
 	*
 	* @method
@@ -132,7 +141,7 @@ var RepeaterChildSupport = {
 	dispatchEvent: kind.inherit(function (sup) {
 		return function (name, event, sender) {
 			var owner;
-			
+
 			// if the event is coming from a child of the repeater-child (this...) and has a
 			// delegate assigned to it there is a distinct possibility it is supposed to be
 			// targeting the instanceOwner of repeater-child not the repeater-child itself
@@ -151,7 +160,7 @@ var RepeaterChildSupport = {
 					}
 				}
 			}
-			
+
 			if (!event._fromRepeaterChild) {
 				if (!!~utils.indexOf(name, this.repeater.selectionEvents)) {
 					this._selectionHandler();
@@ -177,8 +186,7 @@ var RepeaterChildSupport = {
 				var bnd = this.binding({
 					from: 'model.' + s,
 					to: 'selected',
-					oneWay: false/*,
-					kind: enyo.BooleanBinding*/
+					oneWay: false
 				});
 				this._selectionBindingId = bnd.euid;
 			}

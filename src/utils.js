@@ -259,8 +259,7 @@ var isArray = exports.isArray = Array.isArray || function (it) {
 * @public
 */
 exports.isObject = Object.isObject || function (it) {
-	// explicit null/undefined check for IE8 compatibility
-	return (it != null) && (toString.call(it) === '[object Object]');
+	return toString.call(it) === '[object Object]';
 };
 
 /**
@@ -395,7 +394,8 @@ exports.asyncMethod = function (scope, method) {
 * arguments `args` ([Array]{@glossary Array}), if the object and method exist.
 *
 * @example
-* 	enyo.call(myWorkObject, 'doWork', [3, 'foo']);
+* 	utils = require('enyo/utils');
+* 	utils.call(myWorkObject, 'doWork', [3, 'foo']);
 *
 * @param {Object} scope - The `this` context for the method.
 * @param {(Function|String)} method - A Function or the name of a method to bind.
@@ -762,23 +762,6 @@ Object.keys = Object.keys || function (obj) {
 			results.push(prop);
 		}
 	}
-	// *sigh* IE 8
-	if (!({toString: null}).propertyIsEnumerable('toString')) {
-		var dontEnums = [
-			'toString',
-			'toLocaleString',
-			'valueOf',
-			'hasOwnProperty',
-			'isPrototypeOf',
-			'propertyIsEnumerable',
-			'constructor'
-		];
-		for (var i = 0, p; (p = dontEnums[i]); i++) {
-			if (hop.call(obj, p)) {
-				results.push(p);
-			}
-		}
-	}
 	return results;
 };
 
@@ -1026,60 +1009,6 @@ exports.values = function (obj) {
 // ----------------------------------
 
 /**
-* Because our older API parameters are not consistent with other array API methods, and also
-* because only [IE8 lacks integrated support]{@glossary polyfill} for
-* [indexOf()]{@linkcode external:Array.indexOf}, we ensure it is defined (only IE8) and advise,
-* moving forward, that the built-in method be used. But to preserve our original API, it will
-* simply call this method, knowing it exists.
-*
-* @private
-*/
-Array.prototype.indexOf = Array.prototype.indexOf || function (el, offset) {
-	var len = this.length >>> 0;
-
-	offset = +offset || 0;
-
-	if (Math.abs(offset) === Infinity) offset = 0;
-	if (offset < 0) offset += len;
-	if (offset < 0) offset = 0;
-
-	for (; offset < len; ++offset) {
-		if (this[offset] === el) return offset;
-	}
-
-	return -1;
-};
-
-/**
-* Because our older API parameters are not consistent with other array API methods, and also
-* because only [IE8 lacks integrated support]{@glossary polyfill} for
-* [lastIndexOf()]{@glossary Array.lastIndexOf} we ensure it is defined (only IE8) and
-* advise, moving forward, that the built-in method be used. But to preserve our original API, it
-* will simply call this method, knowing it exists.
-*
-* @private
-*/
-Array.prototype.lastIndexOf = Array.prototype.lastIndexOf || function (el, offset) {
-	var array = Object(this)
-		, len = array.length >>> 0;
-
-	if (len === 0) return -1;
-
-	if (offset !== undefined) {
-		offset = Number(offset);
-		if (Math.abs(offset) > len) offset = len;
-		if (offset === Infinity || offset === -Infinity) offset = len;
-		if (offset < 0) offset += len;
-	} else offset = len;
-
-	for (; offset > -1; --offset) {
-		if (array[offset] === el) return offset;
-	}
-
-	return -1;
-};
-
-/**
 * A [polyfill]{@glossary polyfill} for platforms that don't support
 * [Array.findIndex()]{@glossary Array.findIndex}.
 */
@@ -1098,38 +1027,6 @@ Array.prototype.find = Array.prototype.find || function (fn, ctx) {
 	for (var i=0, len=this.length >>> 0; i<len; ++i) {
 		if (fn.call(ctx, this[i], i, this)) return this[i];
 	}
-};
-
-/**
-* A [polyfill]{@glossary polyfill} for platforms that don't support
-* [Array.forEach()]{@glossary Array.forEach}.
-*/
-Array.prototype.forEach = Array.prototype.forEach || function (fn, ctx) {
-	for (var i=0, len=this.length >>> 0; i<len; ++i) fn.call(ctx, this[i], this);
-};
-
-/**
-* A [polyfill]{@glossary polyfill} for platforms that don't support
-* [Array.map()]{@glossary Array.map}.
-*/
-Array.prototype.map = Array.prototype.map || function (fn, ctx) {
-	var ret = [];
-	for (var i=0, len=this.length >>> 0; i<len; ++i) {
-		ret.push(fn.call(ctx, this[i], i, this));
-	}
-	return ret;
-};
-
-/**
-* A [polyfill]{@glossary polyfill} for platforms that don't support
-* [Array.filter()]{@glossary Array.filter}.
-*/
-Array.prototype.filter = Array.prototype.filter || function (fn, ctx) {
-	var ret = [];
-	for (var i=0, len=this.length >>> 0; i<len; ++i) {
-		fn.call(ctx, this[i], i, this) && ret.push(this[i]);
-	}
-	return ret;
 };
 
 /**
