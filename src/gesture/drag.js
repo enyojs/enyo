@@ -146,8 +146,8 @@ module.exports = {
 
 		// _holdPulseConfig represents the current, global `holdpulse` settings, if the default
 		// settings have been overridden in some way.
-		this._holdPulseConfig = this._holdPulseConfig || utils.clone(this.holdPulseDefaultConfig, true);
-		utils.mixin(this._holdPulseConfig, config);
+		this._holdPulseConfig = this._holdPulseConfig || utils.cloneQuick(this.holdPulseDefaultConfig, true);
+		utils.mixin.O2O(this._holdPulseConfig, config);
 	},
 
 	/**
@@ -496,7 +496,7 @@ module.exports = {
 	*/
 	prepareHold: function(e) {
 		// quick copy as the prototype of the new overridable config
-		this.holdPulseConfig = utils.clone(this._holdPulseConfig || this.holdPulseDefaultConfig, true);
+		this.holdPulseConfig = utils.cloneQuick(this._holdPulseConfig || this.holdPulseDefaultConfig, true);
 
 		// expose method for configuring holdpulse options
 		e.configureHoldPulse = this._configureHoldPulse.bind(this);

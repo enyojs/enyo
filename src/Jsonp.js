@@ -26,19 +26,19 @@ var
 */
 var JsonpRequest = module.exports = kind(
 	/** @lends module:enyo/Jsonp~JsonpRequest.prototype */ {
-	
+
 	name: 'enyo.JsonpRequest',
-	
+
 	/**
 	* @private
 	*/
 	kind: Async,
-	
+
 	/**
 	* @private
 	*/
 	published: {
-		
+
 		/**
 		* The URL for the service.
 		*
@@ -48,7 +48,7 @@ var JsonpRequest = module.exports = kind(
 		* @public
 		*/
 		url: '',
-		
+
 		/**
 		* The optional character set to use to interpret the return data.
 		*
@@ -58,7 +58,7 @@ var JsonpRequest = module.exports = kind(
 		* @public
 		*/
 		charset: null,
-		
+
 		/**
 		* The name of the [function]{@glossary Function} that is included in the
 		* encoded arguments and used to wrap the return value from the server.
@@ -71,7 +71,7 @@ var JsonpRequest = module.exports = kind(
 		* @public
 		*/
 		callbackName: 'callback',
-		
+
 		/**
 		* When `true`, a random number is appended as a parameter for GET requests
 		* to (attempt to) force a new fetch of the resource instead of reusing a
@@ -83,7 +83,7 @@ var JsonpRequest = module.exports = kind(
 		* @public
 		*/
 		cacheBust: true,
-		
+
 		/**
 		* In cases where a backend is inflexible with regard to
 		* [callback]{@link module:enyo/Jsonp~JsonpRequest#callback} names, this property may be used to
@@ -99,7 +99,7 @@ var JsonpRequest = module.exports = kind(
 		*/
 		overrideCallback: null
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -107,7 +107,7 @@ var JsonpRequest = module.exports = kind(
 		// Counter to allow creation of unique name for each JSONP request
 		nextCallbackID: 0
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -129,7 +129,7 @@ var JsonpRequest = module.exports = kind(
 		first.parentNode.insertBefore(script, first);
 		this.scriptTag = script;
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -141,7 +141,7 @@ var JsonpRequest = module.exports = kind(
 			script.parentNode.removeChild(script);
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -151,7 +151,7 @@ var JsonpRequest = module.exports = kind(
 			sup.apply(this, arguments);
 		};
 	}),
-	
+
 	/**
 	* Initiates the asynchronous routine and will supply the given value if it completes
 	* successfully. Overloaded from {@link module:enyo/Async~Async#go}.
@@ -165,7 +165,7 @@ var JsonpRequest = module.exports = kind(
 		this.jsonp(value);
 		return this;
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -186,7 +186,7 @@ var JsonpRequest = module.exports = kind(
 		this.response(cleanup);
 		this.error(cleanup);
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -203,7 +203,7 @@ var JsonpRequest = module.exports = kind(
 		//
 		return [uri, args.join('&')].join('?');
 	},
-	
+
 	/**
 	* If `params` is a string, we follow the convention of replacing the string
 	* `'=?'` with the callback name. If `params` is an object (the more common
@@ -215,7 +215,7 @@ var JsonpRequest = module.exports = kind(
 		if (utils.isString(params)) {
 			return params.replace('=?', '=' + fn);
 		} else {
-			params = params ? utils.clone(params, true) : {};
+			params = params ? utils.cloneQuick(params, true) : {};
 			if (this.callbackName) {
 				params[this.callbackName] = fn;
 			}

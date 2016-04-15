@@ -17,27 +17,27 @@ var
 */
 module.exports = kind(
 	/** @lends module:enyo/LinkedListNode~LinkedListNode.prototype */ {
-	
+
 	/**
 	* @private
 	*/
 	kind: null,
-	
+
 	/**
 	* @private
 	*/
 
-	
+
 	/**
 	* @private
 	*/
 	prev: null,
-	
+
 	/**
 	* @private
 	*/
 	next: null,
-	
+
 	/**
 	* @private
 	*/
@@ -47,25 +47,25 @@ module.exports = kind(
 		cpy.next = this.next;
 		return cpy;
 	},
-	
+
 	/**
 	* @private
 	*/
 	constructor: function (props) {
-		props && utils.mixin(this, props);
+		props && utils.mixin.O2O(this, props);
 	},
-	
+
 	/**
 	* @private
 	*/
 	destroy: function () {
 		// clear reference to previous node
 		this.prev = null;
-		
+
 		// if we have a reference to our next node
 		// we continue down the chain
 		this.next && this.next.destroy();
-		
+
 		// clear our reference to the next node
 		this.next = null;
 	}

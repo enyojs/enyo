@@ -784,7 +784,7 @@ module.exports = kind(
 	_getScrollBounds: kind.inherit(function (sup) {
 		return function() {
 			var r = sup.apply(this, arguments);
-			utils.mixin(r, this.getOverScrollBounds());
+			utils.mixin.C2O(r, this.getOverScrollBounds());
 			return r;
 		};
 	}),

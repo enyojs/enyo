@@ -485,7 +485,7 @@ var DataList = module.exports = kind(
 		return function () {
 			var o = utils.clone(this.get('containerOptions')),
 				s = this.get('scrollerOptions');
-			if (s) { utils.mixin(o, s, {exists: true}); }
+			if (s) { utils.mixin.OOO(o, s, {exists: true}); }
 			this.set('containerOptions', o);
 			sup.apply(this, arguments);
 		};

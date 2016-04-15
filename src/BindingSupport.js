@@ -23,17 +23,17 @@ kind.concatenated.push('bindings');
 * @protected
 */
 var BindingSupport = {
-	
+
 	/**
 	* @private
 	*/
 	name: 'BindingSupport',
-	
+
 	/**
 	* @private
 	*/
 	_bindingSupportInitialized: false,
-	
+
 	/**
 	* Imperatively creates a [binding]{@link module:enyo/Binding~Binding}. Merges a variable
 	* number of [hashes]{@glossary Object} and instantiates a binding that
@@ -49,15 +49,15 @@ var BindingSupport = {
 	*/
 	binding: function () {
 		var args = utils.toArray(arguments)
-			, props = utils.mixin(args)
+			, props = utils.mixin.A(args)
 			, bindings = this.bindings || (this.bindings = [])
 			, passiveBindings = this.passiveBindings || (this.passiveBindings = [])
 			, PBCtor = Binding.PassiveBinding
 			, Ctor, bnd;
-			
+
 		props.owner = props.owner || this;
 		Ctor = props.kind = props.kind || this.defaultBindingKind || Binding.defaultBindingKind;
-		
+
 		if (this._bindingSupportInitialized) {
 			utils.isString(Ctor) && (Ctor = props.kind = kind.constructorForKind(Ctor));
 			bnd = new Ctor(props);
@@ -67,10 +67,10 @@ var BindingSupport = {
 			}
 			return bnd;
 		} else bindings.push(props);
-		
+
 		return this;
 	},
-	
+
 	/**
 	* Removes and [destroys]{@link module:enyo/Binding~Binding#destroy} all of, or a subset of,
 	* the [bindings]{@link module:enyo/Binding~Binding} belonging to the callee.
@@ -85,7 +85,7 @@ var BindingSupport = {
 		bindings.forEach(function (bnd) {
 			bnd.destroy();
 		});
-		
+
 		return this;
 	},
 
@@ -98,7 +98,7 @@ var BindingSupport = {
 			b.sync(force);
 		});
 	},
-	
+
 	/**
 	* Removes a single {@link module:enyo/Binding~Binding} from the callee. (This does not
 	* [destroy]{@link module:enyo/Binding~Binding#destroy} the binding.) Also removes the
@@ -116,12 +116,12 @@ var BindingSupport = {
 		if (binding.ctor === Binding.PassiveBinding) {
 			utils.remove(binding, this.passiveBindings);
 		}
-		
+
 		if (binding.owner === this) binding.owner = null;
-		
+
 		return this;
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -139,7 +139,7 @@ var BindingSupport = {
 			sup.apply(this, arguments);
 		};
 	}),
-	
+
 	/**
 	* @private
 	*/
@@ -168,14 +168,14 @@ kind.concatHandler = function (ctor, props, instance) {
 	var proto = ctor.prototype || ctor
 		, kind = props && (props.defaultBindingKind || Binding.defaultBindingKind)
 		, defaults = props && props.bindingDefaults;
-	
+
 	sup.call(this, ctor, props, instance);
 	if (props.bindings) {
 		props.bindings.forEach(function (bnd) {
 			defaults && utils.mixin(bnd, defaults, flags);
-			bnd.kind || (bnd.kind = kind); 
+			bnd.kind || (bnd.kind = kind);
 		});
-		
+
 		proto.bindings = proto.bindings? proto.bindings.concat(props.bindings): props.bindings;
 		delete props.bindings;
 	}

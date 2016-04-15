@@ -374,7 +374,7 @@ var Model = module.exports = kind(
 
 			// if there were options passed in we copy them quickly so that we can hijack
 			// the success and error methods while preserving the originals to use later
-			options = opts ? utils.clone(opts, true) : {};
+			options = opts ? utils.cloneQuick(opts, true) : {};
 
 			// make sure we keep track of how many sources we're requesting
 			source = options.source || this.source;
@@ -427,7 +427,7 @@ var Model = module.exports = kind(
 
 			// if there were options passed in we copy them quickly so that we can hijack
 			// the success and error methods while preserving the originals to use later
-			options = opts ? utils.clone(opts, true) : {};
+			options = opts ? utils.cloneQuick(opts, true) : {};
 
 			// make sure we keep track of how many sources we're requesting
 			source = options.source || this.source;
@@ -487,7 +487,7 @@ var Model = module.exports = kind(
 			if (!(this.status & (States.ERROR | States.BUSY))) {
 
 				// remap to the originals
-				options = opts ? utils.clone(opts, true) : {};
+				options = opts ? utils.cloneQuick(opts, true) : {};
 
 				options.success = function (source, res) {
 
@@ -702,10 +702,10 @@ var Model = module.exports = kind(
 
 		// the _opts_ parameter is a one-hit options hash it does not leave
 		// behind its values as default options...
-		opts = opts? utils.mixin({}, [this.options, opts]): this.options;
+		opts = opts? utils.mixin.A2O({}, [this.options, opts]): this.options;
 
 		// go ahead and mix all of the properties in
-		props && utils.mixin(this, props);
+		props && utils.mixin.O2O(this, props);
 
 		var noAdd = opts.noAdd
 			, commit = opts.commit
@@ -725,7 +725,7 @@ var Model = module.exports = kind(
 
 		// ensure we have the updated attributes
 		this.attributes = this.attributes? defaults? utils.mixin({}, [defaults, this.attributes]): utils.clone(this.attributes, true): defaults? utils.clone(defaults, true): {};
-		attrs && utils.mixin(this.attributes, attrs);
+		attrs && utils.mixin.O2O(this.attributes, attrs);
 		this.previous = utils.clone(this.attributes);
 
 		// now we need to ensure we have a store and register with it

@@ -513,7 +513,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	getAbsoluteBounds: function(targetNode) {
-		return utils.clone(targetNode.getBoundingClientRect());
+		return utils.cloneClientRect(targetNode.getBoundingClientRect());
 	},
 
 	/**
@@ -754,7 +754,7 @@ dom.canAccelerate = function() {
 */
 dom.transform = function(control, transforms) {
 	var d = control.domTransforms = control.domTransforms || {};
-	utils.mixin(d, transforms);
+	utils.mixin.O2O(d, transforms);
 	this.transformsToDom(control);
 };
 

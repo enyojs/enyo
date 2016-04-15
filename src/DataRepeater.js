@@ -174,7 +174,7 @@ var DataRepeater = module.exports = kind(
 		this.initContainer();
 		var components = this.kindComponents || this.components || [],
 			owner = this.getInstanceOwner(),
-			props = this.defaultProps? utils.clone(this.defaultProps, true): (this.defaultProps = {});
+			props = this.defaultProps? utils.cloneQuick(this.defaultProps, true): (this.defaultProps = {});
 		// ensure that children know who their binding owner is
 		props.bindingTransformOwner = this;
 		props.bindingDefaults = this.childBindingDefaults;
@@ -186,7 +186,7 @@ var DataRepeater = module.exports = kind(
 			}
 			// if there is only one child, the properties will be the default kind of the repeater
 			else {
-				utils.mixin(props, components[0]);
+				utils.mixin.O2O(props, components[0]);
 			}
 			props.repeater = this;
 			props.owner = owner;

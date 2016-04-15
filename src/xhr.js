@@ -33,7 +33,7 @@ var
 */
 
 module.exports = {
-	
+
 	/**
 	* Internally-used method to execute XHR requests.
 	*
@@ -59,7 +59,7 @@ module.exports = {
 			xhr.open(method, url, async);
 		}
 		//
-		utils.mixin(xhr, params.xhrFields);
+		utils.mixin.O2O(xhr, params.xhrFields);
 		// only setup handler when we have a callback
 		if (params.callback) {
 			this.makeReadyStateHandler(xhr, params.callback);
@@ -92,7 +92,7 @@ module.exports = {
 		}
 		return xhr;
 	},
-	
+
 	/**
 	* Removes any callbacks that might be set from Enyo code for an existing XHR
 	* and stops the XHR from completing (if possible).
@@ -111,7 +111,7 @@ module.exports = {
 			xhr.abort();
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -142,7 +142,7 @@ module.exports = {
 			};
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -159,7 +159,7 @@ module.exports = {
 		}
 		return result;
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -181,7 +181,7 @@ module.exports = {
 			return url;
 		}
 	},
-	
+
 	/**
 	* @private
 	*/

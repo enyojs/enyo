@@ -25,7 +25,7 @@ var
 *	propagated the {@glossary event}.
 * @property {Object} event - An [object]{@glossary Object} containing event information.
 * @public
-*/ 
+*/
 
 /**
 * Fires when element can resume playback of the [media]{@link module:enyo/Media~Media} data, but may
@@ -45,7 +45,7 @@ var
 *
 * @event module:enyo/Media~Media#onCanPlayThrough
 * @type {Object}
-* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently 
+* @property {Object} sender - The [component]{@link module:enyo/Component~Component} that most recently
 *	propagated the {@glossary event}.
 * @property {Object} event - An [object]{@glossary Object} containing event information.
 * @public
@@ -357,17 +357,17 @@ module.exports = kind(
 	* @private
 	*/
 	kind: Control,
-	
+
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/Media~Media.prototype */ {
-		
+
 		/**
 		* URL of the [media]{@link module:enyo/Media~Media} file to play; may be relative to the
 		* application HTML file.
-		* 
+		*
 		* @type {String}
 		* @default ''
 		* @public
@@ -376,7 +376,7 @@ module.exports = kind(
 
 		/**
 		* If `true`, [media]{@link module:enyo/Media~Media} will automatically start playback when loaded.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -385,7 +385,7 @@ module.exports = kind(
 
 		/**
 		* The desired speed at which the [media]{@link module:enyo/Media~Media} resource is to play.
-		* 
+		*
 		* @type {Number}
 		* @default 1.0
 		* @public
@@ -394,7 +394,7 @@ module.exports = kind(
 
 		/**
 		* The amount of time, in seconds, to jump forward or backward.
-		* 
+		*
 		* @type {Number}
 		* @default 30
 		* @public
@@ -403,7 +403,7 @@ module.exports = kind(
 
 		/**
 		* The effective playback rate.
-		* 
+		*
 		* @type {Number}
 		* @default 1.0
 		* @public
@@ -418,7 +418,7 @@ module.exports = kind(
 		*	slowRewind: ['-1/2', '-1']
 		* }
 		* ```
-		* 
+		*
 		* @type {Object}
 		* @default {
 		*	fastForward: ['2', '4', '8', '16'],
@@ -438,7 +438,7 @@ module.exports = kind(
 		/**
 		* Indicates how data should be preloaded, reflecting the `preload` HTML attribute.
 		* Will be one of `'none'` (the default), `'metadata'`, or `'auto'`.
-		* 
+		*
 		* @type {String}
 		* @default 'none'
 		* @public
@@ -447,7 +447,7 @@ module.exports = kind(
 
 		/**
 		*  If `true`, [media]{@link module:enyo/Media~Media} playback restarts from beginning when finished.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -456,7 +456,7 @@ module.exports = kind(
 
 		/**
 		* If `true`, [media]{@link module:enyo/Media~Media} playback is muted.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -465,7 +465,7 @@ module.exports = kind(
 
 		/**
 		* If `true`, default [media]{@link module:enyo/Media~Media} controls are shown.
-		* 
+		*
 		* @type {Boolean}
 		* @default false
 		* @public
@@ -474,7 +474,7 @@ module.exports = kind(
 
 		/**
 		* Current playback volume, as a number in the range from 0.0 to 1.0.
-		* 
+		*
 		* @type {Number}
 		* @default 1.0
 		* @public
@@ -515,7 +515,7 @@ module.exports = kind(
 		onJumpBackward: '',
 		onStart: ''
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -732,7 +732,7 @@ module.exports = kind(
 	_canPlayThrough: function () {
 		this.doCanPlayThrough();
 	},
-	
+
 	/**
 	* Called when the [duration]{@link module:enyo/Media~Media#duration} attribute has been changed.
 	*
@@ -766,7 +766,7 @@ module.exports = kind(
 
 	/**
 	* Called when an error occurs while fetching media data.
-	* 
+	*
 	* @private
 	*/
 	_error: function () {
@@ -784,7 +784,7 @@ module.exports = kind(
 	},
 	/**
 	* Called when the media duration and dimensions of the media resource/text tracks are ready.
-	* 
+	*
 	* @private
 	*/
 	_loadedMetaData: function () {
@@ -876,7 +876,7 @@ module.exports = kind(
 		return (pbArray.length > 1) ? parseInt(pbArray[0], 10) / parseInt(pbArray[1], 10) : parseInt(rate, 10);
 	},
 	/**
-	* Called when either [defaultPlaybackRate]{@link module:enyo/Media~Media#defaultPlaybackRate} or 
+	* Called when either [defaultPlaybackRate]{@link module:enyo/Media~Media#defaultPlaybackRate} or
 	* [playbackRate]{@link module:enyo/Media~Media#playbackRate} has been updated.
 	*
 	* @fires module:enyo/Media~Media#onSlowforward
@@ -896,8 +896,8 @@ module.exports = kind(
 		}
 
 		info = this.createEventData();
-		utils.mixin(e, utils.clone(info, true));
-		info.originalEvent = utils.clone(e, true);
+		utils.mixin(e, utils.cloneQuick(info, true));
+		info.originalEvent = utils.cloneQuick(e, true);
 
 		pbNumber = this.calcNumberValueOfPlaybackRate(info.playbackRate);
 
@@ -945,7 +945,7 @@ module.exports = kind(
 
 	/**
 	* Called when the media controller position has changed.
-	* 
+	*
 	* @private
 	*/
 	_timeUpdate: function (sender, e) {
@@ -1022,7 +1022,7 @@ module.exports = kind(
 	* Retrieves the ranges of the [media]{@link module:enyo/Media~Media} [source]{@link module:enyo/Media~Media#src}
 	* that have been buffered.
 	*
-	* @returns {TimeRanges} The ranges of the [media]{@link module:enyo/Media~Media} 
+	* @returns {TimeRanges} The ranges of the [media]{@link module:enyo/Media~Media}
 	*	[source]{@link module:enyo/Media~Media#src} that have been buffered.
 	* @public
 	*/
@@ -1059,7 +1059,7 @@ module.exports = kind(
 		return 0;
 	},
 
-	/** 
+	/**
 	* Determines whether the [media]{@link module:enyo/Media~Media} element is paused.
 	*
 	* @returns {Boolean} `true` if the [media]{@link module:enyo/Media~Media} is paused;
@@ -1072,11 +1072,11 @@ module.exports = kind(
 		}
 	},
 
-	/** 
-	* Retrieves the ranges of the [media]{@link module:enyo/Media~Media} [source]{@link module:enyo/Media~Media#src} 
+	/**
+	* Retrieves the ranges of the [media]{@link module:enyo/Media~Media} [source]{@link module:enyo/Media~Media#src}
 	* that have been played, if any.
 	*
-	* @returns {TimeRanges} The ranges of the [media]{@link module:enyo/Media~Media} 
+	* @returns {TimeRanges} The ranges of the [media]{@link module:enyo/Media~Media}
 	*	[source]{@link module:enyo/Media~Media#src} that have been played.
 	* @public
 	*/
@@ -1086,7 +1086,7 @@ module.exports = kind(
 		}
 	},
 
-	/** 
+	/**
 	* Determines the [readiness]{@glossary readyState} of the [media]{@link module:enyo/Media~Media}.
 	*
 	* @returns {ReadyState} The [readiness]{@glossary readyState} state.
@@ -1098,7 +1098,7 @@ module.exports = kind(
 		}
 	},
 
-	/** 
+	/**
 	* Retrieves the ranges of the [media]{@link module:enyo/Media~Media} [source]{@link module:enyo/Media~Media#src}
 	* that the user may seek to, if any.
 	*
@@ -1112,7 +1112,7 @@ module.exports = kind(
 		}
 	},
 
-	/** 
+	/**
 	* Sets current player position in the [media]{@link module:enyo/Media~Media} element.
 	*
 	* @param {Number} time - The player position, in seconds.
@@ -1124,7 +1124,7 @@ module.exports = kind(
 		}
 	},
 
-	/** 
+	/**
 	* Implements custom rewind functionality (until browsers support negative playback rate).
 	*
 	* @public
@@ -1136,7 +1136,7 @@ module.exports = kind(
 
 	/**
 	* Calculates the time that has elapsed since.
-	* 
+	*
 	* @private
 	*/
 	_rewind: function () {
@@ -1149,7 +1149,7 @@ module.exports = kind(
 		this.startRewindJob();
 	},
 
-	/** 
+	/**
 	* Starts rewind job.
 	*
 	* @public
@@ -1159,7 +1159,7 @@ module.exports = kind(
 		Job(this.id + 'rewind', this.bindSafely('_rewind'), 100);
 	},
 
-	/** 
+	/**
 	* Stops rewind job.
 	*
 	* @public
@@ -1168,7 +1168,7 @@ module.exports = kind(
 		Job.stop(this.id + 'rewind');
 	},
 
-	/** 
+	/**
 	* Determines whether the [media]{@link module:enyo/Media~Media} is currently seeking to a new position.
 	*
 	* @returns {Boolean} `true` if currently seeking; otherwise, `false`.
@@ -1180,7 +1180,7 @@ module.exports = kind(
 		}
 	},
 
-	/** 
+	/**
 	* Determines whether the [media]{@link module:enyo/Media~Media} is currently in a paused state.
 	*
 	* @returns {Boolean} `true` if paused; otherwise, `false`.
@@ -1190,7 +1190,7 @@ module.exports = kind(
 		return this.hasNode() ? this.hasNode().paused : true;
 	},
 
-	/** 
+	/**
 	* Fast forwards the [media]{@link module:enyo/Media~Media}, taking into account the current
 	* playback state.
 	*
@@ -1248,7 +1248,7 @@ module.exports = kind(
 
 	},
 
-	/** 
+	/**
 	* Rewinds the [media]{@link module:enyo/Media~Media}, taking into account the current
 	* playback state.
 	*
@@ -1322,7 +1322,7 @@ module.exports = kind(
 		}
 	},
 
-	/** 
+	/**
 	* Jumps backward by an amount specified by the [jumpSec]{@link module:enyo/Media~Media#jumpSec}
 	* property.
 	*
@@ -1343,7 +1343,7 @@ module.exports = kind(
 		this.doJumpBackward(utils.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
 	},
 
-	/** 
+	/**
 	* Jumps forward by an amount specified by the [jumpSec]{@link module:enyo/Media~Media#jumpSec}
 	* property.
 	*
@@ -1364,7 +1364,7 @@ module.exports = kind(
 		this.doJumpForward(utils.mixin(this.createEventData(), {jumpSize: this.jumpSec}));
 	},
 
-	/** 
+	/**
 	* Jumps to the beginning of the [media]{@link module:enyo/Media~Media} content.
 	*
 	* @public
@@ -1382,7 +1382,7 @@ module.exports = kind(
 		this._prevCommand = 'jumpToStart';
 	},
 
-	/** 
+	/**
 	* Jumps to the end of the [media]{@link module:enyo/Media~Media} content.
 	*
 	* @public

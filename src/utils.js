@@ -523,7 +523,7 @@ var setPath = exports.setPath = function (path, is, opts) {
 		silent,
 		comparator;
 
-	if (typeof opts == 'object') opts = mixin({}, [options, opts]);
+	if (typeof opts == 'object') opts = mixin.A2O({}, [options, opts]);
 	else {
 		force = opts;
 		opts = options;
@@ -889,14 +889,60 @@ exports.indexBy = function (property, array, filter) {
 *              returns `base` as it was passed in.
 * @public
 */
-var clone = exports.clone = function (base, quick) {
+exports.clone = function (base) {
+	var quick = false;
+
 	if (base) {
 
 		// avoid the overhead of calling yet another internal function to do type-checking
 		// just copy the array and be done with it
 		if (base instanceof Array) return base.slice();
 		else if (base instanceof Object) {
-			return quick ? Object.create(base) : mixin({}, base);
+			return quick ? Object.create(base) : mixin.O2O({}, base);
+		}
+	}
+
+	// we will only do this if it is not an array or native object
+	return base;
+};
+
+// exports.cloneArray = function (base) {
+// 	if (base) {
+
+// 		// avoid the overhead of calling yet another internal function to do type-checking
+// 		// just copy the array and be done with it
+// 		if (base instanceof Array) return base.slice();
+// 	}
+
+// 	// we will only do this if it is not an array or native object
+// 	return base;
+// };
+
+exports.cloneClientRect = function (base) {
+	var quick = false;
+
+	if (base) {
+
+		// avoid the overhead of calling yet another internal function to do type-checking
+		// just copy the array and be done with it
+		if (base instanceof Array) return base.slice();
+		else if (base instanceof Object) {
+			return quick ? Object.create(base) : mixin.O2O({}, base);
+		}
+	}
+
+	// we will only do this if it is not an array or native object
+	return base;
+};
+
+exports.cloneQuick = function (base, quick) {
+	if (base) {
+
+		// avoid the overhead of calling yet another internal function to do type-checking
+		// just copy the array and be done with it
+		if (base instanceof Array) return base.slice();
+		else if (base instanceof Object) {
+			return quick ? Object.create(base) : mixin.O2O({}, base);
 		}
 	}
 
@@ -943,10 +989,10 @@ var mixinDefaults = {
 * @method enyo.mixin
 * @public
 */
-var mixin = exports.mixin = function () {
-	var ret = arguments[0],
-		src = arguments[1],
-		opts = arguments[2],
+var mixin = exports.mixin = function (a, b, c) {
+	var ret = a,
+		src = b,
+		opts = c,
 		val;
 
 	if (!ret) ret = {};
@@ -958,7 +1004,207 @@ var mixin = exports.mixin = function () {
 
 	if (!opts || opts === true) opts = mixinDefaults;
 
-	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin(ret, it, opts);
+	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin.OOO(ret, it, opts);
+	else {
+		for (var key in src) {
+			val = src[key];
+
+			// quickly ensure the property isn't a default
+			if (empty[key] !== val) {
+				if (
+					(!opts.exists || val) &&
+					(!opts.ignore || !ret[key]) &&
+					(opts.filter? opts.filter(key, val, src, ret, opts): true)
+				) {
+					ret[key] = val;
+				}
+			}
+		}
+	}
+
+	return ret;
+};
+
+mixin.A = function (a) {
+	var ret = a,
+		src = undefined,
+		opts = undefined,
+		val;
+
+	if (!ret) ret = {};
+	else if (ret instanceof Array) {
+		opts = src;
+		src = ret;
+		ret = {};
+	}
+
+	if (!opts || opts === true) opts = mixinDefaults;
+
+	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin.OOO(ret, it, opts);
+	else {
+		for (var key in src) {
+			val = src[key];
+
+			// quickly ensure the property isn't a default
+			if (empty[key] !== val) {
+				if (
+					(!opts.exists || val) &&
+					(!opts.ignore || !ret[key]) &&
+					(opts.filter? opts.filter(key, val, src, ret, opts): true)
+				) {
+					ret[key] = val;
+				}
+			}
+		}
+	}
+
+	return ret;
+};
+
+mixin.A2O = function (a, b) {
+	var ret = a,
+		src = b,
+		opts = {},
+		val;
+
+	if (!ret) ret = {};
+	else if (ret instanceof Array) {
+		opts = src;
+		src = ret;
+		ret = {};
+	}
+
+	if (!opts || opts === true) opts = mixinDefaults;
+
+	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin.OOO(ret, it, opts);
+	else {
+		for (var key in src) {
+			val = src[key];
+
+			// quickly ensure the property isn't a default
+			if (empty[key] !== val) {
+				if (
+					(!opts.exists || val) &&
+					(!opts.ignore || !ret[key]) &&
+					(opts.filter? opts.filter(key, val, src, ret, opts): true)
+				) {
+					ret[key] = val;
+				}
+			}
+		}
+	}
+
+	return ret;
+};
+
+mixin.O2O = function (a, b) {
+	var ret = a,
+		src = b,
+		opts = mixinDefaults,
+		val;
+
+	if (!ret) ret = {};
+	else if (ret instanceof Array) {
+		opts = src;
+		src = ret;
+		ret = {};
+	}
+
+	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin.OOO(ret, it, opts);
+	else {
+		for (var key in src) {
+			val = src[key];
+
+			// quickly ensure the property isn't a default
+			if (empty[key] !== val) {
+				ret[key] = val;
+			}
+		}
+	}
+
+	return ret;
+};
+
+mixin.C2O = function (a, b) {
+	var ret = a,
+		src = b,
+		opts = mixinDefaults,
+		val;
+
+	if (!ret) ret = {};
+	else if (ret instanceof Array) {
+		opts = src;
+		src = ret;
+		ret = {};
+	}
+
+	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin.OOO(ret, it, opts);
+	else {
+		for (var key in src) {
+			val = src[key];
+
+			// quickly ensure the property isn't a default
+			if (empty[key] !== val) {
+				ret[key] = val;
+			}
+		}
+	}
+
+	return ret;
+};
+
+mixin.O2F = function (a, b) {
+	var ret = a,
+		src = b,
+		opts = {},
+		val;
+
+	if (!ret) ret = {};
+	else if (ret instanceof Array) {
+		opts = src;
+		src = ret;
+		ret = {};
+	}
+
+	if (!opts || opts === true) opts = mixinDefaults;
+
+	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin.OOO(ret, it, opts);
+	else {
+		for (var key in src) {
+			val = src[key];
+
+			// quickly ensure the property isn't a default
+			if (empty[key] !== val) {
+				if (
+					(!opts.exists || val) &&
+					(!opts.ignore || !ret[key]) &&
+					(opts.filter? opts.filter(key, val, src, ret, opts): true)
+				) {
+					ret[key] = val;
+				}
+			}
+		}
+	}
+
+	return ret;
+};
+
+mixin.OOO = function (a, b, c) {
+	var ret = a,
+		src = b,
+		opts = c,
+		val;
+
+	if (!ret) ret = {};
+	else if (ret instanceof Array) {
+		opts = src;
+		src = ret;
+		ret = {};
+	}
+
+	if (!opts || opts === true) opts = mixinDefaults;
+
+	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin.OOO(ret, it, opts);
 	else {
 		for (var key in src) {
 			val = src[key];

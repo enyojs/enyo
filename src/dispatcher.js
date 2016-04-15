@@ -378,7 +378,7 @@ dispatcher.getPosition = function () {
 * 	417 : 'fastforward'
 * });
 * ```
-* 
+*
 * @private
 */
 dispatcher.features.push(function(e) {
@@ -392,7 +392,7 @@ dispatcher.features.push(function(e) {
 	}
 });
 
-utils.mixin(dispatcher, {
+utils.mixin.O2O(dispatcher, {
 	keyMap: {},
 	registerKeyMap: function(map) {
 		utils.mixin(this.keyMap, map);
@@ -429,7 +429,7 @@ dispatcher.features.push(function(e) {
 //        NOTE: This object is a plug-in; these methods should
 //        be called on `enyo.dispatcher`, and not on the plug-in itself.
 //
-utils.mixin(dispatcher, {
+utils.mixin.O2O(dispatcher, {
 
 	/**
 	* @private
@@ -441,7 +441,7 @@ utils.mixin(dispatcher, {
 	*/
 	captures: [],
 
-	/** 
+	/**
 	* Captures [events]{@glossary event} for `inTarget`, where `inEvents` is specified as a
 	* hash of event names mapped to callback handler names to be called on `inTarget` (or,
 	* optionally, `inScope`). The callback is called when any of the captured events are
@@ -458,7 +458,7 @@ utils.mixin(dispatcher, {
 
 	/**
 	* Removes the specified target from the capture list.
-	* 
+	*
 	* @private
 	*/
 	release: function(inTarget) {
@@ -473,7 +473,7 @@ utils.mixin(dispatcher, {
 
 	/**
 	* Sets the information for a captured {@glossary event}.
-	* 
+	*
 	* @private
 	*/
 	setCaptureInfo: function(inInfo) {
@@ -487,14 +487,14 @@ utils.mixin(dispatcher, {
 (function () {
 	/**
 	* Dispatcher preview feature
-	* 
+	*
 	* Allows {@link module:enyo/Control~Control} ancestors of the {@glossary event} target
 	* a chance (eldest first) to react by implementing `previewDomEvent`.
 	*
 	* @private
 	*/
 	var fn = 'previewDomEvent';
-	var preview = 
+	var preview =
 		/** @lends enyo.dispatcher.features */ {
 
 		/**

@@ -756,6 +756,6 @@ var Popup = module.exports = kind(
 Popup.concat = function (ctor, props, instance) {
 	var proto = ctor.prototype || ctor,
 		evts = proto.eventsToCapture;
-	proto.eventsToCapture = evts ? utils.mixin({}, [evts, props.eventsToCapture]) : props.eventsToCapture;
+	proto.eventsToCapture = evts ? utils.mixin.A2O({}, [evts, props.eventsToCapture]) : props.eventsToCapture;
 	delete props.eventsToCapture;
 };

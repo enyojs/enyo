@@ -19,7 +19,7 @@ var
 	FormData = require('./FormData'),
 	/*jshint +W079*/
 	Xhr = require('./xhr');
-	
+
 
 /**
 * A cache of response properties set on the {@link module:enyo/Ajax~Ajax} instance once it has completed
@@ -50,29 +50,29 @@ var
 */
 var Ajax = module.exports = kind(
 	/** @lends module:enyo/Ajax~Ajax.prototype */ {
-	
+
 	name: 'enyo.Ajax',
-	
+
 	/**
 	* @private
 	*/
 	kind: Async,
-	
+
 	/**
 	* @private
 	*/
 	published: AjaxProperties,
-	
+
 	/**
 	* @private
 	*/
 	constructor: kind.inherit(function (sup) {
 		return function (inParams) {
-			utils.mixin(this, inParams);
+			utils.mixin.O2O(this, inParams);
 			sup.apply(this, arguments);
 		};
 	}),
-	
+
 	/**
 	* @private
 	*/
@@ -83,7 +83,7 @@ var Ajax = module.exports = kind(
 			sup.apply(this, arguments);
 		};
 	}),
-	
+
 	/**
 	* This will be set once a request has completed (successfully or unsuccessfully).
 	* It is a cache of the response values.
@@ -93,7 +93,7 @@ var Ajax = module.exports = kind(
 	* @public
 	*/
 	xhrResponse: null,
-	
+
 	/**
 	* Executes the request with the given options. The parameter may be a
 	* [hash]{@glossary Object} of properties or a [string]{@glossary String}. Both
@@ -122,7 +122,7 @@ var Ajax = module.exports = kind(
 		this.request(params);
 		return this;
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -182,7 +182,7 @@ var Ajax = module.exports = kind(
 				}
 			}
 		}
-		utils.mixin(xhr_headers, this.headers);
+		utils.mixin.O2O(xhr_headers, this.headers);
 		// don't pass in headers structure if there are no headers defined as this messes
 		// up CORS code for IE8-9
 		if (utils.keys(xhr_headers).length === 0) {
@@ -199,7 +199,7 @@ var Ajax = module.exports = kind(
 				sync: this.sync,
 				username: this.username,
 				password: this.password,
-				xhrFields: utils.mixin({onprogress: this.bindSafely(this.updateProgress)}, this.xhrFields),
+				xhrFields: utils.mixin.O2O({onprogress: this.bindSafely(this.updateProgress)}, this.xhrFields),
 				mimeType: this.mimeType
 			});
 		}
@@ -209,7 +209,7 @@ var Ajax = module.exports = kind(
 			this.fail(e);
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -236,7 +236,7 @@ var Ajax = module.exports = kind(
 			}
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -252,7 +252,7 @@ var Ajax = module.exports = kind(
 			sup.apply(this, arguments);
 		};
 	}),
-	
+
 	/**
 	* @private
 	*/
@@ -261,7 +261,7 @@ var Ajax = module.exports = kind(
 			return this[(this.handleAs || 'text') + 'Handler'](inXhr);
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -298,21 +298,21 @@ var Ajax = module.exports = kind(
 			return true;
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
 	xmlHandler: function (inXhr) {
 		return inXhr.responseXML;
 	},
-	
+
 	/**
 	* @private
 	*/
 	textHandler: function (inXhr) {
 		return inXhr.responseText;
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -325,14 +325,14 @@ var Ajax = module.exports = kind(
 			return r;
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
 	binaryHandler: function (inXhr) {
 		return inXhr.response;
-	}, 
-	
+	},
+
 	/**
 	* @private
 	*/
@@ -351,7 +351,7 @@ var Ajax = module.exports = kind(
 			this.sendProgress(event.loaded, 0, event.total, ev);
 		}
 	},
-	
+
 	/**
 	* @private
 	*/
@@ -376,7 +376,7 @@ var Ajax = module.exports = kind(
 			return pairs.join('&');
 		}
 	},
-	
+
 	/**
 	* @private
 	*/

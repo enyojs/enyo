@@ -19,7 +19,7 @@ var
 var
 	kindPrefix = {},
 	unnamedCounter = 0;
-	
+
 /**
 * @callback module:enyo/Component~Component~EventHandler
 * @param {module:enyo/Component~Component} sender - The [component]{@link module:enyo/Component~Component} that most recently
@@ -492,7 +492,7 @@ var Component = module.exports = kind(
 	* @private
 	*/
 	adjustComponentProps: function (props) {
-		if (this.defaultProps) utils.mixin(props, this.defaultProps, {ignore: true});
+		if (this.defaultProps) utils.mixin.OOO(props, this.defaultProps, {ignore: true});
 		props.kind = props.kind || props.isa || this.defaultKind;
 		props.owner = props.owner || this;
 	},
@@ -501,7 +501,7 @@ var Component = module.exports = kind(
 	* @private
 	*/
 	_createComponent: function (props, ext) {
-		var def = ext ? utils.mixin({}, [ext, props]) : utils.clone(props);
+		var def = ext ? utils.mixin.A2O({}, [ext, props]) : utils.clone(props);
 
 		// always adjust the properties according to the needs of the kind and parent kinds
 		this.adjustComponentProps(def);
@@ -588,6 +588,21 @@ var Component = module.exports = kind(
 				this.bubbleTarget
 				|| (this.cachedBubble && this.cachedBubbleTarget[nom])
 				|| this.owner
+			);
+		}
+	},
+	getBubbleTargetNom: function (nom) {
+		return (
+			this.bubbleTarget
+			|| (this.cachedBubble && this.cachedBubbleTarget[nom])
+			|| this.owner
+		);
+	},
+	getBubbleTargetEvent: function (event) {
+		if (event.delegate) return this.owner;
+		else {
+			return (
+				this.bubbleTarget || this.owner
 			);
 		}
 	},
@@ -1068,7 +1083,7 @@ Component.concat = function (ctor, props) {
 		handlers;
 	if (props.handlers) {
 		handlers = proto.handlers ? utils.clone(proto.handlers) : {};
-		proto.handlers = utils.mixin(handlers, props.handlers);
+		proto.handlers = utils.mixin.O2O(handlers, props.handlers);
 		delete props.handlers;
 	}
 	if (props.events) Component.publishEvents(proto, props);
@@ -1081,7 +1096,7 @@ Component.concat = function (ctor, props) {
 */
 Component.overrideComponents = function (components, overrides, defaultKind) {
 	var omitMethods = function (k, v) {
-		var isMethod = 
+		var isMethod =
 			// If it's a function, then it's a method (unless it's
 			// a constructor passed as value for 'kind')
 			(utils.isFunction(v) && (k !== 'kind')) ||
@@ -1091,9 +1106,9 @@ Component.overrideComponents = function (components, overrides, defaultKind) {
 
 		return !isMethod;
 	};
-	components = utils.clone(components);
+	components = components instanceof Array ? utils.cloneArray(components) : utils.clone(components);
 	for (var i=0; i<components.length; i++) {
-		var c = utils.clone(components[i]);
+		var c = components[i] instanceof Array ? utils.cloneArray(components[i]) : utils.clone(components[i]);
 		var o = overrides[c.name];
 		var ctor = kind.constructorForKind(c.kind || defaultKind);
 		if (o) {
@@ -1107,7 +1122,7 @@ Component.overrideComponents = function (components, overrides, defaultKind) {
 				b = b.prototype.base;
 			}
 			// All others just mix in
-			utils.mixin(c, o, {filter: omitMethods});
+			utils.mixin.OOO(c, o, {filter: omitMethods});
 		}
 		if (c.components) {
 			c.components = Component.overrideComponents(c.components, overrides, ctor.prototype.defaultKind);

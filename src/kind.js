@@ -64,7 +64,7 @@ var kind = exports = module.exports = function (props) {
 	kind.concatHandler(ctor, props);
 
 	// put in our props
-	utils.mixin(ctor.prototype, props);
+	utils.mixin.O2O(ctor.prototype, props);
 	// alias class name as 'kind' in the prototype
 	// but we actually only need to set this if a new name was used,
 	// not if it is inheriting from a kind anonymously
@@ -317,12 +317,12 @@ kind.features.push(function(ctor, props) {
 	}
 	// move props statics to constructor
 	if (props.statics) {
-		utils.mixin(ctor, props.statics);
+		utils.mixin.O2F(ctor, props.statics);
 		delete ctor.prototype.statics;
 	}
 	// also support protectedStatics which won't interfere with defer
 	if (props.protectedStatics) {
-		utils.mixin(ctor, props.protectedStatics);
+		utils.mixin.O2F(ctor, props.protectedStatics);
 		delete ctor.prototype.protectedStatics;
 	}
 	// allow superclass customization
@@ -390,7 +390,7 @@ kind.statics = {
 		for (var i=0, ext; (ext=exts[i]); ++i) {
 			kind.concatHandler(proto, ext, true);
 			kind.extendMethods(proto, ext, true);
-			utils.mixin(proto, ext, {filter: fn});
+			utils.mixin.OOO(proto, ext, {filter: fn});
 		}
 
 		return target || ctor;
