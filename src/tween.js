@@ -61,7 +61,7 @@ module.exports = {
                 
                 if (ease && (typeof ease !== 'function')) {
                     if (k == 'rotate') {
-                        newState = transform.Vector.toQuant(newState);
+                        newState = transform.Quaternion.toQuant(newState);
                         points[k] = points[k] || 
                             this.bezierSPoints(ease, oldState, newState, pose.props[k], points[k]);
                         fn = this.bezierSpline;
@@ -73,7 +73,7 @@ module.exports = {
                     cState = fn.call(this, t, points[k], cState);
                 } else {
                     if (k == 'rotate') {
-                        newState = transform.Vector.toQuant(newState);
+                        newState = transform.Quaternion.toQuant(newState);
                         fn = this.slerp;
                     } else {
                         fn = this.lerp;
@@ -164,7 +164,7 @@ module.exports = {
         var a,
             b,
             theta,
-            dot = transform.Vector.quantDot(qA, qB),
+            dot = transform.Quaternion.quantDot(qA, qB),
             l = qA.length;
 
         dot = Math.min(Math.max(dot, -1.0), 1.0);
@@ -313,7 +313,7 @@ module.exports = {
                 a = parseFloat(ease[key]);
                 eD.pop(); // remove angle from end point.
                 eD[eD.length] = a;
-                q = transform.Vector.toQuant(utils.clone(eD));
+                q = transform.Quaternion.toQuant(utils.clone(eD));
                 quats.push(q);
                 time.push(t);
             }

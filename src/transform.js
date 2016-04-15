@@ -460,12 +460,12 @@ var matrix = exports.Matrix = {
         }
 
         scV[0] = vector.len(row[0]);
-        row[0] = vector.normalize(row[0]);
+        row[0] = quaternion.normalize(row[0]);
         skV[0] = vector.dot(row[0], row[1]);
         row[1] = vector.combine(row[1], row[0], 1.0, -skV[0]);
 
         scV[1] = vector.len(row[1]);
-        row[1] = vector.normalize(row[1]);
+        row[1] = quaternion.normalize(row[1]);
         skV[0] /= scV[1];
 
         // Compute XZ and YZ shears, orthogonalized 3rd row
@@ -476,7 +476,7 @@ var matrix = exports.Matrix = {
 
         // Next, get Z scale and normalize 3rd row.
         scV[2] = vector.len(row[2]);
-        row[2] = vector.normalize(row[2]);
+        row[2] = quaternion.normalize(row[2]);
         skV[1] /= scV[2];
         skV[2] /= scV[2];
 
@@ -625,18 +625,6 @@ var vector = exports.Vector = {
     },
 
     /**
-     * Gives the direction of motion from one vector to other.
-     * Returns true if moving towards positive direction.
-     * @param  {Number[]} v1 - quant
-     * @param  {Number[]} v2 - quant
-     * @return {boolean} true if positive, false otherwise.
-     * @public
-     */
-    direction: function(q1, q2) {
-        return (q1[0] - q2[0]) < 0 || (q1[1] - q2[1]) < 0 || (q1[2] - q2[2]) < 0;
-    },
-
-    /**
      * Dot product of 3D vectors
      * @param  {Number[]} v1 - vector
      * @param  {Number[]} v2 - vector
@@ -645,17 +633,6 @@ var vector = exports.Vector = {
      */
     dot: function(v1, v2) {
         return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]) + (v1[3] !== undefined && v2[3] !== undefined ? (v1[3] * v2[3]) : 0);
-    },
-
-    /**
-     * Dot product of 3D quanterion
-     * @param  {Number[]} q1 - quanterion
-     * @param  {Number[]} q2 - quanterion
-     * @return {Number} resultant dot product
-     * @public
-     */
-    quantDot: function(q1, q2) {
-        return (q1[0] * q2[0]) + (q1[1] * q2[1]) + (q1[2] * q2[2]) + (q1[3] * q2[3]);
     },
 
     /**
@@ -668,17 +645,6 @@ var vector = exports.Vector = {
     cross: function(v1, v2) {
         var crossProdMat = new Float32Array([v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]]);
         return crossProdMat;
-    },
-
-    /**
-     * Normalizing a vector is obtaining another unit vector in the same direction.
-     * To normalize a vector, divide the vector by its magnitude.
-     * @param  {Number[]} q1 - quanterion
-     * @return {Number[]} resultant quanterion
-     * @public
-     */
-    normalize: function(q) {
-        return this.divide(q, this.len(q));
     },
 
     /**
@@ -695,6 +661,42 @@ var vector = exports.Vector = {
         var combineMat = new Float32Array([(ascl * a[0]) + (bscl * b[0]), (ascl * a[1]) + (bscl * b[1]), (ascl * a[2]) + (bscl * b[2])]);
         return combineMat;
 
+    }
+};
+
+var quaternion = exports.Quaternion = {
+    /**
+     * Gives the direction of motion from one vector to other.
+     * Returns true if moving towards positive direction.
+     * @param  {Number[]} q1 - quant
+     * @param  {Number[]} q2 - quant
+     * @return {boolean} true if positive, false otherwise.
+     * @public
+     */
+    direction: function(q1, q2) {
+        return (q1[0] - q2[0]) < 0 || (q1[1] - q2[1]) < 0 || (q1[2] - q2[2]) < 0;
+    },
+
+    /**
+     * Dot product of 3D quanterion
+     * @param  {Number[]} q1 - quanterion
+     * @param  {Number[]} q2 - quanterion
+     * @return {Number} resultant dot product
+     * @public
+     */
+    quantDot: function(q1, q2) {
+        return (q1[0] * q2[0]) + (q1[1] * q2[1]) + (q1[2] * q2[2]) + (q1[3] * q2[3]);
+    },
+
+    /**
+     * Normalizing a vector is obtaining another unit vector in the same direction.
+     * To normalize a vector, divide the vector by its magnitude.
+     * @param  {Number[]} q1 - quanterion
+     * @return {Number[]} resultant quanterion
+     * @public
+     */
+    normalize: function(q) {
+        return vector.divide(q, vector.len(q));
     },
 
     /**
