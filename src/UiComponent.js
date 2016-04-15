@@ -679,6 +679,8 @@ var UiComponent = module.exports = kind(
 	* @private
 	*/
 	getBubbleTarget: function (nom, event) {
+		try {
+
 		if (event.delegate) return this.owner;
 		else {
 			return (
@@ -688,8 +690,12 @@ var UiComponent = module.exports = kind(
 				|| this.owner
 			);
 		}
+
+		} catch(err) {
+
+		}
 	},
-	
+
 	/**
 	* @method
 	* @private

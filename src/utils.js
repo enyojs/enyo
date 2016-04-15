@@ -890,6 +890,8 @@ exports.indexBy = function (property, array, filter) {
 * @public
 */
 var clone = exports.clone = function (base, quick) {
+	try {
+
 	if (base) {
 
 		// avoid the overhead of calling yet another internal function to do type-checking
@@ -902,6 +904,10 @@ var clone = exports.clone = function (base, quick) {
 
 	// we will only do this if it is not an array or native object
 	return base;
+
+	} catch(err) {
+
+	}
 };
 
 var empty = {};
@@ -949,6 +955,8 @@ var mixin = exports.mixin = function () {
 		opts = arguments[2],
 		val;
 
+	try {
+
 	if (!ret) ret = {};
 	else if (ret instanceof Array) {
 		opts = src;
@@ -977,6 +985,10 @@ var mixin = exports.mixin = function () {
 	}
 
 	return ret;
+
+	} catch(err) {
+
+	}
 };
 
 /**
