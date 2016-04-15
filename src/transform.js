@@ -1,34 +1,31 @@
 require('enyo');
 
 /**
+ * To create a Typed_array
+ * @param  {Number} size The size of the buffer required
+ * @return {Number[]}   Typed_array
+ */
+function typedArray (size) {
+    return new Float32Array(new ArrayBuffer(size));
+}
+
+/**
+ * To input the specified indices with value 1
+ * @param  {Number[]} matrix    typedArray sent
+ * @param  {Number[]} numberMat indices where value has to be 1
+ */
+function inputValues (matrix, numberMat) {
+    for (var i = 0; i < numberMat.length; i++) {
+        matrix[numberMat[i]] = 1;
+    }
+}
+
+/**
  * Transform module for transform related calculation
  * 
  * @module enyo/AnimationSupport/Transform
  */
 module.exports = {
-
-    /**
-     * To create a Typed_array
-     * @param  {Number} size The size of the buffer required
-     * @return {Number[]}   Typed_array
-     */
-    typedArray: function(size) {
-        var buffer, typedArray;
-        buffer = new ArrayBuffer(size);
-        typedArray = new Float32Array(buffer);
-        return typedArray;
-    },
-
-    /**
-     * To input the specified indices with value 1
-     * @param  {Number[]} matrix    typedArray sent
-     * @param  {Number[]} numberMat indices where value has to be 1
-     */
-    inputValues: function(matrix, numberMat) {
-        for (var i = 0; i < numberMat.length; i++) {
-            matrix[numberMat[i]] = 1;
-        }
-    },
 
     /**
      * To create Identity Matrix3d as array.
@@ -37,8 +34,8 @@ module.exports = {
      */
     identity: function() {
         var identityMatrix, modifiedMat;
-        identityMatrix = this.typedArray(64);
-        modifiedMat = this.inputValues(identityMatrix, new Uint8Array([0, 5, 10, 15]));
+        identityMatrix = typedArray(64);
+        modifiedMat = inputValues(identityMatrix, new Uint8Array([0, 5, 10, 15]));
         return identityMatrix;
     },
 
@@ -49,8 +46,8 @@ module.exports = {
      */
     identity2D: function() {
         var identity2D, modifiedMat;
-        identity2D = this.typedArray(36);
-        modifiedMat = this.inputValues(identity2D, new Uint8Array([0, 4, 8]));
+        identity2D = typedArray(36);
+        modifiedMat = inputValues(identity2D, new Uint8Array([0, 4, 8]));
         return identity2D;
     },
 
@@ -86,8 +83,8 @@ module.exports = {
      */
     translate: function(x, y, z) {
         var translateMat, modifiedMat;
-        translateMat = this.typedArray(64);
-        modifiedMat = this.inputValues(translateMat, new Uint8Array([0, 5, 10, 15]));
+        translateMat = typedArray(64);
+        modifiedMat = inputValues(translateMat, new Uint8Array([0, 5, 10, 15]));
         translateMat[12] = x;
         translateMat[13] = y ? y : 0;
         translateMat[14] = z ? z : 0;
@@ -102,8 +99,8 @@ module.exports = {
      */
     translateX: function(x) {
         var translateX, modifiedMat;
-        translateX = this.typedArray(64);
-        modifiedMat = this.inputValues(translateX, new Uint8Array([0, 5, 10, 15]));
+        translateX = typedArray(64);
+        modifiedMat = inputValues(translateX, new Uint8Array([0, 5, 10, 15]));
         translateX[12] = x ? x : 0;
         return translateX;
     },
@@ -116,8 +113,8 @@ module.exports = {
      */
     translateY: function(y) {
         var translateY, modifiedMat;
-        translateY = this.typedArray(64);
-        modifiedMat = this.inputValues(translateY, new Uint8Array([0, 5, 10, 15]));
+        translateY = typedArray(64);
+        modifiedMat = inputValues(translateY, new Uint8Array([0, 5, 10, 15]));
         translateY[13] = y ? y : 0;
         return translateY;
     },
@@ -130,8 +127,8 @@ module.exports = {
      */
     translateZ: function(z) {
         var translateZ, modifiedMat;
-        translateZ = this.typedArray(64);
-        modifiedMat = this.inputValues(translateZ, new Uint8Array([0, 5, 10, 15]));
+        translateZ = typedArray(64);
+        modifiedMat = inputValues(translateZ, new Uint8Array([0, 5, 10, 15]));
         translateZ[14] = z ? z : 0;
         return translateZ;
     },
@@ -145,7 +142,7 @@ module.exports = {
      * @return {Number[]}   Matrix3d
      */
     scale: function(x, y, z) {
-        var scaleMat = this.typedArray(64);
+        var scaleMat = typedArray(64);
         scaleMat[0] = x;
         scaleMat[5] = y ? y : 1;
         scaleMat[10] = z ? z : 1;
@@ -165,8 +162,8 @@ module.exports = {
         a = a ? Math.tan(a * Math.PI / 180) : 0;
         b = b ? Math.tan(b * Math.PI / 180) : 0;
 
-        skewMat = this.typedArray(64);
-        modifiedMat = this.inputValues(skewMat, new Uint8Array([0, 5, 10, 15]));
+        skewMat = typedArray(64);
+        modifiedMat = inputValues(skewMat, new Uint8Array([0, 5, 10, 15]));
         skewMat[1] = b;
         skewMat[4] = a;
         return skewMat;
@@ -184,8 +181,8 @@ module.exports = {
         cosa = Math.cos(a);
         sina = Math.sin(a);
 
-        rotateXMat = this.typedArray(64);
-        modifiedMat = this.inputValues(rotateXMat, new Uint8Array([0, 15]));
+        rotateXMat = typedArray(64);
+        modifiedMat = inputValues(rotateXMat, new Uint8Array([0, 15]));
         rotateXMat[5] = cosa;
         rotateXMat[6] = -sina;
         rotateXMat[9] = sina;
@@ -205,8 +202,8 @@ module.exports = {
         cosb = Math.cos(b);
         sinb = Math.sin(b);
 
-        rotateYMat = this.typedArray(64);
-        modifiedMat = this.inputValues(rotateYMat, new Uint8Array([5, 15]));
+        rotateYMat = typedArray(64);
+        modifiedMat = inputValues(rotateYMat, new Uint8Array([5, 15]));
         rotateYMat[0] = cosb;
         rotateYMat[2] = sinb;
         rotateYMat[8] = -sinb;
@@ -226,7 +223,7 @@ module.exports = {
         cosg = Math.cos(g);
         sing = Math.sin(g);
 
-        rotateZMat = this.typedArray(64);
+        rotateZMat = typedArray(64);
         rotateZMat[0] = cosg;
         rotateZMat[1] = -sing;
         rotateZMat[4] = sing;
@@ -255,7 +252,7 @@ module.exports = {
         cg = Math.cos(g);
         sg = Math.sin(g);
 
-        rotateMat = this.typedArray(64);
+        rotateMat = typedArray(64);
         rotateMat[0] = cb * cg;
         rotateMat[1] = ca * sg + sa * sb * cg;
         rotateMat[2] = sa * sg - ca * sb * cg;
@@ -278,7 +275,7 @@ module.exports = {
      */
     multiply: function(m1, m2) {
         if (m1.length !== 16 || m2.length !== 16) return;
-        var multiplyMat = this.typedArray(64);
+        var multiplyMat = typedArray(64);
         multiplyMat[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2];
         multiplyMat[1] = m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2];
         multiplyMat[2] = m1[2] * m2[0] + m1[6] * m2[1] + m1[10] * m2[2];
@@ -440,7 +437,7 @@ module.exports = {
             skV = [],
             scV = [],
             row = [],
-            pdum3 = {};
+            pdum3 = [];
 
         for (i = 0; i < 16; i++)
             matrix[0] /= matrix[15];
@@ -620,7 +617,6 @@ module.exports = {
     divide: function(v, s) {
         var divideVector = new Float32Array([v[0] / s, v[1] / s, v[2] / s]);
         return divideVector;
-
     },
 
     /**
@@ -667,7 +663,6 @@ module.exports = {
     cross: function(v1, v2) {
         var crossProdMat = new Float32Array([v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]]);
         return crossProdMat;
-
     },
 
     /**
@@ -704,26 +699,26 @@ module.exports = {
      * @public
      */
     toQuant: function(v) {
-            if (!v) v = [];
-            var p = parseFloat(v[1] || 0) * Math.PI / 360,
-                y = parseFloat(v[2] || 0) * Math.PI / 360,
-                r = parseFloat(v[0] || 0) * Math.PI / 360,
-                c1 = Math.cos(p),
-                c2 = Math.cos(y),
-                c3 = Math.cos(r),
-                s1 = Math.sin(p),
-                s2 = Math.sin(y),
-                s3 = Math.sin(r),
-                q;
+        if (!v) v = [];
+        var p = parseFloat(v[1] || 0) * Math.PI / 360,
+            y = parseFloat(v[2] || 0) * Math.PI / 360,
+            r = parseFloat(v[0] || 0) * Math.PI / 360,
+            c1 = Math.cos(p),
+            c2 = Math.cos(y),
+            c3 = Math.cos(r),
+            s1 = Math.sin(p),
+            s2 = Math.sin(y),
+            s3 = Math.sin(r),
+            q;
 
-            q = new Float32Array([
-                Math.round((s1 * s2 * c3 + c1 * c2 * s3) * 100000) / 100000,
-                Math.round((s1 * c2 * c3 + c1 * s2 * s3) * 100000) / 100000,
-                Math.round((c1 * s2 * c3 - s1 * c2 * s3) * 100000) / 100000,
-                Math.round((c1 * c2 * c3 - s1 * s2 * s3) * 100000) / 100000
-            ]);
+        q = new Float32Array([
+            Math.round((s1 * s2 * c3 + c1 * c2 * s3) * 100000) / 100000,
+            Math.round((s1 * c2 * c3 + c1 * s2 * s3) * 100000) / 100000,
+            Math.round((c1 * s2 * c3 - s1 * c2 * s3) * 100000) / 100000,
+            Math.round((c1 * c2 * c3 - s1 * s2 * s3) * 100000) / 100000
+        ]);
 
-            return q;
-        }
-        //TODO: Acheive the same fucntionality for other 11 choices XYX, XZX, XZY, YXY, YXZ, YZX, YZY, ZXY, ZXZ, ZYX, ZYZ 
+        return q;
+    }
+    //TODO: Acheive the same fucntionality for other 11 choices XYX, XZX, XZY, YXY, YXZ, YZX, YZY, ZXY, ZXZ, ZYX, ZYZ 
 };
