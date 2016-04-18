@@ -282,41 +282,13 @@ module.exports = kind(
 	scroll: function() {
 		var tt = this.threshold,
 			v = (this.direction === 'vertical'),
-			val = v ? this.scrollTop : this.scrollLeft,
-			dir = v ? this.yDir : this.xDir,
-			delta = this.delta,
-			cb = this.cachedBounds ? this.cachedBounds : this._getScrollBounds(),
-			maxVal = v ? cb.maxTop : cb.maxLeft,
-			minMax = this.threshold.minMax,
-			maxMin = maxVal - minMax,
-			d2x = this.dim2extent,
-			d, st, j;
-		if (dir == 1 && val > tt.max) {
-			d = val - tt.max;
-			st = Math.ceil(d / delta);
-			j = st * delta;
-			tt.max = Math.min(maxVal, tt.max + j);
-			tt.min = Math.min(maxMin, tt.max - delta);
-			this.set('first', (d2x * Math.ceil(this.first / d2x)) + (st * d2x));
+			val = v ? this.scrollTop : this.scrollLeft;
+
+		if (val > tt.max || val < tt.min) {
+			this.refreshThresholds();
+			this.doIt();
 		}
-		else if (dir == -1 && val < tt.min) {
-			d = tt.min - val;
-			st = Math.ceil(d / delta);
-			j = st * delta;
-			tt.max = Math.max(minMax, tt.min - (j - delta));
-			tt.min = (tt.max > minMax) ? tt.max - delta : -Infinity;
-			this.set('first', (d2x * Math.ceil(this.first / d2x)) - (st * d2x));
-		}
-		if (tt.max > maxVal) {
-			if (maxVal < minMax) {
-				tt.max = minMax;
-				tt.min = -Infinity;
-			}
-			else {
-				tt.max = maxVal;
-				tt.min = maxMin;
-			}
-		}
+
 		this.positionChildren();
 	},
 
@@ -333,6 +305,8 @@ module.exports = kind(
 				delta = this.delta,
 				cb = this.cachedBounds ? this.cachedBounds : this._getScrollBounds(),
 				maxVal = v ? cb.maxTop : cb.maxLeft,
+				minMax = tt.minMax,
+				maxMin = maxVal - minMax,
 				d2x = this.dim2extent,
 				head = Math.floor(this.overhang / 2),
 				fvg = Math.floor(val / delta),
@@ -340,8 +314,11 @@ module.exports = kind(
 				f = d2x * fg,
 				nPos = fvg * delta;
 
-			tt.max = Math.min(maxVal, nPos + delta),
-			tt.min = Math.max(0, nPos);
+			tt.max = Math.max(minMax, Math.min(maxVal, nPos + delta));
+			tt.min = (tt.max > minMax) ? tt.max - delta : -Infinity;
+			if (tt.max > maxMin) {
+				tt.max = Infinity;
+			}
 
 			this.first = f;
 		}
