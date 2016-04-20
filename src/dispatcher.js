@@ -501,7 +501,11 @@ utils.mixin.O2O(dispatcher, {
 		* @private
 		*/
 		feature: function(e) {
-			preview.dispatch(e, e.dispatchTarget);
+			try {
+				preview.dispatch(e, e.dispatchTarget);
+			} catch(err) {
+
+			}
 		},
 
 		/**
