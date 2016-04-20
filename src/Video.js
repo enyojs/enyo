@@ -869,7 +869,16 @@ module.exports = kind(
 		;
 
 		this.setCurrentTime(newTime);
-		this.startRewindJob();
+
+		if (newTime > 0) {
+			this.startRewindJob();
+		} else { // continue the previous action (play / pause)
+			if (this.playbackRate < -1) {
+				this.play();
+			} else {
+				this.pause();
+			}
+		}
 	},
 
 	/**
