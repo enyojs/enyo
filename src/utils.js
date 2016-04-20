@@ -1100,8 +1100,7 @@ mixin.A2O = function (a, b) {
 mixin.O2O = function (a, b) {
 	var ret = a,
 		src = b,
-		opts = mixinDefaults,
-		val;
+		opts = mixinDefaults;
 
 	if (!ret) ret = {};
 	else if (ret instanceof Array) {
@@ -1113,12 +1112,7 @@ mixin.O2O = function (a, b) {
 	if (src instanceof Array) for (var i=0, it; (it=src[i]); ++i) mixin.OOO(ret, it, opts);
 	else {
 		for (var key in src) {
-			val = src[key];
-
-			// quickly ensure the property isn't a default
-			if (empty[key] !== val) {
-				ret[key] = val;
-			}
+			ret[key] = src[key];
 		}
 	}
 
