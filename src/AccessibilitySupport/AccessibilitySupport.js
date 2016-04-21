@@ -22,14 +22,18 @@ var defaultObservers = [
 		var role = this.accessibilityAlert && 'alert' || this.accessibilityRole || null;
 		this.setAriaAttribute('role', role);
 	}},
-	{path: ['content', 'accessibilityHint', 'accessibilityLabel', 'tabIndex'], method: function () {
-		var focusable = this.accessibilityLabel || this.content || this.accessibilityHint || false,
+	{path: ['content', 'accessibilityHint', 'accessibilityLabel', 'accessibilityPreHint', 'tabIndex'], method: function () {
+		var focusable = this.accessibilityPreHint || this.accessibilityLabel || this.content || this.accessibilityHint || false,
 			prefix = this.accessibilityLabel || this.content || null,
-			label = this.accessibilityHint && prefix && (prefix + ' ' + this.accessibilityHint) ||
+			label = this.accessibilityPreHint && prefix && this.accessibilityHint && (this.accessibilityPreHint + ' ' + prefix + ' ' + this.accessibilityHint) ||
+					this.accessibilityPreHint && prefix && (this.accessibilityPreHint + ' ' + prefix) ||
+					this.accessibilityPreHint && this.accessibilityHint && (this.accessibilityPreHint + ' ' + this.accessibilityHint) ||
+					this.accessibilityHint && prefix && (prefix + ' ' + this.accessibilityHint) ||
+					this.accessibilityPreHint ||
 					this.accessibilityHint ||
 					this.accessibilityLabel ||
 					null;
-
+		
 		this.setAriaAttribute('aria-label', label);
 
 		// A truthy or zero tabindex will be set directly
@@ -182,13 +186,24 @@ var AccessibilitySupport = {
 	/**
 	* `accessibilityHint` is used to provide additional information regarding the
 	* control. If `accessibilityHint` is set, the screen reader will read the
-	* hint content when the control is focused.
+	* hint content after control's content or accessibilityLabel when the control is focused.
 	*
 	* @type {String}
 	* @default ''
 	* @public
 	*/
 	accessibilityHint: '',
+
+	/**
+	* `accessibilityPreHint` is used to provide additional information regarding the
+	* control. If `accessibilityPreHint` is set, the screen reader will read the
+	* hint content before control's content or accessibilityLabel when the control is focused.
+	*
+	* @type {String}
+	* @default ''
+	* @public
+	*/
+	accessibilityPreHint: '',
 
 	/**
 	* The `role` of the control. May be superseded by a truthy `accessibilityAlert` value.
