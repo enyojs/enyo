@@ -56,12 +56,11 @@ module.exports = {
                 }
 
                 cState = utils.clone(state[k] || []);
-                newState = utils.clone(pose._endAnim[k]);
-                oldState = utils.clone(pose._startAnim[k]);
+                newState = pose._endAnim[k].slice();
+                oldState = pose._startAnim[k].slice();
                 
                 if (ease && (typeof ease !== 'function')) {
                     if (k == 'rotate') {
-                        newState = transform.Quaternion.toQuant(newState);
                         points[k] = points[k] || 
                             this.bezierSPoints(ease, oldState, newState, pose.props[k], points[k]);
                         fn = this.bezierSpline;
@@ -72,12 +71,7 @@ module.exports = {
                     }
                     cState = fn.call(this, t, points[k], cState);
                 } else {
-                    if (k == 'rotate') {
-                        newState = transform.Quaternion.toQuant(newState);
-                        fn = this.slerp;
-                    } else {
-                        fn = this.lerp;
-                    }
+                    fn = (k === 'rotate') ? this.slerp : this.lerp;
                     cState = fn.call(this, oldState, newState, ease(t, d), cState);
                 }
                 
@@ -301,26 +295,24 @@ module.exports = {
         var time = [0],
             quats = [startQuat];
 
-        var t, a, q, n, _a, aI, bN,
+        var a, n, _a, aI, bN, eP,
             eD = utils.formatCSSValues(endPoint);
 
         splinePoints = splinePoints || {};
-        quats.push(startQuat);
-        time.push(0);
         if (Object.keys(ease).length > 0) {
             for (var key in ease) {
-                t = parseFloat(key) / 100;
-                a = parseFloat(ease[key]);
-                eD.pop(); // remove angle from end point.
-                eD[eD.length] = a;
-                q = transform.Quaternion.toQuant(utils.clone(eD));
-                quats.push(q);
-                time.push(t);
+                eP = utils.clone(eD);
+                a = parseFloat(ease[key]) / 100;
+                for (var i in eP) {
+                    eP[i] *= a; 
+                }
+                quats.push(transform.Quaternion.toQuant(eP));
+                time.push(parseFloat(key) / 100);
             }
             quats.push(endQuat);
             time.push(1);
             n = quats.length - 1;
-            ai = this.slerp(startQuat, endQuat, 0);
+            aI = this.slerp(startQuat, endQuat, 0);
             splinePoints[0] = [quats[0], aI, aI, quats[1]];
             for (var i = 0, j = 1; i < n; i++, j++) {
                 if (i === 0) {

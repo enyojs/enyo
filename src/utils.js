@@ -164,8 +164,8 @@ var
 		'opacity': 1, 'flood-opacity': 1, 'stop-opacity': 1, 'fill-opacity': 1, 'stroke-opacity': 1
 	},
 	TRANSFORM = {
-		translate: 1, translateX: 1, translateY: 1, translateZ: 1,
-		rotateX: 1, rotateY: 1, rotateZ: 1, rotate: 1, skew: 1, scale: 1, perspective: 1
+		translate: 1, translateX: 1, translateY: 1, translateZ: 1, rotate: 1, rotateX: 1, rotateY: 1, rotateZ: 1,
+		skew: 1, skewX: 1, skewY: 1, scale: 1, scaleX: 1, scaleY: 1, scaleZ: 1, perspective: 1
 	};
 
 
@@ -1245,25 +1245,20 @@ exports.remove = function (array, el) {
 	return array;
 };
 
-exports.cssFormat = function (key) {
-	if (SHADOW[key] || COLOR[key]) return 'rgb';
-};
-
 /**
- 
  * Converts comma separated values to array.
  * @public
  * @param  {String} val Value of required animation in any property.
  * @param  {Number} length [description]
- * @param  {[type]} format [description]
+ * @param  {[type]} prop [description]
  * @return {Number[]}     Create array from val.
  */
-exports.formatCSSValues = function (val, format, length) {
+exports.formatCSSValues = function (val, prop, length) {
 	var res;
 	if (typeof val == 'function') {
 		return val;
 	}
-	if (format === 'rgb') {
+	if (SHADOW[prop] || COLOR[prop]) {
 		if (val === 'none') {
 			return Array(7).fill(0);
 		}
@@ -1272,27 +1267,53 @@ exports.formatCSSValues = function (val, format, length) {
 		} else {
 			res = this.formatCSSValues(val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,''));
 		}
-	} else if (format === 'matrix') {
-		res = transform.identity();
-		val = this.formatCSSValues(val.replace(/^\w*\(/, '').replace(')', ''));
-		if (val.length <= 6) {
-			res[0] = val[0];
-			res[1] = val[1];
-			res[4] = val[2];
-			res[5] = val[3];
-			res[12] = val[4];
-			res[13] = val[5];
-		}
-		if (val.length == 16){
-			res = val;
-		}
 	} else {
-		if (!val || val === "auto" || val === 'none') {
-			return 0;
+		switch (prop) {
+			case 'translateX':
+				return [parseFloat(val, 10), 0, 0];
+			case 'translateY':
+				return [0, parseFloat(val, 10), 0];
+			case 'translateZ':
+				return [0, 0, parseFloat(val, 10)];
+			case 'rotateX':
+				return [parseFloat(val, 10), 0, 0];
+			case 'rotateY':
+				return [0, parseFloat(val, 10), 0];
+			case 'rotateZ':
+				return [0, 0, parseFloat(val, 10)];
+			case 'skewX':
+				return [parseFloat(val, 10), 0, 0];
+			case 'skewY':
+				return [0, parseFloat(val, 10), 0];
+			case 'scaleX':
+				return [parseFloat(val, 10), 1, 1];
+			case 'scaleY':
+				return [1, parseFloat(val, 10), 1];
+			case 'scaleZ':
+				return [1, 1, parseFloat(val, 10)];
+			case 'matrix':
+				res = transform.identity();
+				val = this.formatCSSValues(val.replace(/^\w*\(/, '').replace(')', ''));
+				if (val.length <= 6) {
+					res[0] = val[0];
+					res[1] = val[1];
+					res[4] = val[2];
+					res[5] = val[3];
+					res[12] = val[4];
+					res[13] = val[5];
+				}
+				if (val.length == 16){
+					res = val;
+				}
+				break;
+			default:
+				if (!val || val === "auto" || val === 'none') {
+					return 0;
+				}
+				res = val.toString().split(",").map(function(v) {
+					return parseFloat(v, 10);
+				});
 		}
-		res = val.toString().split(",").map(function(v) {
-			return parseFloat(v, 10);
-		});
 	}
 	return length ? res.concat(Array(length - res.length).fill(0)): res;
 };
