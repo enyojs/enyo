@@ -461,17 +461,21 @@ var dom = module.exports = {
 			v = sP[k];
 			if (!utils.isTransform(k)) {
 				v = v || utils.getStyleValue(s || this.getComputedStyle(node), k);
-				sP[k] = utils.formatCSSValues(v, utils.cssFormat(k));
-				eP[k] = utils.formatCSSValues(props[k], utils.cssFormat(k), sP[k].length);
+				sP[k] = utils.formatCSSValues(v, k);
+				eP[k] = utils.formatCSSValues(props[k], k, sP[k].length);
 			} else {
-				v = utils.formatCSSValues(props[k]);
-				tP[k] = v;
+				v = utils.formatCSSValues(props[k], k);
+				if (k.indexOf('rotate') !== -1) {
+					tP[k] = transform.Quaternion.toQuant(v);
+				} else {
+					tP[k] = v;
+				}
 			}
 		}
 
 		if (initial) {
 			dP.translate = initial.translate;
-			dP.rotate = initial.rotate.length < 4 ? transform.toQuant(initial.rotate) : initial.rotate;
+			dP.rotate = initial.rotate.length < 4 ? transform.Quaternion.toQuant(initial.rotate) : initial.rotate;
 			dP.scale = initial.scale;
 			dP.skew = initial.skew;
 			dP.perspective = initial.perspective;
