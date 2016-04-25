@@ -443,7 +443,7 @@ var matrix = exports.Matrix = {
             pdum3 = [];
 
         for (i = 0; i < 16; i++)
-            matrix[0] /= matrix[15];
+            matrix[i] /= matrix[15];
 
         //TODO: decompose perspective
         pV = [0, 0, 0, 0];

@@ -465,10 +465,49 @@ var dom = module.exports = {
 				eP[k] = utils.formatCSSValues(props[k], k, sP[k].length);
 			} else {
 				v = utils.formatCSSValues(props[k], k);
-				if (k.indexOf('rotate') !== -1) {
-					tP[k] = transform.Quaternion.toQuant(v);
-				} else {
-					tP[k] = v;
+				switch (k) {
+					case 'translate':
+						tP[k] = v;
+						break;
+					case 'translateX':
+					case 'translateY':
+					case 'translateZ':
+						tP.translate = v;
+						props.translate = v.join();
+						delete props[k];
+						break;
+					case 'rotate':
+						tP[k] = transform.Quaternion.toQuant(v);
+						break;
+					case 'rotateX':
+					case 'rotateY':
+					case 'rotateZ':
+						tP.rotate = transform.Quaternion.toQuant(v);
+						props.rotate = v.join();
+						delete props[k];
+						break;
+					case 'scale':
+						tP[k] = v;
+						break;
+					case 'scaleX':
+					case 'scaleY':
+					case 'scaleZ':
+						tP.scale = v;
+						props.scale = v.join();
+						delete props[k];
+						break;
+					case 'skew':
+						tP[k] = v;
+						break;
+					case 'skewX':
+					case 'skewY':
+						tP.skew = v;
+						props.skew = v.join();
+						delete props[k];
+						break;
+					default:
+						tP[k] = v;
+						break;
 				}
 			}
 		}
