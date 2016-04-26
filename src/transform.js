@@ -688,6 +688,13 @@ var quaternion = exports.Quaternion = {
         return (q1[0] * q2[0]) + (q1[1] * q2[1]) + (q1[2] * q2[2]) + (q1[3] * q2[3]);
     },
 
+    multiplication: function(q1, q2) {
+        return [q2[0] * q1[0] - q2[1] * q1[1] - q2[2] * q1[2] - q2[3] * q1[3],
+                q2[0] * q1[1] + q2[1] * q1[0] - q2[2] * q1[3] + q2[3] * q1[2],
+                q2[0] * q1[2] + q2[1] * q1[3] + q2[2] * q1[0] - q2[3] * q1[1],
+                q2[0] * q1[3] - q2[1] * q1[2] + q2[2] * q1[1] + q2[3] * q1[0]];
+    },
+
     /**
      * Normalizing a vector is obtaining another unit vector in the same direction.
      * To normalize a vector, divide the vector by its magnitude.

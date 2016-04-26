@@ -1255,7 +1255,7 @@ exports.remove = function (array, el) {
  */
 exports.formatCSSValues = function (val, prop, length) {
 	var res;
-	if (typeof val == 'function') {
+	if (typeof val === 'function') {
 		return val;
 	}
 	if (SHADOW[prop] || COLOR[prop]) {
@@ -1263,59 +1263,55 @@ exports.formatCSSValues = function (val, prop, length) {
 			return Array(7).fill(0);
 		}
 		if (val.indexOf('rgb') === 0) {
-			res = this.formatCSSValues(val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1].split(' ').join()));
+			res = this.stringToMatrix(val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1].split(' ').join()));
 		} else {
-			res = this.formatCSSValues(val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,''));
-		}
-	} else {
-		switch (prop) {
-			case 'translateX':
-				return [parseFloat(val, 10), 0, 0];
-			case 'translateY':
-				return [0, parseFloat(val, 10), 0];
-			case 'translateZ':
-				return [0, 0, parseFloat(val, 10)];
-			case 'rotateX':
-				return [parseFloat(val, 10), 0, 0];
-			case 'rotateY':
-				return [0, parseFloat(val, 10), 0];
-			case 'rotateZ':
-				return [0, 0, parseFloat(val, 10)];
-			case 'skewX':
-				return [parseFloat(val, 10), 0, 0];
-			case 'skewY':
-				return [0, parseFloat(val, 10), 0];
-			case 'scaleX':
-				return [parseFloat(val, 10), 1, 1];
-			case 'scaleY':
-				return [1, parseFloat(val, 10), 1];
-			case 'scaleZ':
-				return [1, 1, parseFloat(val, 10)];
-			case 'matrix':
-				res = transform.identity();
-				val = this.formatCSSValues(val.replace(/^\w*\(/, '').replace(')', ''));
-				if (val.length <= 6) {
-					res[0] = val[0];
-					res[1] = val[1];
-					res[4] = val[2];
-					res[5] = val[3];
-					res[12] = val[4];
-					res[13] = val[5];
-				}
-				if (val.length == 16){
-					res = val;
-				}
-				break;
-			default:
-				if (!val || val === "auto" || val === 'none') {
-					return 0;
-				}
-				res = val.toString().split(",").map(function(v) {
-					return parseFloat(v, 10);
-				});
+			res = this.stringToMatrix(val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,''));
 		}
 	}
+	if (prop === 'duration') {
+		return 0;
+	}
 	return length ? res.concat(Array(length - res.length).fill(0)): res;
+};
+
+exports.formatTransformValues = function (val, prop) {
+	var res;
+	switch (prop) {
+		case 'translateX':
+		case 'rotateX':
+		case 'skewX':
+			return [parseFloat(val, 10), 0, 0];
+		case 'translateY':
+		case 'rotateY':
+		case 'skewY':
+			return [0, parseFloat(val, 10), 0];
+		case 'translateZ':
+		case 'rotateZ':
+			return [0, 0, parseFloat(val, 10)];
+		case 'scaleX':
+			return [parseFloat(val, 10), 1, 1];
+		case 'scaleY':
+			return [1, parseFloat(val, 10), 1];
+		case 'scaleZ':
+			return [1, 1, parseFloat(val, 10)];
+		case 'matrix':
+			res = transform.identity();
+			val = this.stringToMatrix(val.replace(/^\w*\(/, '').replace(')', ''));
+			if (val.length <= 6) {
+				res[0] = val[0];
+				res[1] = val[1];
+				res[4] = val[2];
+				res[5] = val[3];
+				res[12] = val[4];
+				res[13] = val[5];
+			}
+			if (val.length == 16) {
+				res = val;
+			}
+			return res;
+		default:
+			return this.stringToMatrix(val);
+	}
 };
 
 /**
@@ -1326,6 +1322,15 @@ exports.formatCSSValues = function (val, prop, length) {
  */
 exports.isTransform = function (transform) {
 	return TRANSFORM[transform];
+};
+
+exports.stringToMatrix = function (val) {
+	if (!val || val === "auto" || val === 'none') {
+		return 0;
+	}
+	return val.toString().split(",").map(function(v) {
+		return parseFloat(v, 10);
+	});
 };
 
 exports.toPropertyValue = function (prop, val, ret) {

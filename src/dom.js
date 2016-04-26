@@ -462,52 +462,22 @@ var dom = module.exports = {
 			if (!utils.isTransform(k)) {
 				v = v || utils.getStyleValue(s || this.getComputedStyle(node), k);
 				sP[k] = utils.formatCSSValues(v, k);
-				eP[k] = utils.formatCSSValues(props[k], k, sP[k].length);
+				eP[k] = utils.formatCSSValues(props[k], k, sP[k] ? sP[k].length : sP[k]);
 			} else {
-				v = utils.formatCSSValues(props[k], k);
-				switch (k) {
-					case 'translate':
-						tP[k] = v;
-						break;
-					case 'translateX':
-					case 'translateY':
-					case 'translateZ':
-						tP.translate = v;
-						props.translate = v.join();
-						delete props[k];
-						break;
-					case 'rotate':
-						tP[k] = transform.Quaternion.toQuant(v);
-						break;
-					case 'rotateX':
-					case 'rotateY':
-					case 'rotateZ':
-						tP.rotate = transform.Quaternion.toQuant(v);
-						props.rotate = v.join();
-						delete props[k];
-						break;
-					case 'scale':
-						tP[k] = v;
-						break;
-					case 'scaleX':
-					case 'scaleY':
-					case 'scaleZ':
-						tP.scale = v;
-						props.scale = v.join();
-						delete props[k];
-						break;
-					case 'skew':
-						tP[k] = v;
-						break;
-					case 'skewX':
-					case 'skewY':
-						tP.skew = v;
-						props.skew = v.join();
-						delete props[k];
-						break;
-					default:
-						tP[k] = v;
-						break;
+				v = utils.formatTransformValues(props[k], k);
+				if (k.match(/rotate/)) {
+					v = transform.Quaternion.toQuant(v);
+					tP.rotate = tP.rotate ? transform.Quaternion.multiplication(tP.rotate, v) : v;
+				} else {
+					t = k.replace(/[XYZ]$/,'');
+					tP[t] = tP[t] ? tP[t].map(function (num, id) {
+						return num + v[id];
+					}) : v;
+				}
+				if (k.match(/[XYZ]$/)) {
+					t = k.replace(/[XYZ]$/,'');
+					props[t] = tP[t].join();
+					delete props[k];
 				}
 			}
 		}
@@ -520,7 +490,7 @@ var dom = module.exports = {
 			dP.perspective = initial.perspective;
 		} else {
 			m = utils.getStyleValue(s || this.getComputedStyle(node), this.getCssTransformProp());
-			m = utils.formatCSSValues(m, 'matrix');
+			m = utils.formatTransformValues(m, 'matrix');
 			transform.Matrix.decompose(m, dP);
 		}
 
