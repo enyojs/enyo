@@ -1,8 +1,9 @@
 require('enyo');
 
 var
-	logger = require('./logger'),
-	utils = require('./utils');
+    logger = require('./logger'),
+    scene = require('./scene'),
+    utils = require('./utils');
 
 var defaultCtor = null;
 
@@ -240,30 +241,31 @@ kind.inherited = function (originals, replacements) {
 	var target = originals.callee;
 	var fn = target._inherited;
 
-	// regardless of how we got here, just ensure we actually
-	// have a function to call or else we throw a console
-	// warning to notify developers they are calling a
-	// super method that doesn't exist
-	if ('function' === typeof fn) {
-		var args = originals;
-		if (replacements) {
-			// combine the two arrays, with the replacements taking the first
-			// set of arguments, and originals filling up the rest.
-			args = [];
-			var i = 0, l = replacements.length;
-			for (; i < l; ++i) {
-				args[i] = replacements[i];
-			}
-			l = originals.length;
-			for (; i < l; ++i) {
-				args[i] = originals[i];
-			}
-		}
-		return fn.apply(this, args);
-	} else {
-		logger.warn('enyo.kind.inherited: unable to find requested ' +
-			'super-method from -> ' + originals.callee.displayName + ' in ' + this.kindName);
-	}
+    // regardless of how we got here, just ensure we actually
+    // have a function to call or else we throw a console
+    // warning to notify developers they are calling a
+    // super method that doesn't exist
+    if ('function' === typeof fn) {
+        var args = originals;
+        if (replacements) {
+            // combine the two arrays, with the replacements taking the first
+            // set of arguments, and originals filling up the rest.
+            args = [];
+            var i = 0,
+                l = replacements.length;
+            for (; i < l; ++i) {
+                args[i] = replacements[i];
+            }
+            l = originals.length;
+            for (; i < l; ++i) {
+                args[i] = originals[i];
+            }
+        }
+        return fn.apply(this, args);
+    } else {
+        logger.warn('enyo.kind.inherited: unable to find requested ' +
+            'super-method from -> ' + originals.callee.displayName + ' in ' + this.kindName);
+    }
 };
 
 // dcl inspired super-inheritance
@@ -330,6 +332,65 @@ kind.features.push(function(ctor, props) {
 	}
 });
 
+
+kind.features.push(function(ctor, props) {
+    // install common statics
+    if (props.scene) {
+        var fn,
+            proto = ctor.prototype || ctor,
+            sctor = scene.create(proto);
+
+        extend(AnimationSupport, sctor);
+        fn = props.scene.isScene ? sceneToScene : updateScene;
+        proto.scene = fn.call(sctor, props.scene);
+    }
+});
+
+/**
+ * Adds animation from a scene to other scene
+ * @memberOf module:enyo/AnimationSupport/Actor
+ * @public
+ * @return {Object} An instance of the constructor
+ */
+function sceneToScene(src) {
+    if (!src) return;
+    if (!src.id) extend(AnimationSupport, src);
+
+    var i, l = src.length(),
+        anim;
+
+    for (i = 0; i < l; i++) {
+        anim = utils.mixin({}, src.getAnimation(i));
+        this.addAnimation(anim.animate, anim.animate.duration);
+    }
+
+    var span = src.span + this.span;
+    src.rolePlays.push({
+        actor: this,
+        span: span,
+        dur: this.span
+    });
+    return this;
+}
+
+/**
+ * Add animations within a scene
+ * @memberOf module:enyo/AnimationSupport/Actor
+ * @public
+ * @return {Object} An instance of the constructor
+ */
+function updateScene(props) {
+    if (!props) return;
+
+    var anims = utils.isArray(props) ? props : [props];
+    for (var i = 0; i < anims.length; i++) {
+        this.addAnimation(anims[i], anims[i].duration || 0);
+    }
+    return this;
+}
+
+
+
 /**
 * @private
 */
@@ -350,47 +411,48 @@ kind.statics = {
 	*/
 	subclass: function (ctor, props) {},
 
-	/**
-	* Allows for extension of the current [kind]{@glossary kind} without
-	* creating a new kind. This method is available on all
-	* [constructors]{@glossary constructor}, although calling it on a
-	* [deferred]{@glossary deferred} constructor will force it to be
-	* resolved at that time. This method does not re-run the
-	* {@link module:enyo/kind.features} against the constructor or instance.
-	*
-	* @name module:enyo/kind.extend
-	* @method
-	* @param {Object|Object[]} props A [hash]{@glossary Object} or [array]{@glossary Array}
-	*	of [hashes]{@glossary Object}. Properties will override
-	*	[prototype]{@glossary Object.prototype} properties. If a
-	*	method that is being added already exists, the new method will
-	*	supersede the existing one. The method may call
-	*	`this.inherited()` or be wrapped with `kind.inherit()` to call
-	*	the original method (this chains multiple methods tied to a
-	*	single [kind]{@glossary kind}).
-	* @param {Object} [target] - The instance to be extended. If this is not specified, then the
-	*	[constructor]{@glossary constructor} of the
-	*	[object]{@glossary Object} this method is being called on will
-	*	be extended.
-	* @returns {Object} The constructor of the class, or specific
-	*	instance, that has been extended.
-	* @public
-	*/
-	extend: function (props, target) {
-		var ctor = this
-			, exts = utils.isArray(props)? props: [props]
-			, proto, fn;
+    /**
+     * Allows for extension of the current [kind]{@glossary kind} without
+     * creating a new kind. This method is available on all
+     * [constructors]{@glossary constructor}, although calling it on a
+     * [deferred]{@glossary deferred} constructor will force it to be
+     * resolved at that time. This method does not re-run the
+     * {@link module:enyo/kind.features} against the constructor or instance.
+     *
+     * @name module:enyo/kind.extend
+     * @method
+     * @param {Object|Object[]} props A [hash]{@glossary Object} or [array]{@glossary Array}
+     *  of [hashes]{@glossary Object}. Properties will override
+     *  [prototype]{@glossary Object.prototype} properties. If a
+     *  method that is being added already exists, the new method will
+     *  supersede the existing one. The method may call
+     *  `this.inherited()` or be wrapped with `kind.inherit()` to call
+     *  the original method (this chains multiple methods tied to a
+     *  single [kind]{@glossary kind}).
+     * @param {Object} [target] - The instance to be extended. If this is not specified, then the
+     *  [constructor]{@glossary constructor} of the
+     *  [object]{@glossary Object} this method is being called on will
+     *  be extended.
+     * @returns {Object} The constructor of the class, or specific
+     *  instance, that has been extended.
+     * @public
+     */
+    extend: function(props, target) {
+        var ctor = this,
+            exts = utils.isArray(props) ? props : [props],
+            proto, fn;
 
 		fn = function (key, value) {
 			return !(typeof value == 'function' || isInherited(value)) && concatenated.indexOf(key) === -1;
 		};
 
-		proto = target || ctor.prototype;
-		for (var i=0, ext; (ext=exts[i]); ++i) {
-			kind.concatHandler(proto, ext, true);
-			kind.extendMethods(proto, ext, true);
-			utils.mixin(proto, ext, {filter: fn});
-		}
+        proto = target || ctor.prototype;
+        for (var i = 0, ext;
+            (ext = exts[i]); ++i) {
+            kind.concatHandler(proto, ext, true);
+            kind.extendMethods(proto, ext, true);
+            utils.mixin(proto, ext, { filter: fn });
+        }
 
 		return target || ctor;
 	},
@@ -416,12 +478,12 @@ kind.statics = {
 };
 
 /**
-* @method
-* @private
-*/
-exports.concatHandler = function (ctor, props, instance) {
-	var proto = ctor.prototype || ctor
-		, base = proto.ctor;
+ * @method
+ * @private
+ */
+exports.concatHandler = function(ctor, props, instance) {
+    var proto = ctor.prototype || ctor,
+        base = proto.ctor;
 
 	while (base) {
 		if (base.concat) base.concat(ctor, props, instance);
@@ -440,33 +502,32 @@ var kindCtors =
 	exports._kindCtors = {};
 
 /**
-* @method
-* @private
-*/
-var constructorForKind = exports.constructorForKind = function (kind) {
-	if (kind === null) {
-		return kind;
-	} else if (kind === undefined) {
-		return getDefaultCtor();
-	}
-	else if (utils.isFunction(kind)) {
-		return kind;
-	}
-	logger.warn('Creating instances by name is deprecated. Name used:', kind);
-	// use memoized constructor if available...
-	var ctor = kindCtors[kind];
-	if (ctor) {
-		return ctor;
-	}
-	// otherwise look it up and memoize what we find
-	//
-	// if kind is an object in enyo, say "Control", then ctor = enyo["Control"]
-	// if kind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
-	// if kind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
-	//
-	// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
-	// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-	ctor = Theme[kind] || (global.enyo && global.enyo[kind]) || utils.getPath.call(global, 'enyo.' + kind) || global[kind] || utils.getPath.call(global, kind);
+ * @method
+ * @private
+ */
+var constructorForKind = exports.constructorForKind = function(kind) {
+    if (kind === null) {
+        return kind;
+    } else if (kind === undefined) {
+        return getDefaultCtor();
+    } else if (utils.isFunction(kind)) {
+        return kind;
+    }
+    logger.warn('Creating instances by name is deprecated. Name used:', kind);
+    // use memoized constructor if available...
+    var ctor = kindCtors[kind];
+    if (ctor) {
+        return ctor;
+    }
+    // otherwise look it up and memoize what we find
+    //
+    // if kind is an object in enyo, say "Control", then ctor = enyo["Control"]
+    // if kind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
+    // if kind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
+    //
+    // Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
+    // This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
+    ctor = Theme[kind] || (global.enyo && global.enyo[kind]) || utils.getPath.call(global, 'enyo.' + kind) || global[kind] || utils.getPath.call(global, kind);
 
 	// If what we found at this namespace isn't a function, it's definitely not a kind constructor
 	if (!utils.isFunction(ctor)) {
@@ -503,4 +564,273 @@ exports.createFromKind = function (nom, param) {
 	if (Ctor) {
 		return new Ctor(param);
 	}
+};
+/**
+ * Interface which accepts the animation details and returns a scene object
+ * @param  {Array} proto      Actors 
+ * @param  {Object} properties Animation Properties
+ * @param  {number} duration   Animation duration
+ * @param  {String} completed  Callback function on completion
+ * @return {Object}            A scene object
+ */
+kind.animate = function(proto, properties, duration, completed) {
+    var fn, rolePlays, sctor, parentScene;
+    parentScene = scene({ animation: properties });
+    if (properties && proto.length > 0) {
+        for (var i = 0; i <= proto.length; i++) {
+            sctor = scene.create(proto[i]);
+            kind.statics.extend(AnimationSupport, sctor);
+            // fn = properties.isScene ? sceneToScene : updateScene; //fn.call(sctor, properties)
+            parentScene.rolePlays.push({
+                actor: updateScene.call(sctor, properties),
+                span: (sctor.span) * (i + 1),
+                dur: sctor.span
+            });
+        }
+    } else if (properties && proto) {
+        sctor = scene.create(proto);
+        kind.statics.extend(AnimationSupport, sctor);
+        parentScene.rolePlays.push({
+            actor: updateScene.call(sctor, properties),
+            span: sctor.span,
+            dur: sctor.span
+        });
+    }
+    kind.statics.extend(AnimationSupport, parentScene);
+    parentScene.threshold = parentScene.rolePlays.length * parentScene.span;
+    return parentScene;
+};
+
+function completedFun() {
+    //TO DO the call back function for completion of animation
+};
+
+var AnimationSupport = {
+
+    id: utils.uid("@"),
+
+    handleLayers: false,
+
+    /**
+     * An exposed property to know if know the animating state of this scene.
+     * 'true' - the scene is asked for animation(doesn't mean animation is happening)
+     * 'false' - the scene is not active(has completed or its actors are not visible)
+     * @type {Boolean}
+     * @memberOf module:enyo/AnimationSupport/Actor
+     * @public
+     */
+    animating: false,
+
+    /**
+     * An exposed property to know if the scene is ready with actors performing action.
+     * 'true' - the scene actors are ready for action
+     * 'false' - some or all actors are not ready
+     * @type {Boolean}
+     * @memberOf module:enyo/AnimationSupport/Actor
+     * @public
+     */
+    active: this && this.generated,
+
+
+    /**
+     * @private
+     */
+    timeline: 0,
+    /**
+     * @private
+     */
+    _cachedValue: 0,
+    /**
+     * @private
+     */
+    speed: 0,
+    /**
+     * @private
+     */
+    seekInterval: 0,
+    /**
+     * @private
+     */
+    repeat: false,
+    /**
+     * @private
+     */
+    cache: function(actor) {
+        actor = actor || this;
+        if (actor.speed === 0) {
+            actor.speed = actor._cachedValue;
+        }
+        this.animating = true;
+    },
+
+    /**
+     * Starts the animation of the <code>actor</code> given in argument.
+     * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be started.
+     * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+     * @public
+     */
+    play: function(actor) {
+        actor = actor || this;
+        actor.speed = 1;
+        if (isNaN(actor.timeline) || !actor.timeline) {
+            actor.timeline = 0;
+        }
+        this.trigger();
+        actor._cachedValue = actor.speed;
+        this.animating = true;
+    },
+
+    /**
+     * Replays the animation of the <code>actor</code> given in argument.
+     * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be started.
+     * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+     * @public
+     */
+    replay: function(actor) {
+        this.stop();
+        this.play();
+    },
+    /**
+     * Resumes the paused animation of the <code>actor</code> given in argument.
+     * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be resumed.
+     * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+     * @public
+     */
+    resume: function(actor) {
+        this.cache(actor);
+        actor = actor || this;
+        actor.speed *= 1;
+    },
+
+    /**
+     * Pauses the animation of the <code>actor</code> given in argument.
+     * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be paused.
+     * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+     * @public
+     */
+    pause: function(actor) {
+        actor = actor || this;
+        actor._cachedValue = actor.speed;
+        actor.speed = 0;
+    },
+
+    /**
+     * Reverses the animation of the <code>actor</code> given in argument.
+     * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be reversed.
+     * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+     * @public
+     */
+    reverse: function(actor) {
+        this.cache(actor);
+        actor = actor || this;
+        actor._cachedValue = actor.speed;
+        actor.speed *= -1;
+    },
+
+    /**
+     * fast description goes here
+     * @param  {Number} mul   description goes here
+     * @param  [Component]{@link module:enyo/Component~Component} actor description goes here
+     * @public
+     */
+    fast: function(mul, actor) {
+        this.cache(actor);
+        actor = actor || this;
+        actor.speed *= mul;
+    },
+
+    /**
+     * slow description goes here
+     * @param  {Number} mul   description goes here
+     * @param  [Component]{@link module:enyo/Component~Component} actor description goes here
+     * @public
+     */
+    slow: function(mul, actor) {
+        this.cache(actor);
+        actor = actor || this;
+        actor.speed *= mul;
+    },
+
+    /**
+     * Changes the speed of the animation.</br>
+     * Speed of the animation changed based on the <code>factor</code>.</br>
+     * To slow down the speed use values between <b>0</b> and <b>1</b>. For Example <b>0.5</b> to reduce the speed by <b>50%</b>.</br>
+     * To increase the speed use values above <b>1</b>. For Example <b>2</b> to increase the speed by <b>200%</b>.</br>
+     * Animation will be paused if factor is <b>0</b>. To pause the animation use <code>{@link enyo/AnimationSupport/Editor.pause pause}</code> API.</br>
+     * Speed will not be affected incase of negative multiplication factor.
+     * @param  {Number} factor                                              Multiplication factor which changes the speed
+     * @param  [Component {@link module:enyo/Component~Component}] actor     The component whose animating speed should be changed
+     * @public
+     */
+    // speed: function(mul, actor) {
+    //     if (mul < 0) return;
+    //     this.cache(actor);
+    //     actor = actor || this;
+    //     actor.speed *= mul;
+    // },
+
+    /**
+     * Stops the animation of the actor given in argument.
+     * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be stopped.
+     * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+     * @public
+     */
+    stop: function(actor) {
+        actor = actor || this;
+        actor._cachedValue = 1;
+        actor.speed = 0;
+        actor.timeline = 0;
+        // this.animating = false;
+        // this.cancel();
+    },
+
+    /**
+     * Seeks the animation of the <code>actor</code> to the position provided in <code>seek</code>
+     * The value of <code>seek</code> should be between <b>0</b> to <code>duration</code> of the animation.
+     * @param  {Number}                                             seek    Value in seek where the animation has to be seeked
+     * @param  [Component]{@link module:enyo/Component~Component}   actor       The component to be animated
+     * @public
+     */
+    seek: function(seek, actor) {
+        actor = actor || this;
+        actor.timeline = seek;
+    },
+
+    /**
+     * Seeks <code>actor</code> with animation to the position provided in <code>seek</code>
+     * The value of <code>seek</code> should be between <b>0</b> to <code>duration</code> of the animation.
+     * @param  {Number}                                             seek    Value in seek where the animation has to be seeked
+     * @param  [Component]{@link module:enyo/Component~Component}   actor       The component to be animated
+     * @public
+     */
+    seekAnimate: function(seek, actor) {
+        actor = actor || this;
+        if (seek >= 0) {
+            if (!this.animating)
+                this.play(actor);
+            actor.speed = 1;
+        } else {
+            actor.speed = -1;
+        }
+        actor.seekInterval = actor.timeline + seek;
+        if (actor.seekInterval < 0) {
+            actor.speed = 0;
+            actor.seekInterval = 0;
+        }
+    },
+
+    //TODO: Move these events to Event Delegator
+    /**
+     * Event to identify when the scene has done animating.
+     * @memberOf module:enyo/AnimationSupport/Actor
+     * @public
+     */
+    completed: function() {},
+
+    /**
+     * Event to identify when the scene has done a step(rAF updatation of time) in the animation.
+     * @memberOf module:enyo/AnimationSupport/Actor
+     * @public
+     */
+    step: function() {}
 };
