@@ -504,7 +504,6 @@ utils.mixin(dispatcher, {
 			try {
 				preview.dispatch(e, e.dispatchTarget);
 			} catch(err) {
-
 			}
 		},
 

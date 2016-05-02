@@ -429,7 +429,6 @@ module.exports = kind(
 				this.doScrollStop();
 			}, 100);
 		} catch(err) {
-
 		}
 	},
 

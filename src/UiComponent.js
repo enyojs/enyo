@@ -680,17 +680,15 @@ var UiComponent = module.exports = kind(
 	*/
 	getBubbleTarget: function (nom, event) {
 		try {
-
-		if (event.delegate) return this.owner;
-		else {
-			return (
-				this.bubbleTarget
-				|| (this.cachedBubble && this.cachedBubbleTarget[nom])
-				|| this.parent
-				|| this.owner
-			);
-		}
-
+			if (event.delegate) return this.owner;
+			else {
+				return (
+					this.bubbleTarget
+					|| (this.cachedBubble && this.cachedBubbleTarget[nom])
+					|| this.parent
+					|| this.owner
+				);
+			}
 		} catch(err) {
 
 		}

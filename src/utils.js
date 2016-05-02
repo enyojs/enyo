@@ -891,22 +891,19 @@ exports.indexBy = function (property, array, filter) {
 */
 var clone = exports.clone = function (base, quick) {
 	try {
+		if (base) {
 
-	if (base) {
-
-		// avoid the overhead of calling yet another internal function to do type-checking
-		// just copy the array and be done with it
-		if (base instanceof Array) return base.slice();
-		else if (base instanceof Object) {
-			return quick ? Object.create(base) : mixin({}, base);
+			// avoid the overhead of calling yet another internal function to do type-checking
+			// just copy the array and be done with it
+			if (base instanceof Array) return base.slice();
+			else if (base instanceof Object) {
+				return quick ? Object.create(base) : mixin({}, base);
+			}
 		}
-	}
 
-	// we will only do this if it is not an array or native object
-	return base;
-
+		// we will only do this if it is not an array or native object
+		return base;
 	} catch(err) {
-
 	}
 };
 

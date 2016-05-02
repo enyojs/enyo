@@ -509,7 +509,6 @@ var DataList = module.exports = kind(
 				this.delegate.didScroll(this, e);
 			}
 		} catch(err) {
-
 		}
 		return true;
 	},

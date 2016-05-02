@@ -583,18 +583,15 @@ var Component = module.exports = kind(
 	*/
 	getBubbleTarget: function (nom, event) {
 		try {
-
-		if (event.delegate) return this.owner;
-		else {
-			return (
-				this.bubbleTarget
-				|| (this.cachedBubble && this.cachedBubbleTarget[nom])
-				|| this.owner
-			);
-		}
-
+			if (event.delegate) return this.owner;
+			else {
+				return (
+					this.bubbleTarget
+					|| (this.cachedBubble && this.cachedBubbleTarget[nom])
+					|| this.owner
+				);
+			}
 		} catch(err) {
-
 		}
 	},
 
