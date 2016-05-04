@@ -56,8 +56,8 @@ module.exports = {
                 }
 
                 cState = utils.clone(state[k] || []);
-                newState = pose._endAnim[k].slice();
-                oldState = pose._startAnim[k].slice();
+                newState = utils.cloneArray(pose._endAnim[k]);
+                oldState = utils.cloneArray(pose._startAnim[k]);
                 
                 if (ease && (typeof ease !== 'function')) {
                     if (k == 'rotate') {
@@ -163,7 +163,7 @@ module.exports = {
 
         dot = Math.min(Math.max(dot, -1.0), 1.0);
         if (dot == 1.0) {
-            qR = utils.cloneArray(qA);
+            qR = utils.clone(qA);
             return qR;
         }
         theta = Math.acos(dot);
@@ -296,7 +296,7 @@ module.exports = {
             quats = [startQuat];
 
         var a, n, _a, aI, bN, eP,
-            eD = utils.formatCSSValues(endPoint);
+            eD = utils.stringToMatrix(endPoint);
 
         splinePoints = splinePoints || {};
         if (Object.keys(ease).length > 0) {

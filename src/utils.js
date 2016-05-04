@@ -1255,7 +1255,7 @@ exports.remove = function (array, el) {
  */
 exports.formatCSSValues = function (val, prop, length) {
 	var res;
-	if (typeof val === 'function') {
+	if (typeof val === 'function' || this.isArray(val)) {
 		return val;
 	}
 	if (SHADOW[prop] || COLOR[prop]) {
