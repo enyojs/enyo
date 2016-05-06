@@ -573,14 +573,13 @@ exports.createFromKind = function (nom, param) {
  * @param  {String} completed  Callback function on completion
  * @return {Object}            A scene object
  */
-kind.animate = function(proto, properties, duration, completed) {
-    var fn, rolePlays, sctor, parentScene;
+kind.animate = function(proto, properties, completed) {
+    var rolePlays, sctor, parentScene;
     parentScene = scene({ animation: properties });
     if (properties && proto.length > 0) {
         for (var i = 0; i <= proto.length; i++) {
             sctor = scene.create(proto[i]);
             kind.statics.extend(AnimationSupport, sctor);
-            // fn = properties.isScene ? sceneToScene : updateScene; //fn.call(sctor, properties)
             parentScene.rolePlays.push({
                 actor: updateScene.call(sctor, properties),
                 span: (sctor.span) * (i + 1),
@@ -598,16 +597,13 @@ kind.animate = function(proto, properties, duration, completed) {
     }
     kind.statics.extend(AnimationSupport, parentScene);
     parentScene.threshold = parentScene.rolePlays.length * parentScene.span;
+    parentScene.completed = completed;
     return parentScene;
-};
-
-function completedFun() {
-    //TO DO the call back function for completion of animation
 };
 
 var AnimationSupport = {
 
-    id: utils.uid("@"),
+
 
     handleLayers: false,
 
@@ -825,7 +821,9 @@ var AnimationSupport = {
      * @memberOf module:enyo/AnimationSupport/Actor
      * @public
      */
-    completed: function() {},
+    completed: function() {
+        this.animating = false;
+    },
 
     /**
      * Event to identify when the scene has done a step(rAF updatation of time) in the animation.

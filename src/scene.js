@@ -47,7 +47,17 @@ var SceneAction = {
      * @type {Array}
      */
     rolePlays: [],
+    actorsIds: [],
+    completedActors: [],
 
+    compareArrays: function(array1, array2) {
+        var array1 = array1;
+        var array2 = array2;
+        var is_same = array1.length == array2.length && array1.every(function(element, index) {
+            return element === array2[index];
+        });
+        return is_same;
+    },
     /**
      * This function initiates action on the animation
      * from the list of animations for a given scene.
@@ -64,7 +74,10 @@ var SceneAction = {
             tm = this.timeline,
             th = this.threshold || this.span;
 
-        if (this.rolePlays && this.rolePlays.length > 0) {
+        if (this.rolePlays && this.rolePlays.length > 0 && this.animating === true) {
+            if (this.actorsIds.length !== 0 && this.completedActors.length !== 0 && this.compareArrays(this.actorsIds, this.completedActors) === true) {
+                this.animating = false;
+            }
             s = animateAtTime(this.rolePlays, tm);
             e = animateAtTime(this.rolePlays, tm + th);
             e += e == s ? 1 : 0;
@@ -180,6 +193,7 @@ function sceneConstructor(actor) {
         };
 
     this.span = 0;
+    this.id = utils.uid("@");
 
     /**
      * This function initiates action on the animation
@@ -198,6 +212,9 @@ function sceneConstructor(actor) {
             tm = rolePlay(ts, this);
             if (isNaN(tm) || tm < 0) return pose;
             else if (tm <= dur) {
+                if (SceneAction.actorsIds.indexOf(this.id) === -1) {
+                    SceneAction.actorsIds.push(this.id);
+                }
                 index = animateAtTime(_poses, tm);
                 pose = this.getAnimation(index);
                 past = index ? this.getAnimation(index - 1).span : 0;
@@ -220,7 +237,11 @@ function sceneConstructor(actor) {
             }
         }
         this.animating = false;
+        if (SceneAction.completedActors.indexOf(this.id) === -1) {
+            SceneAction.completedActors.push(this.id);
+        }
         this.completed && this.completed(_actor);
+
     };
 
     /**
