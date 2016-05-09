@@ -100,18 +100,6 @@ module.exports = kind(
 	},
 
 	/**
-	* @method
-	* @private
-	*/
-	create: kind.inherit(function (sup) {
-		return function() {
-			sup.apply(this, arguments);
-			// apply initial transform so we're always composited
-			Dom.transformValue(this.$.client, this.translation, '0,0,0');
-		};
-	}),
-
-	/**
 	* @private
 	*/
 	calcScrollNode: function () {
@@ -313,8 +301,11 @@ module.exports = kind(
 			if (this.translateOptimized || this.isScrolling()) {
 				x = this.startX - x;
 				y = this.startY - y;
-				o = x + 'px, ' + y + 'px' + (this.accel ? ',0' : '');
-				Dom.transformValue(this.$.client, this.translation, o);
+				o = x + 'px, ' + y + 'px';
+				if (this.accel) {
+					Dom.transformValue(this.$.client, 'translateZ', '0');
+				}
+				Dom.transformValue(this.$.client, 'translate', o);
 				this._translated = true;
 			} else {
 				sup.apply(this, arguments);
