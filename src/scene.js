@@ -167,7 +167,7 @@ function sceneConstructor(actor) {
             if (since < 0) since = 0;
             if (since <= dur && dur !== 0) {
                 t = since / dur;
-                tween.step(actor, pose, (t > 0.98) ? 1 : t, dur);
+                tween.step(actor, pose, t, dur);
             } else {
                 tween.step(actor, pose, 1, dur);
             }

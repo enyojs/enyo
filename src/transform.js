@@ -244,8 +244,6 @@ exports.rotate = function(a, b, g) {
     return rotateMat;
 };
 
-
-
 var matrix = exports.Matrix = {
 
     /**
@@ -277,8 +275,8 @@ var matrix = exports.Matrix = {
      * @return {Number[]}    Resultant Matrix3d
      */
     multiply: function(m1, m2) {
-        if (m1.length !== 16 || m2.length !== 16) return;
         var multiplyMat = typedArray(64);
+        if (m1.length !== 16 || m2.length !== 16) return;
         multiplyMat[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2];
         multiplyMat[1] = m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2];
         multiplyMat[2] = m1[2] * m2[0] + m1[6] * m2[1] + m1[10] * m2[2];
@@ -432,7 +430,6 @@ var matrix = exports.Matrix = {
      * @return {Boolean}         true, if matrix exists else false.
      */
     decompose: function(matrix, ret) {
-        if (matrix[15] === 0) return false;
         var i,
             tV = [],
             rV = [],
@@ -441,6 +438,8 @@ var matrix = exports.Matrix = {
             scV = [],
             row = [],
             pdum3 = [];
+
+        if (matrix[15] === 0) return false;
 
         for (i = 0; i < 16; i++)
             matrix[i] /= matrix[15];
@@ -459,12 +458,12 @@ var matrix = exports.Matrix = {
             ]);
         }
 
-        scV[0] = vector.len(row[0]);
+        scV[0] = vector.length(row[0]);
         row[0] = quaternion.normalize(row[0]);
         skV[0] = vector.dot(row[0], row[1]);
         row[1] = vector.combine(row[1], row[0], 1.0, -skV[0]);
 
-        scV[1] = vector.len(row[1]);
+        scV[1] = vector.length(row[1]);
         row[1] = quaternion.normalize(row[1]);
         skV[0] /= scV[1];
 
@@ -475,7 +474,7 @@ var matrix = exports.Matrix = {
         row[2] = vector.combine(row[2], row[1], 1.0, -skV[2]);
 
         // Next, get Z scale and normalize 3rd row.
-        scV[2] = vector.len(row[2]);
+        scV[2] = vector.length(row[2]);
         row[2] = quaternion.normalize(row[2]);
         skV[1] /= scV[2];
         skV[2] /= scV[2];
@@ -608,7 +607,7 @@ var vector = exports.Vector = {
      * @return {Number} resultant length
      * @public
      */
-    len: function(v) {
+    length: function(v) {
         return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     },
 
@@ -688,6 +687,12 @@ var quaternion = exports.Quaternion = {
         return (q1[0] * q2[0]) + (q1[1] * q2[1]) + (q1[2] * q2[2]) + (q1[3] * q2[3]);
     },
 
+    /**
+     * Multiplication of two quanternions
+     * @param  {Number[]} q1 quanternion
+     * @param  {Number[]} q2 quanternion
+     * @return {Number[]}    quanternion
+     */
     multiplication: function(q1, q2) {
         return [q2[0] * q1[0] - q2[1] * q1[1] - q2[2] * q1[2] - q2[3] * q1[3],
                 q2[0] * q1[1] + q2[1] * q1[0] - q2[2] * q1[3] + q2[3] * q1[2],
@@ -703,7 +708,7 @@ var quaternion = exports.Quaternion = {
      * @public
      */
     normalize: function(q) {
-        return vector.divide(q, vector.len(q));
+        return vector.divide(q, vector.length(q));
     },
 
     /**

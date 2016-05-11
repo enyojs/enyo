@@ -1246,12 +1246,12 @@ exports.remove = function (array, el) {
 };
 
 /**
- * Converts comma separated values to array.
+ * Converts other then transform related css values to matrix.
  * @public
- * @param  {String} val Value of required animation in any property.
- * @param  {Number} length [description]
- * @param  {[type]} prop [description]
- * @return {Number[]}     Create array from val.
+ * @param  {String} val    CSS value of prop
+ * @param  {String} prop   Property name
+ * @param  {Number} length Required length of matrix
+ * @return {Number[]}      Value to matrix of required length
  */
 exports.formatCSSValues = function (val, prop, length) {
 	var res;
@@ -1274,26 +1274,39 @@ exports.formatCSSValues = function (val, prop, length) {
 	return length ? res.concat(Array(length - res.length).fill(0)): res;
 };
 
+/**
+ * Convert transform related css values to matrix
+ * @public
+ * @param  {String} val  CSS value of transform
+ * @param  {String} prop Transform property name
+ * @return {Number[]}    Value to matrix
+ */
 exports.formatTransformValues = function (val, prop) {
 	var res;
 	switch (prop) {
 		case 'translateX':
 		case 'rotateX':
 		case 'skewX':
-			return [parseFloat(val, 10), 0, 0];
+			res = [parseFloat(val, 10), 0, 0];
+			break;
 		case 'translateY':
 		case 'rotateY':
 		case 'skewY':
-			return [0, parseFloat(val, 10), 0];
+			res = [0, parseFloat(val, 10), 0];
+			break;
 		case 'translateZ':
 		case 'rotateZ':
-			return [0, 0, parseFloat(val, 10)];
+			res = [0, 0, parseFloat(val, 10)];
+			break;
 		case 'scaleX':
-			return [parseFloat(val, 10), 1, 1];
+			res = [parseFloat(val, 10), 1, 1];
+			break;
 		case 'scaleY':
-			return [1, parseFloat(val, 10), 1];
+			res = [1, parseFloat(val, 10), 1];
+			break;
 		case 'scaleZ':
-			return [1, 1, parseFloat(val, 10)];
+			res = [1, 1, parseFloat(val, 10)];
+			break;
 		case 'matrix':
 			res = transform.identity();
 			val = this.stringToMatrix(val.replace(/^\w*\(/, '').replace(')', ''));
@@ -1308,10 +1321,11 @@ exports.formatTransformValues = function (val, prop) {
 			if (val.length == 16) {
 				res = val;
 			}
-			return res;
+			break;
 		default:
-			return this.stringToMatrix(val);
+			res = this.stringToMatrix(val);
 	}
+	return res;
 };
 
 /**
@@ -1324,6 +1338,11 @@ exports.isTransform = function (transform) {
 	return TRANSFORM[transform];
 };
 
+/**
+ * Split and convert string (CSS value) to matrix
+ * @param  {String} val CSS value as string
+ * @return {Number[]}     Value to matrix
+ */
 exports.stringToMatrix = function (val) {
 	if (!val || val === "auto" || val === 'none') {
 		return 0;
@@ -1333,6 +1352,13 @@ exports.stringToMatrix = function (val) {
 	});
 };
 
+/**
+ * Convert other then transform array (computed to animate) to CSS value
+ * @param  {String} prop Property name
+ * @param  {Number} val  Property value
+ * @param  {Object} ret  Already existing object to store animation property
+ * @return {Object}      Same ret object with addition of extra property
+ */
 exports.toPropertyValue = function (prop, val, ret) {
 	if (!val) return;
 	ret = ret || {};
