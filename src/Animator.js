@@ -8,6 +8,7 @@ require('enyo');
 var
 	kind = require('./kind'),
 	utils = require('./utils'),
+	easing = require('./easing'),
 	animation = require('./animation');
 
 var
@@ -145,7 +146,7 @@ module.exports = kind(
 		* @default module:enyo/easing~easing.cubicOut
 		* @public
 		*/
-		easingFunction: animation.easing.cubicOut
+		easingFunction: easing.cubicOut
 	},
 
 	/*

@@ -1,8 +1,9 @@
 require('enyo');
 
 var
-	logger = require('./logger'),
-	utils = require('./utils');
+    logger = require('./logger'),
+    scene = require('./scene'),
+    utils = require('./utils');
 
 var defaultCtor = null;
 
@@ -420,12 +421,19 @@ kind.statics = {
 * @private
 */
 exports.concatHandler = function (ctor, props, instance) {
-	var proto = ctor.prototype || ctor
-		, base = proto.ctor;
+	var proto = ctor.prototype || ctor,
+		base = proto.ctor, sctor;
 
 	while (base) {
 		if (base.concat) base.concat(ctor, props, instance);
 		base = base.prototype.base;
+	}
+
+	// install common statics
+    if (props.scene) {
+		sctor = new scene(proto, props.scene);
+		proto.scene = sctor;
+		delete props.scene;
 	}
 };
 
@@ -503,4 +511,23 @@ exports.createFromKind = function (nom, param) {
 	if (Ctor) {
 		return new Ctor(param);
 	}
+};
+/**
+ * Interface which accepts the animation details and returns a scene object
+ * @param  {Array} proto      Actors 
+ * @param  {Object} properties Animation Properties
+ * @param  {number} duration   Animation duration
+ * @param  {String} completed  Callback function on completion
+ * @return {Object}            A scene object
+ */
+exports.animate = function(proto, properties, opts) {
+	var i, ctor, s,
+		ctors = utils.isArray(proto) ? proto : [proto];
+	
+	for (i = 0; (ctor = ctors[i]); i++) {
+		s = new scene(ctor, properties);
+		if (opts && opts.delay) opts.delay += opts.delay;
+		utils.mixin(s, opts);
+	}
+	return s;
 };
