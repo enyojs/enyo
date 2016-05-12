@@ -283,19 +283,22 @@ function sceneConstructor(actor) {
      * @public
      */
     this.addAnimation = function(newProp, span) {
-        if (_prevDur === 0 && span === 0) {
-            _poses[0] = {
-                animate: newProp,
-                span: 0
-            };
-        } else {
-            _prevDur = span || _prevDur;
-            this.span += _prevDur;
+        var delay = newProp.delay;
+        if (delay) {
+            this.span += delay;
             _poses.push({
-                animate: newProp,
+                animate: {
+                    duration: delay
+                },
                 span: this.span
             });
         }
+        _prevDur = span || _prevDur;
+        this.span += _prevDur;
+        _poses.push({
+            animate: newProp,
+            span: this.span
+        });
     };
     /**
      * Adds new animation on the actors in a parent scene.
@@ -338,12 +341,7 @@ function sceneConstructor(actor) {
  */
 function rolePlay(t, actor) {
     actor = actor || this;
-
-    if (actor.delay > 0) {
-        actor.delay -= (t * actor.speed);
-    } else {
-        actor.timeline += (t * actor.speed);
-    }
+    actor.timeline += (t * actor.speed);
 
     if (actor.seekInterval !== 0) {
         if ((actor.seekInterval - actor.timeline) * actor.speed < 0) {

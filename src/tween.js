@@ -51,7 +51,7 @@ module.exports = {
 
         if (pose.props) {
             for (k in pose.props) {
-                if (!pose._endAnim[k] || k === 'duration' || k === 'ease') {
+                if (k === 'delay' || k === 'duration' || k === 'ease' || !pose._endAnim[k]) {
                     continue;
                 }
 
@@ -60,7 +60,7 @@ module.exports = {
                 oldState = utils.cloneArray(pose._startAnim[k]);
                 
                 if (ease && (typeof ease !== 'function')) {
-                    if (k == 'rotate') {
+                    if (k === 'rotate') {
                         points[k] = points[k] || 
                             this.bezierSPoints(ease, oldState, newState, pose.props[k], points[k]);
                         fn = this.bezierSpline;
