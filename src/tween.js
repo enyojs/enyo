@@ -464,9 +464,7 @@ function getAnimatedProperty(node, props, initial) {
                 tP.rotate = tP.rotate ? transform.Quaternion.multiplication(tP.rotate, v) : v;
             } else {
                 t = k.replace(/[XYZ]$/, '');
-                tP[t] = tP[t] ? tP[t].map(function(num, id) {
-                    return num + v[id];
-                }) : v;
+                tP[t] = tP[t] ? merge(tP[t], v) : v;
             }
             if (k.match(/[XYZ]$/)) {
                 t = k.replace(/[XYZ]$/, '');
@@ -500,6 +498,13 @@ function getAnimatedProperty(node, props, initial) {
         matrix: m,
         props: props
     };
+}
+
+function merge (ar1, ar2) {
+	ar1.map(function(num, id) {
+        return num + ar2[id];
+    });
+    return ar1;
 }
 
 
@@ -610,7 +615,7 @@ function toPropertyValue(prop, val, ret) {
         val = 'rgb(' + val.slice(0, 3).map(function(v) {
             return parseInt(v, 10);
         }) + ') ' + val.slice(3).map(function(v) {
-            return v + 'px'
+            return v + 'px';
         }).join(' ');
     } else {
         val = val[0] + 'px';
