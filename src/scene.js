@@ -58,6 +58,34 @@ var SceneAction = {
         });
         return is_same;
     },
+    sceneConstAction: function(ts, pose) {
+        var past, index, tm,
+            dur = this.span;
+
+        if (_actor && _actor.generated) {
+            tm = rolePlay(ts, this);
+            if (isNaN(tm) || tm < 0) return pose;
+            else if (tm <= dur) {
+                if (SceneAction.actorsIds.indexOf(this.id) === -1) {
+                    SceneAction.actorsIds.push(this.id);
+                }
+                index = animateAtTime(_poses, tm);
+                pose = this.getAnimation(index);
+                past = index ? this.getAnimation(index - 1).span : 0;
+                if (pose.animate instanceof this.constructor === true) {
+                    pose.animate.speed = this.speed;
+                    pose.animate.action(ts);
+                } else {
+                    _update(pose, _actor, tm - past, pose.span - past);
+                }
+                this.step && this.step(_actor);
+            } else {
+                this.timeline = this.repeat ? 0 : this.span;
+                if (!this.repeat) this.cut();
+            }
+        }
+        return pose;
+    },
     /**
      * This function initiates action on the animation
      * from the list of animations for a given scene.
@@ -68,42 +96,49 @@ var SceneAction = {
      * @private
      */
     action: function(ts, pose) {
-        var i, role, actor,
+
+        var i, role, actor, rolePlays,
             s, e,
             sts = 0,
             tm = this.timeline,
             th = this.threshold || this.span;
+        rolePlays = this.rolePlays;
 
-        if (this.rolePlays && this.rolePlays.length > 0 && this.animating === true) {
-            if (this.actorsIds.length !== 0 && this.completedActors.length !== 0 && this.compareArrays(this.actorsIds, this.completedActors) === true) {
-                this.animating = false;
-            }
-            s = animateAtTime(this.rolePlays, tm);
-            e = animateAtTime(this.rolePlays, tm + th);
-            e += e == s ? 1 : 0;
+        if (this.sequencing && this.sequencing === true) {
+            sceneConstAction(ts, pose);
+        } else {
+            if (rolePlays && rolePlays.length > 0 && this.animating === true) {
+                if (this.actorsIds.length !== 0 && this.completedActors.length !== 0 && this.compareArrays(this.actorsIds, this.completedActors) === true) {
+                    this.animating = false;
+                    this.completedAction = true;
+                }
+                s = animateAtTime(rolePlays, tm);
+                e = animateAtTime(rolePlays, tm + th);
+                e += e == s ? 1 : 0;
 
-            for (i = 0;
-                (role = this.rolePlays[i]); i++) {
-                actor = role.actor;
-                if (i < s) {
-                    actor.active = true;
-                    actor.timeline = role.dur;
-                    pose = actor.action(0, pose);
-                    actor.cut();
-                } else if (i >= s && i < e) {
-                    actor.active = true;
-                    sts += ts;
-                    actor.speed = this.speed;
-                    actor.repeat = this.repeat;
-                    pose = actor.action(ts, pose);
-                } else {
-                    if (actor.active) {
+                for (i = 0;
+                    (role = rolePlays[i]); i++) {
+                    actor = role.actor;
+                    if (i < s) {
+                        actor.active = true;
+                        actor.timeline = role.dur;
                         pose = actor.action(0, pose);
                         actor.cut();
+                    } else if (i >= s && i < e) {
+                        actor.active = true;
+                        sts += ts;
+                        actor.speed = this.speed;
+                        actor.repeat = this.repeat;
+                        pose = actor.action(ts, pose);
+                    } else {
+                        if (actor.active) {
+                            pose = actor.action(0, pose);
+                            actor.cut();
+                        }
                     }
                 }
+                tm = rolePlay(sts);
             }
-            tm = rolePlay(sts);
         }
         return pose;
     }
@@ -167,7 +202,8 @@ function sceneConstructor(actor) {
             if (since < 0) since = 0;
             if (since <= dur && dur !== 0) {
                 t = since / dur;
-                tween.step(actor, pose, t, dur);
+                // tween.step(actor, pose, t, dur);
+                tween.step(actor, pose, (t > 0.98) ? 1 : t, dur);
             } else {
                 tween.step(actor, pose, 1, dur);
             }
@@ -218,7 +254,12 @@ function sceneConstructor(actor) {
                 index = animateAtTime(_poses, tm);
                 pose = this.getAnimation(index);
                 past = index ? this.getAnimation(index - 1).span : 0;
-                _update(pose, _actor, tm - past, pose.span - past);
+                if (pose.animate instanceof this.constructor === true) {
+                    pose.animate.speed = this.speed;
+                    pose.animate.action(ts);
+                } else {
+                    _update(pose, _actor, tm - past, pose.span - past);
+                }
                 this.step && this.step(_actor);
             } else {
                 this.timeline = this.repeat ? 0 : this.span;
@@ -283,6 +324,7 @@ function sceneConstructor(actor) {
      * @public
      */
     this.addAnimation = function(newProp, span) {
+        span = span ? span : newProp.span;
         var delay = newProp.delay;
         if (delay) {
             this.span += delay;
