@@ -566,9 +566,10 @@ exports.createFromKind = function(nom, param) {
  * Interface which accepts the animation details and returns a scene object
  * @param  {Array} proto      Actors 
  * @param  {Object} properties Animation Properties
- * @param  {number} duration   Animation duration
  * @param  {String} completed  Callback function on completion
- * @return {Object}            A scene object
+ * @return {Object}            A scene constructor object
+ * @memberOf module:enyo/AnimationSupport/Actor
+ * @public
  */
 kind.animate = function(proto, properties, completed) {
     var rolePlays, sctor, parentScene;
@@ -597,7 +598,15 @@ kind.animate = function(proto, properties, completed) {
     parentScene.completed = completed;
     return parentScene;
 };
-
+/**
+ * Interface for Sequence animations which accepts the animation details and returns a scene object
+ * @param  {Array} actors      Actors 
+ * @param  {Object} properties Animation Properties
+ * @param  {String} completed  Callback function on completion
+ * @return {Object}            A scene constructor object
+ * @memberOf module:enyo/AnimationSupport/Actor
+ * @public
+ */
 kind.sequenceAnimate = function(actors, properties, completed) {
     var actorsList, arrayCheck, rolePlays, sctor, parentScene, sceneLocal;
     actorsList = actors;
@@ -614,7 +623,6 @@ kind.sequenceAnimate = function(actors, properties, completed) {
             kind.statics.extend(AnimationSupport, sceneLocal);
             parentScene.addAnimation(sceneLocal);
         }
-        // parentScene.threshold = parentScene.rolePlays.length * parentScene.span;
         parentScene.completed = completed;
         return parentScene;
     } else {

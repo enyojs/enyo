@@ -47,9 +47,28 @@ var SceneAction = {
      * @type {Array}
      */
     rolePlays: [],
+    /**
+     * An Array of ids of all the actors participating in animation for a scene.
+     * @memberOf module:enyo/AnimationSupport/Scene
+     * @public
+     * @type {Array}
+     */
     actorsIds: [],
+    /**
+     * An array of ids of all the animation completed actors.
+     * @memberOf module:enyo/AnimationSupport/Scene
+     * @public
+     * @type {Array}
+     */
     completedActors: [],
-
+    /**
+     * This function compares two arrays to know whether they are same or not.
+     * @memberOf module:enyo/AnimationSupport/Scene
+     * @private
+     * @param  {Array} array1 First Array
+     * @param  {Array} array2 Second Array
+     * @return {Boolean} True => Both arrays are same; False => Arrays are not same.
+     */
     compareArrays: function(array1, array2) {
         var array1 = array1;
         var array2 = array2;
@@ -58,7 +77,15 @@ var SceneAction = {
         });
         return is_same;
     },
-    
+    /**
+     * This function initiates action on the animation
+     * from the list of animations for a given scene in sequence of actors.
+     * @param  {number} ts   - timespan
+     * @param  {Object} pose - pose from the animation list
+     * @return {Object}      - pose
+     * @memberOf module:enyo/AnimationSupport/Scene
+     * @private
+     */
     sceneConstAction: function(ts, pose) {
         var past, index, tm,
             dur = this.span;
