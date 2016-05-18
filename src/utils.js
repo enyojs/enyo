@@ -1255,22 +1255,22 @@ exports.remove = function (array, el) {
  */
 exports.formatCSSValues = function (val, prop, length) {
 	var res;
-	if (typeof val === 'function' || this.isArray(val)) {
+	if (typeof val === 'function') {
 		return val;
+	}
+	if (prop === 'duration') {
+		val = 0;
 	}
 	if (SHADOW[prop] || COLOR[prop]) {
 		if (val === 'none') {
-			return Array(7).fill(0);
-		}
-		if (val.indexOf('rgb') === 0) {
-			res = this.stringToMatrix(val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1].split(' ').join()));
+			val = Array(7).fill(0);
+		} else if (val.indexOf('rgb') === 0) {
+			val = val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1].split(' ').join());
 		} else {
-			res = this.stringToMatrix(val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,''));
+			val = val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,'');
 		}
 	}
-	if (prop === 'duration') {
-		return 0;
-	}
+	res = this.stringToMatrix(val);
 	return length ? res.concat(Array(length - res.length).fill(0)): res;
 };
 

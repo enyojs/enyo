@@ -58,6 +58,7 @@ var SceneAction = {
         });
         return is_same;
     },
+    
     sceneConstAction: function(ts, pose) {
         var past, index, tm,
             dur = this.span;
@@ -262,7 +263,9 @@ function sceneConstructor(actor) {
                 }
                 this.step && this.step(_actor);
             } else {
-                this.timeline = this.repeat ? 0 : this.span;
+                if (this.repeat === true)
+                    this.repeat = Infinity;
+                this.timeline = this.repeat-- ? 0 : this.span;
                 if (!this.repeat) this.cut();
             }
         }
