@@ -263,10 +263,10 @@ function sceneConstructor(actor) {
                 }
                 this.step && this.step(_actor);
             } else {
-                if (this.repeat === true)
-                    this.repeat = Infinity;
-                this.timeline = this.repeat-- ? 0 : this.span;
-                if (!this.repeat) this.cut();
+                if (typeof this.repeat === "boolean")
+                    this.repeat = this.repeat ? Infinity : 1;
+                this.timeline = --this.repeat ? 0 : this.span;
+                if (this.timeline === this.span) this.cut();
             }
         }
         return pose;
