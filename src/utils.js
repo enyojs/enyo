@@ -890,18 +890,21 @@ exports.indexBy = function (property, array, filter) {
 * @public
 */
 var clone = exports.clone = function (base, quick) {
-	if (base) {
+	try {
+		if (base) {
 
-		// avoid the overhead of calling yet another internal function to do type-checking
-		// just copy the array and be done with it
-		if (base instanceof Array) return base.slice();
-		else if (base instanceof Object) {
-			return quick ? Object.create(base) : mixin({}, base);
+			// avoid the overhead of calling yet another internal function to do type-checking
+			// just copy the array and be done with it
+			if (base instanceof Array) return base.slice();
+			else if (base instanceof Object) {
+				return quick ? Object.create(base) : mixin({}, base);
+			}
 		}
-	}
 
-	// we will only do this if it is not an array or native object
-	return base;
+		// we will only do this if it is not an array or native object
+		return base;
+	} catch(err) {
+	}
 };
 
 var empty = {};
@@ -949,6 +952,8 @@ var mixin = exports.mixin = function () {
 		opts = arguments[2],
 		val;
 
+	try {
+
 	if (!ret) ret = {};
 	else if (ret instanceof Array) {
 		opts = src;
@@ -977,6 +982,10 @@ var mixin = exports.mixin = function () {
 	}
 
 	return ret;
+
+	} catch(err) {
+
+	}
 };
 
 /**
@@ -1283,8 +1292,11 @@ exports.merge = function (/* _arrays_ */) {
 * @public
 */
 var cloneArray = exports.cloneArray = function (array, offset, initialArray) {
-	var ret = initialArray || [];
-	for(var i = offset || 0, l = array.length; i<l; i++){
+	var
+		ret = initialArray || [],
+		_offset = offset ? offset : 0;
+
+	for(var i = _offset || 0, l = array.length; i<l; i++){
 		ret.push(array[i]);
 	}
 	// Alternate smarter implementation:

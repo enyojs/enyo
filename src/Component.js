@@ -19,7 +19,7 @@ var
 var
 	kindPrefix = {},
 	unnamedCounter = 0;
-	
+
 /**
 * @callback module:enyo/Component~Component~EventHandler
 * @param {module:enyo/Component~Component} sender - The [component]{@link module:enyo/Component~Component} that most recently
@@ -582,13 +582,16 @@ var Component = module.exports = kind(
 	* @private
 	*/
 	getBubbleTarget: function (nom, event) {
-		if (event.delegate) return this.owner;
-		else {
-			return (
-				this.bubbleTarget
-				|| (this.cachedBubble && this.cachedBubbleTarget[nom])
-				|| this.owner
-			);
+		try {
+			if (event.delegate) return this.owner;
+			else {
+				return (
+					this.bubbleTarget
+					|| (this.cachedBubble && this.cachedBubbleTarget[nom])
+					|| this.owner
+				);
+			}
+		} catch(err) {
 		}
 	},
 
@@ -1081,7 +1084,7 @@ Component.concat = function (ctor, props) {
 */
 Component.overrideComponents = function (components, overrides, defaultKind) {
 	var omitMethods = function (k, v) {
-		var isMethod = 
+		var isMethod =
 			// If it's a function, then it's a method (unless it's
 			// a constructor passed as value for 'kind')
 			(utils.isFunction(v) && (k !== 'kind')) ||

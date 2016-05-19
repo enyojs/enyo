@@ -81,9 +81,9 @@ var kind = exports = module.exports = function (props) {
 	ctor.prototype.ctor = ctor;
 	// support pluggable 'features'
 	utils.forEach(kind.features, function(fn){ fn(ctor, props); });
-	
+
 	if (name) kindCtors[name] = ctor;
-	
+
 	return ctor;
 };
 
@@ -207,7 +207,7 @@ kind.extendMethods = function (ctor, props, add) {
 				p = proto[n] = p.fn(b? (b.prototype[n] || utils.nop): utils.nop);
 			}
 		}
-		if (utils.isFunction(p)) {
+		if (p != null && utils.isFunction(p)) {
 			if (add) {
 				proto[n] = p;
 				p.displayName = n + '()';
@@ -293,7 +293,11 @@ exports.inherit = function (fn) {
 * @private
 */
 var isInherited = exports.isInherited = function (fn) {
-	return fn && (fn instanceof Inherited);
+	if(fn instanceof Inherited) {
+		return fn && (fn instanceof Inherited);
+	} else {
+		return false;
+	}
 };
 
 

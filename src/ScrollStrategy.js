@@ -13,10 +13,10 @@ var
 	Control = require('./Control');
 
 /**
-* {@link module:enyo/ScrollStrategy~ScrollStrategy} is a helper [kind]{@glossary kind} that implements a default 
+* {@link module:enyo/ScrollStrategy~ScrollStrategy} is a helper [kind]{@glossary kind} that implements a default
 * scrolling strategy for an {@link module:enyo/Scroller~Scroller}.
-* 
-* `enyo/ScrollStrategy` is not typically created in application code. Instead, it is specified 
+*
+* `enyo/ScrollStrategy` is not typically created in application code. Instead, it is specified
 * as the value of the [strategyKind]{@link module:enyo/Scroller~Scroller#strategyKind} property of an
 * `enyo/Scroller` or {@link module:layout/List~List}, or is used by the framework implicitly.
 *
@@ -38,68 +38,73 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	published: 
+	published:
 		/** @lends module:enyo/ScrollStrategy~ScrollStrategy.prototype */ {
-		
+
 		/**
 		* Specifies how to vertically scroll.  Acceptable values are `'scroll'`, `'auto'`,
 		* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
 		* scroll strategy.
-		* 
+		*
 		* @type {String}
 		* @default 'default'
 		* @public
 		*/
 		vertical: 'default',
-		
+
 		/**
 		* Specifies how to horizontally scroll.  Acceptable values are `'scroll'`, `'auto'`,
 		* `'hidden'`, and `'default'`. The precise effect of the setting is determined by the
 		* scroll strategy.
-		* 
+		*
 		* @type {String}
 		* @default 'default'
 		* @public
 		*/
 		horizontal: 'default',
-		
+
 		/**
 		* The horizontal scroll position.
-		* 
+		*
 		* @type {Number}
 		* @default 0
 		* @public
 		*/
 		scrollLeft: 0,
-		
+
 		/**
 		* The vertical scroll position.
-		* 
+		*
 		* @type {Number}
 		* @default 0
 		* @public
 		*/
 		scrollTop: 0,
-		
+
 		/**
 		* Maximum height of the scroll content.
-		* 
+		*
 		* @type {Number}
 		* @default null
 		* @public
 		*/
 		maxHeight: null,
-		
+
 		/**
 		* Indicates whether mouse wheel may be used to move the [scroller]{@link module:enyo/Scroller~Scroller}.
-		* 
+		*
 		* @type {Boolean}
 		* @default true
 		* @public
 		*/
 		useMouseWheel: true
 	},
-	
+
+	/**
+	* @private
+	*/
+	_scrolling: false,
+
 	/**
 	* @private
 	*/
@@ -184,7 +189,7 @@ module.exports = kind(
 		this.container.applyStyle('max-height', this.maxHeight);
 	},
 
-	/** 
+	/**
 	* Scrolls to the specified position.
 	*
 	* @param {Number} x - The `x` position in pixels.
@@ -198,7 +203,7 @@ module.exports = kind(
 		}
 	},
 
-	/** 
+	/**
 	* Ensures that the given node is visible in the [scroller's]{@link module:enyo/Scroller~Scroller} viewport.
 	*
 	* @param {Node} node - The node to make visible in the [scroller's]{@link module:enyo/Scroller~Scroller}
@@ -320,7 +325,7 @@ module.exports = kind(
 
 	/**
 	* Retrieves the scroll boundaries of the [scroller]{@link module:enyo/Scroller~Scroller}.
-	* 
+	*
 	* @returns {module:enyo/Scroller~Scroller~BoundaryObject} An [object]{@glossary Object} describing the
 	*	scroll boundaries.
 	* @public
@@ -376,9 +381,9 @@ module.exports = kind(
 	},
 
 	/**
-	* Avoid allowing scroll when starting at a vertical boundary to prevent iOS from window 
+	* Avoid allowing scroll when starting at a vertical boundary to prevent iOS from window
 	* scrolling.
-	* 
+	*
 	* @private
 	*/
 	down: function (sender, e) {
@@ -389,9 +394,9 @@ module.exports = kind(
 	},
 
 	/**
-	* NOTE: Mobile native [scrollers]{@link module:enyo/Scroller~Scroller} need `touchmove`. Indicate this by 
+	* NOTE: Mobile native [scrollers]{@link module:enyo/Scroller~Scroller} need `touchmove`. Indicate this by
 	* setting the `requireTouchmove` property to `true`.
-	* 
+	*
 	* @private
 	*/
 	move: function (sender, e) {
@@ -414,14 +419,17 @@ module.exports = kind(
 	* @private
 	*/
 	domScroll: function(sender, e) {
-		if (!this._scrolling) {
-			this.doScrollStart();
+		try {
+			if (!this._scrolling) {
+				this.doScrollStart();
+			}
+			this._scrolling = true;
+			this.startJob('stopScrolling', function() {
+				this._scrolling = false;
+				this.doScrollStop();
+			}, 100);
+		} catch(err) {
 		}
-		this._scrolling = true;
-		this.startJob('stopScrolling', function() {
-			this._scrolling = false;
-			this.doScrollStop();
-		}, 100);
 	},
 
 	/**

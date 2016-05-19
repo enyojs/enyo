@@ -57,6 +57,10 @@ for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
 		break;
 	}
 }
+
+exports = module.exports = {
+};
+
 /**
 * Requests an animation callback.
 *
@@ -73,6 +77,7 @@ for (var i = 0, pl = prefix.length, p, wc, wr; (p = prefix[i]) || i < pl; i++) {
 exports.requestAnimationFrame = function(callback, node) {
 	return _requestFrame(callback, node);
 };
+
 /**
 * Cancels a requested animation callback with the specified id.
 *

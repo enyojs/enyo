@@ -498,14 +498,17 @@ var DataList = module.exports = kind(
 	* @private
 	*/
 	didScroll: function (sender, e) {
-		if (this.hasRendered && this.collection && this.collection.length > 0) {
-			if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
-				// assign this here so that if for any reason it needs to
-				// it can reset it
-				this.heightNeedsUpdate = this.widthNeedsUpdate = false;
-				this.refresh();
+		try {
+			if (this.hasRendered && this.collection && this.collection.length > 0) {
+				if (this.heightNeedsUpdate || this.widthNeedsUpdate) {
+					// assign this here so that if for any reason it needs to
+					// it can reset it
+					this.heightNeedsUpdate = this.widthNeedsUpdate = false;
+					this.refresh();
+				}
+				this.delegate.didScroll(this, e);
 			}
-			this.delegate.didScroll(this, e);
+		} catch(err) {
 		}
 		return true;
 	},
