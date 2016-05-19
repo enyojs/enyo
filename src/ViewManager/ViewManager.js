@@ -386,7 +386,7 @@ var ViewMgr = kind(
 	dragView: null,
 
 	/**
-	 * 
+	 *
 	 *
 	 * @type {Boolean}
 	 */
@@ -978,6 +978,8 @@ var ViewMgr = kind(
 		this.dragView = null;
 		this.dragBounds = this.getBounds();
 
+		this.handleDrag(sender, event);
+
 		return true;
 	},
 
@@ -1099,7 +1101,7 @@ var ViewMgr = kind(
 
 		if (draggable) {
 			this.decorateDragEvent(event);
-			dragging = 
+			dragging =
 				// check direction against orientation to ignore drags that don't apply to this. the
 				// check should only be necessary for the first drag event so it's further guarded
 				// by the special 'start' value of dragging.
@@ -1108,7 +1110,7 @@ var ViewMgr = kind(
 				// Intentionally ignoring draggable mode here so dragView will reference the
 				// becoming-active view even if we are only supporting flick and not drag
 				this.canDrag(event.direction);
-		
+
 			this.set('dragging', dragging);
 		}
 
