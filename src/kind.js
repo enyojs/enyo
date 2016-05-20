@@ -521,13 +521,16 @@ exports.createFromKind = function (nom, param) {
  * @return {Object}            A scene object
  */
 exports.animate = function(proto, properties, opts) {
-	var i, ctor, s,
-		ctors = utils.isArray(proto) ? proto : [proto];
-	
-	for (i = 0; (ctor = ctors[i]); i++) {
-		s = new scene(ctor, properties);
-		if (opts && opts.delay) opts.delay += opts.delay;
-		utils.mixin(s, opts);
+	var i, ctor, ps, s;
+
+	if (!utils.isArray(proto)) {
+		return new scene(proto, properties, opts);
 	}
-	return s;
+	
+	ps = new scene();
+	for (i = 0; (ctor = proto[i]); i++) {
+		s = new scene(ctor, properties, opts);
+		ps.addScene(s);
+	}
+	return ps;
 };

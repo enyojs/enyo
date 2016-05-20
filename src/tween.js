@@ -53,7 +53,7 @@ module.exports = {
 
         if (pose.props) {
             for (k in pose.props) {
-                if (!pose._endAnim[k] || k === 'duration' || k === 'ease') {
+                if (!pose._endAnim[k] || k === 'duration' || k === 'ease' || k === 'path') {
                     continue;
                 }
 

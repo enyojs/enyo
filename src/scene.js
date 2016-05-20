@@ -38,6 +38,10 @@ var AnimationSupport = {
 	* @public
 	*/
 	seekInterval: 0,
+	/**
+	* @public
+	*/
+	isSequence: true,
 
 	/**
 	 * Starts the animation of the <code>actor</code> given in argument.
@@ -85,24 +89,6 @@ var AnimationSupport = {
 	reverse: function () {
 		this.direction = -1;
 	},
-
-	/**
-	 * Changes the speed of the animation.</br>
-	 * Speed of the animation changed based on the <code>factor</code>.</br>
-	 * To slow down the speed use values between <b>0</b> and <b>1</b>. For Example <b>0.5</b> to reduce the speed by <b>50%</b>.</br>
-	 * To increase the speed use values above <b>1</b>. For Example <b>2</b> to increase the speed by <b>200%</b>.</br>
-	 * Animation will be paused if factor is <b>0</b>. To pause the animation use <code>{@link enyo/AnimationSupport/Editor.pause pause}</code> API.</br>
-	 * Speed will not be affected incase of negative multiplication factor.
-	 * @param  {Number} factor                                              Multiplication factor which changes the speed
-	 * @param  [Component {@link module:enyo/Component~Component}] actor     The component whose animating speed should be changed
-	 * @public
-	 */
-	// speed: function(mul, actor) {
-	//     if (mul < 0) return;
-	//     this.cache(actor);
-	//     actor = actor || this;
-	//     actor.speed *= mul;
-	// },
 
 	/**
 	 * Stops the animation of the actor given in argument.
@@ -172,7 +158,7 @@ var AnimationSupport = {
 * @wip
 * @private
 */
-var scene = module.exports = function (actor, props) {
+var scene = module.exports = function (actor, props, opts) {
 	this.id = utils.uid("@");
 	this.poses = [];
 	this.rolePlays = [];
@@ -180,6 +166,7 @@ var scene = module.exports = function (actor, props) {
 
 	this.rAFId = animation.subscribe(this, loop);
 	utils.mixin(this, AnimationSupport);
+	if (opts) utils.mixin(this, opts);
 
 	if (props) {
 		var anims = utils.isArray(props) ? props : [props];
@@ -190,34 +177,46 @@ var scene = module.exports = function (actor, props) {
 		}
 	}
 };
+scene.prototype.isActive = function () {
+	if (this.actor)
+		return this.actor.generated;
+
+	// making sure parent scenes are always active.
+	return true;
+};
 
 scene.prototype.getAnimation = function (index) {
 	return index < 0 || this.poses[index];
 };
 
 scene.prototype.addAnimation = function (newProp, span) {
-	var l = this.poses.length, old;
+	var l = this.poses.length, old,
+		newSpan = newProp instanceof this.constructor ? newProp.span : span;
 
-	if (l > 0) {
+	if (l > 0 && this.isSequence) {
 		old = this.poses[l-1];
-		span += old.span;
+		newSpan += old.span;
 	}
-	this.poses.push({animate: newProp, span: span});
-	this.span = span;
+	this.poses.push({animate: newProp, span: newSpan, dur: span});
+	this.span = newSpan;
 };
 
 scene.prototype.action = function(ts, pose) {
-	var past, index, tm,
+	var tm, i, poses,
 		dur = this.span;
 
-	if (this.actor && this.actor.generated) {
+	if (this.isActive()) {
 		tm = rolePlay(ts, this);
 		if (isNaN(tm) || tm < 0) return pose;
 		else if (tm <= dur) {
-			index = animateAtTime(this.poses, tm);
-			pose = this.poses[index];
-			past = index ? this.poses[index - 1].span : 0;
-			update(pose, this.actor, tm - past, pose.span - past);
+			poses = posesAtTime(this.poses, tm);
+			for (i = 0, pose; (pose = poses[i]); i++) {
+				if (pose instanceof this.constructor) {
+                    this.toScene(pose).action(ts);
+                } else {
+					update(pose, this.actor, (tm - (pose.span - pose.dur)), pose.dur);
+				}
+			}
 			this.step && this.step(this.actor);
 		} else {
 			if (typeof this.repeat === "boolean")
@@ -241,14 +240,27 @@ scene.prototype.cut = function () {
 	this.completed && this.completed(this.actor);
 };
 
-scene.prototype.addScene = function (scene) {
-	this.span = scene.span + this.span;
-	this.rolePlays.push({
-		scene: scene,
-		span: this.span,
-		dur: scene.span
-	});
+scene.prototype.toScene = function (scene) {
+	scene.speed = this.speed;
+	scene.direction = this.direction;
+	scene.handleLayers = this.handleLayers;
+	return scene;
 };
+
+
+scene.prototype.addScene = function (sc) {
+	var l = this.poses.length, old,
+		newSpan = sc instanceof this.constructor ? sc.span : 0;
+
+	if (l > 0 && this.isSequence) {
+		old = this.poses[l-1];
+		newSpan += old.span;
+		sc.span = newSpan;
+	}
+	this.poses.push(sc);
+	this.span = newSpan;
+};
+
 
 
 function loop (was, is) {
@@ -256,7 +268,7 @@ function loop (was, is) {
 		_ts = is - (was || 0);
 		_ts = (_ts > _framerate) ? _framerate : _ts;
 		this.action(_ts);
-	} else if(this.actor.destroyed) {
+	} else if (this.actor && this.actor.destroyed) {
 		animation.unsubscribe(this.rAFId);	
 	}
 }
@@ -311,23 +323,32 @@ function rolePlay (t, actor) {
  * @return {number}      - index of the animation
  * @private
  */
-function animateAtTime (anims, span) {
-	var startIndex = 0,
-		stopIndex = anims.length - 1,
-		middle = Math.floor((stopIndex + startIndex) / 2);
+// function animateAtTime (anims, span) {
+// 	var startIndex = 0,
+// 		stopIndex = anims.length - 1,
+// 		middle = Math.floor((stopIndex + startIndex) / 2);
 
-	if (span === 0) {
-		return startIndex;
-	}
+// 	if (span === 0) {
+// 		return startIndex;
+// 	}
 
-	while (anims[middle].span != span && startIndex < stopIndex) {
-		if (span < anims[middle].span) {
-			stopIndex = middle;
-		} else if (span > anims[middle].span) {
-			startIndex = middle + 1;
-		}
+// 	while (anims[middle].span != span && startIndex < stopIndex) {
+// 		if (span < anims[middle].span) {
+// 			stopIndex = middle;
+// 		} else if (span > anims[middle].span) {
+// 			startIndex = middle + 1;
+// 		}
 
-		middle = Math.floor((stopIndex + startIndex) / 2);
-	}
-	return (anims[middle].span != span) ? startIndex : middle;
+// 		middle = Math.floor((stopIndex + startIndex) / 2);
+// 	}
+// 	return (anims[middle].span != span) ? startIndex : middle;
+// }
+
+function posesAtTime(anims, span) {
+	function doFilter(val, idx, ar) {
+		if(idx === 0) 
+			return span <= val.span;
+		return span > ar[idx -1].span && span <= val.span;
+	};
+    return anims.filter(doFilter);
 }
