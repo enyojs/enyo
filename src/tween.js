@@ -501,7 +501,7 @@ function getAnimatedProperty(node, props, initial) {
 }
 
 function merge (ar1, ar2) {
-	ar1.map(function(num, id) {
+    ar1.map(function(num, id) {
         return num + ar2[id];
     });
     return ar1;
@@ -521,20 +521,20 @@ function formatCSSValues(val, prop, length) {
     if (typeof val === 'function') {
         return val;
     }
+    if (prop === 'duration' || prop === 'delay') {
+        val = 0;
+    }
     if (SHADOW[prop] || COLOR[prop]) {
         if (val === 'none') {
-            return Array(7).fill(0);
-        }
-        if (val.indexOf('rgb') === 0) {
-            res = stringToMatrix(val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1].split(' ').join()));
+            val = Array(7).fill(0);
+        } else if (val.indexOf('rgb') === 0) {
+            val = val.split(')')[0].replace(/^\w*\(/, '').concat(val.split(')')[1].split(' ').join());
         } else {
-            res = stringToMatrix(val.split('rgb(')[1].replace(')', ',').concat(val.split('rgb(')[0]).replace(/, $/, ''));
+            val = val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,'');
         }
     }
-    if (prop === 'duration') {
-        return 0;
-    }
-    return length ? res.concat(Array(length - res.length).fill(0)) : res;
+    res = stringToMatrix(val);
+    return length ? res.concat(Array(length - res.length).fill(0)): res;
 }
 
 function formatTransformValues(val, prop) {
@@ -543,20 +543,26 @@ function formatTransformValues(val, prop) {
         case 'translateX':
         case 'rotateX':
         case 'skewX':
-            return [parseFloat(val, 10), 0, 0];
+            res = [parseFloat(val, 10), 0, 0];
+            break;
         case 'translateY':
         case 'rotateY':
         case 'skewY':
-            return [0, parseFloat(val, 10), 0];
+            res = [0, parseFloat(val, 10), 0];
+            break;
         case 'translateZ':
         case 'rotateZ':
-            return [0, 0, parseFloat(val, 10)];
+            res = [0, 0, parseFloat(val, 10)];
+            break;
         case 'scaleX':
-            return [parseFloat(val, 10), 1, 1];
+            res = [parseFloat(val, 10), 1, 1];
+            break;
         case 'scaleY':
-            return [1, parseFloat(val, 10), 1];
+            res = [1, parseFloat(val, 10), 1];
+            break;
         case 'scaleZ':
-            return [1, 1, parseFloat(val, 10)];
+            res = [1, 1, parseFloat(val, 10)];
+            break;
         case 'matrix':
             res = transform.Matrix.identity();
             val = stringToMatrix(val.replace(/^\w*\(/, '').replace(')', ''));
@@ -571,10 +577,11 @@ function formatTransformValues(val, prop) {
             if (val.length == 16) {
                 res = val;
             }
-            return res;
+            break;
         default:
-            return stringToMatrix(val);
+            res = stringToMatrix(val);
     }
+    return res;
 }
 
 /**

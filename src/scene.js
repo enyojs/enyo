@@ -184,6 +184,8 @@ var scene = module.exports = function (actor, props) {
 	if (props) {
 		var anims = utils.isArray(props) ? props : [props];
 		for (var i = 0, anim; (anim = anims[i]); i++) {
+			if (anim.delay)
+				this.addAnimation({duration: anim.delay}, anim.delay);
 			this.addAnimation(anim, anim.duration || 0);
 		}
 	}
@@ -218,7 +220,9 @@ scene.prototype.action = function(ts, pose) {
 			update(pose, this.actor, tm - past, pose.span - past);
 			this.step && this.step(this.actor);
 		} else {
-			this.timeline = this.repeat ? 0 : this.span;
+			if (typeof this.repeat === "boolean")
+                this.repeat = this.repeat ? Infinity : 1;
+            this.timeline = --this.repeat ? 0 : this.span;
 			if(!this.repeat) this.cut();
 		}
 	}
