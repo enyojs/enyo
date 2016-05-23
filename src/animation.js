@@ -16,7 +16,7 @@ var ms = Math.round(1000/60),
 	cAF = 'cancelAnimationFrame',
 	i, pl, p, wcRAF, wrAF, wcAF,
 	_requestFrame, _cancelFrame, cancelFrame,
-	core = { ts: 0, obs: []};
+	core = { ts: 0, obs: {}};
 
 
 /*
@@ -108,8 +108,9 @@ exports.cancelAnimationFrame = function(id) {
 * @public
 */
 exports.subscribe = function(ctx,callback) {
-	core.obs.push(utils.bindSafely(ctx, callback));
-	return core.obs.length -1;
+	var id = utils.uid("rAF");
+	core.obs[id]=utils.bindSafely(ctx, callback);
+	return id;
 };
 /**
 * Unsubcribes for animation frame ticks.
@@ -119,7 +120,7 @@ exports.subscribe = function(ctx,callback) {
 * @public
 */
 exports.unsubscribe = function(id) {
-	core.obs.splice(id, 1);
+	delete core.obs[id];
 };
 
 var startrAF = function(){
@@ -190,8 +191,8 @@ Object.defineProperty(core, 'ts', {
 	},
 
 	set: function(newValue) {
-		for (var i = 0, ob; (ob = this.obs[i]); i++) {
-			ob(this.value, newValue);
+		for(var i in this.obs){
+			this.obs[i](this.value, newValue);
 		}
 		this.value = newValue;
 	}
