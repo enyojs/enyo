@@ -177,6 +177,7 @@ var scene = module.exports = function (actor, props, opts) {
 		}
 	}
 };
+
 scene.prototype.isActive = function () {
 	if (this.actor)
 		return this.actor.generated;
@@ -190,14 +191,14 @@ scene.prototype.getAnimation = function (index) {
 };
 
 scene.prototype.addAnimation = function (newProp, span) {
-	var l = this.poses.length, old,
+	var l = this.poses.length, old = 0,
 		newSpan = newProp instanceof this.constructor ? newProp.span : span;
 
 	if (l > 0 && this.isSequence) {
-		old = this.poses[l-1];
-		newSpan += old.span;
+		old = this.poses[l-1].span;
+		newSpan += old;
 	}
-	this.poses.push({animate: newProp, span: newSpan, dur: span});
+	this.poses.push({animate: newProp, span: newSpan, begin: old });
 	this.span = newSpan;
 };
 
@@ -212,9 +213,9 @@ scene.prototype.action = function(ts, pose) {
 			poses = posesAtTime(this.poses, tm);
 			for (i = 0, pose; (pose = poses[i]); i++) {
 				if (pose instanceof this.constructor) {
-					this.toScene(pose).action(ts);
-				} else {
-					update(pose, this.actor, (tm - (pose.span - pose.dur)), pose.dur);
+                    this.toScene(pose).action(ts);
+                } else {
+					update(pose, this.actor, (tm - pose.begin), (pose.span - pose.begin));
 				}
 			}
 			this.step && this.step(this.actor);
@@ -256,14 +257,16 @@ scene.prototype.toScene = function (scene) {
 
 
 scene.prototype.addScene = function (sc) {
-	var l = this.poses.length, old,
+	var l = this.poses.length, old = 0,
 		newSpan = sc instanceof this.constructor ? sc.span : 0;
 
 	if (l > 0 && this.isSequence) {
-		old = this.poses[l-1];
-		newSpan += old.span;
+		old = this.poses[l-1].span;
+		newSpan += old;
 		sc.span = newSpan;
+		sc.begin = old;
 	}
+
 	this.poses.push(sc);
 	this.span = newSpan;
 };
@@ -325,32 +328,9 @@ function rolePlay (t, actor) {
  * @return {number}      - index of the animation
  * @private
  */
-// function animateAtTime (anims, span) {
-//  var startIndex = 0,
-//      stopIndex = anims.length - 1,
-//      middle = Math.floor((stopIndex + startIndex) / 2);
-
-//  if (span === 0) {
-//      return startIndex;
-//  }
-
-//  while (anims[middle].span != span && startIndex < stopIndex) {
-//      if (span < anims[middle].span) {
-//          stopIndex = middle;
-//      } else if (span > anims[middle].span) {
-//          startIndex = middle + 1;
-//      }
-
-//      middle = Math.floor((stopIndex + startIndex) / 2);
-//  }
-//  return (anims[middle].span != span) ? startIndex : middle;
-// }
-
 function posesAtTime(anims, span) {
 	function doFilter(val, idx, ar) {
-		if(idx === 0) 
-			return span <= val.span;
-		return span > ar[idx -1].span && span <= val.span;
-	};
+		return span > (val.begin || 0) && span <= val.span;
+	}
 	return anims.filter(doFilter);
 }

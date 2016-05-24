@@ -429,7 +429,7 @@ exports.concatHandler = function (ctor, props, instance) {
 		base = base.prototype.base;
 	}
 
-	// install common statics
+	// construct scene
     if (props.scene) {
 		sctor = new scene(proto, props.scene);
 		proto.scene = sctor;
@@ -528,8 +528,9 @@ exports.animate = function(proto, properties, opts) {
 	}
 	
 	ps = new scene();
+	if (opts) utils.mixin(ps, opts);
 	for (i = 0; (ctor = proto[i]); i++) {
-		s = new scene(ctor, properties, opts);
+		s = new scene(ctor, properties);
 		ps.addScene(s);
 	}
 	return ps;
