@@ -212,17 +212,24 @@ scene.prototype.action = function(ts, pose) {
 			poses = posesAtTime(this.poses, tm);
 			for (i = 0, pose; (pose = poses[i]); i++) {
 				if (pose instanceof this.constructor) {
-                    this.toScene(pose).action(ts);
-                } else {
+					this.toScene(pose).action(ts);
+				} else {
 					update(pose, this.actor, (tm - (pose.span - pose.dur)), pose.dur);
 				}
 			}
 			this.step && this.step(this.actor);
 		} else {
 			if (typeof this.repeat === "boolean")
-                this.repeat = this.repeat ? Infinity : 1;
-            this.timeline = --this.repeat ? 0 : this.span;
-			if(!this.repeat) this.cut();
+				this.repeat = this.repeat ? Infinity : 1;
+			this.timeline = --this.repeat ? 0 : this.span;
+			if (this.repeat) {
+				this.actor.addStyles(this.actor.initalState);
+			} else {
+				if (this.fillmode === "backwards") {
+					this.actor.addStyles(this.actor.initalState);
+				}
+				this.cut();
+			}
 		}
 	}
 	return pose;
@@ -269,7 +276,7 @@ function loop (was, is) {
 		_ts = (_ts > _framerate) ? _framerate : _ts;
 		this.action(_ts);
 	} else if (this.actor && this.actor.destroyed) {
-		animation.unsubscribe(this.rAFId);	
+		animation.unsubscribe(this.rAFId);  
 	}
 }
 
@@ -297,12 +304,7 @@ function rolePlay (t, actor) {
 	actor = actor || this;
 	t = t * actor.speed * actor.direction;
 
-	if(actor.delay > 0) {
-		actor.delay -= t;
-	} else {
-		actor.timeline += t;
-	}
-
+	actor.timeline += t;
 	if(actor.seekInterval !== 0) {
 		if((actor.seekInterval-actor.timeline)*actor.speed < 0) {
 			actor.seekInterval = 0;
@@ -324,24 +326,24 @@ function rolePlay (t, actor) {
  * @private
  */
 // function animateAtTime (anims, span) {
-// 	var startIndex = 0,
-// 		stopIndex = anims.length - 1,
-// 		middle = Math.floor((stopIndex + startIndex) / 2);
+//  var startIndex = 0,
+//      stopIndex = anims.length - 1,
+//      middle = Math.floor((stopIndex + startIndex) / 2);
 
-// 	if (span === 0) {
-// 		return startIndex;
-// 	}
+//  if (span === 0) {
+//      return startIndex;
+//  }
 
-// 	while (anims[middle].span != span && startIndex < stopIndex) {
-// 		if (span < anims[middle].span) {
-// 			stopIndex = middle;
-// 		} else if (span > anims[middle].span) {
-// 			startIndex = middle + 1;
-// 		}
+//  while (anims[middle].span != span && startIndex < stopIndex) {
+//      if (span < anims[middle].span) {
+//          stopIndex = middle;
+//      } else if (span > anims[middle].span) {
+//          startIndex = middle + 1;
+//      }
 
-// 		middle = Math.floor((stopIndex + startIndex) / 2);
-// 	}
-// 	return (anims[middle].span != span) ? startIndex : middle;
+//      middle = Math.floor((stopIndex + startIndex) / 2);
+//  }
+//  return (anims[middle].span != span) ? startIndex : middle;
 // }
 
 function posesAtTime(anims, span) {
@@ -350,5 +352,5 @@ function posesAtTime(anims, span) {
 			return span <= val.span;
 		return span > ar[idx -1].span && span <= val.span;
 	};
-    return anims.filter(doFilter);
+	return anims.filter(doFilter);
 }

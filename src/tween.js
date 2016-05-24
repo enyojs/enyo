@@ -22,10 +22,16 @@ module.exports = {
      * @private
      */
     init: function(actor, pose, initial) {
+        var k;
+        actor.initalState = actor.initalState || {};
         if (!(actor && pose && pose.animate)) return;
         node = actor.hasNode();
-        utils.mixin(pose, getAnimatedProperty(node, pose.animate, initial || actor.currentState));
+        utils.mixin(pose, getAnimatedProperty(node, pose.animate, initial));
         actor.currentState = pose.currentState;
+        for (k in pose.initalState) {
+            if (k !== "delay" && k !== "duration")
+                actor.initalState[k] = actor.initalState[k] || pose.initalState[k];
+        }
         return pose;
     },
 
@@ -46,7 +52,7 @@ module.exports = {
         var k;
         domCSS = {};
         node = actor.hasNode();
-        state = actor.currentState = actor.currentState || pose.currentState || {};
+        state = utils.clone(pose.currentState || pose._startAnim);
         points = pose.controlPoints = pose.controlPoints || {};
         ease = pose.animate && pose.animate.ease ? pose.animate.ease : this.ease;
         path = pose.animate && pose.animate.path;
@@ -99,14 +105,14 @@ module.exports = {
             state.perspective
         );
         state.matrix = matrix;
-        actor.currentState = pose.currentState = state;
+        pose.currentState = state;
         domCSS = toTransformValue(matrix, domCSS);
 
         actor.addStyles(domCSS);
     },
 
     halt: function(actor, pose) {
-        var matrix = actor.currentState && actor.currentState.matrix;
+        var matrix = pose.currentState && pose.currentState.matrix;
         
         pose = transform.Matrix.decompose2D(matrix);
         domCSS = toTransformValue(pose.matrix2D);
@@ -448,6 +454,7 @@ function getAnimatedProperty(node, props, initial) {
         sP = initial ? utils.mixin({}, initial) : {},
         tP = {},
         dP = {},
+        iP = {},
         m, k, v, t,
         s = initial ? undefined : dom.getComputedStyle(node);
 
@@ -455,6 +462,7 @@ function getAnimatedProperty(node, props, initial) {
         v = sP[k];
         if (!isTransform(k)) {
             v = v || getStyleValue(s || dom.getComputedStyle(node), k);
+            iP[k] = v;
             sP[k] = formatCSSValues(v, k);
             eP[k] = formatCSSValues(props[k], k, sP[k] ? sP[k].length : sP[k]);
         } else {
@@ -484,6 +492,7 @@ function getAnimatedProperty(node, props, initial) {
         m = getStyleValue(s || dom.getComputedStyle(node), dom.getCssTransformProp());
         m = formatTransformValues(m, 'matrix');
         transform.Matrix.decompose(m, dP);
+        iP.transform = "matrix3d("+m.toString()+")";
     }
 
     for (k in dP) {
@@ -495,6 +504,7 @@ function getAnimatedProperty(node, props, initial) {
         _endAnim: eP,
         _transform: dP,
         currentState: dP,
+        initalState: iP,
         matrix: m,
         props: props
     };
