@@ -168,14 +168,15 @@ var scene = module.exports = function (actor, props, opts) {
 	utils.mixin(this, AnimationSupport);
 	if (opts) utils.mixin(this, opts);
 
-	if (props) {
-		var anims = utils.isArray(props) ? props : [props];
-		for (var i = 0, anim; (anim = anims[i]); i++) {
-			if (anim.delay)
-				this.addAnimation({duration: anim.delay}, anim.delay);
-			this.addAnimation(anim, anim.duration || 0);
-		}
-	}
+    if (props) {
+        var anims = utils.isArray(props) ? props : [props];
+        for (var i = 0, anim;
+            (anim = anims[i]); i++) {
+            if (anim.delay)
+                this.addAnimation({ duration: anim.delay }, anim.delay);
+            this.addAnimation(anim, anim.duration || 0);
+        }
+    }
 };
 
 scene.prototype.isActive = function () {
@@ -186,13 +187,71 @@ scene.prototype.isActive = function () {
 	return true;
 };
 
-scene.prototype.getAnimation = function (index) {
-	return index < 0 || this.poses[index];
+function modify(pose, currentTm) {
+    pose.span = currentTm;
+    delete pose._endAnim;
+    pose._endAnim = pose.currentState;
+    return pose;
 };
 
-scene.prototype.addAnimation = function (newProp, span) {
-	var l = this.poses.length, old = 0,
-		newSpan = newProp instanceof this.constructor ? newProp.span : span;
+function currPose(poseArr, tm, properties) {
+    var currentTime = tm;
+    for (var i = 0; i < poseArr.length; i++) {
+
+        if (poseArr[i].begin <= currentTime && poseArr[i].span >= currentTime) { // check the current Pose
+            modify(poseArr[i], currentTime);
+            poseArr.splice((i + 1), poseArr.length - (i + 1));
+            poseArr[(i + 1)] = {
+                animate: properties,
+                begin: currentTime,
+                span: currentTime + properties.duration
+            };
+            break;
+        }
+    }
+};
+
+function hasPosesCheck(poseArr) {
+    var bool;
+    for (var i = 0; i < poseArr.length; i++) {
+        bool = poseArr[i].poses ? true : false;
+        if (bool === true) {
+            break;
+        }
+    }
+    return bool;
+};
+
+function loopPose(poseArr, tm, properties) {
+    var isArrayCheck, hasPoses;
+    isArrayCheck = utils.isArray(poseArr);
+    hasPoses = hasPosesCheck(poseArr);
+
+    if (isArrayCheck === true && hasPoses === true) {
+        for (var i = 0; i < poseArr.length; i++) {
+            loopPose(poseArr[i].poses, tm, properties);
+        }
+    } else if (isArrayCheck === true && hasPoses === false) {
+        currPose(poseArr, tm, properties);
+    }
+};
+
+
+scene.prototype.setAnimation = function(properties) {
+    var currentTime, currentPose;
+    currentTime = this.timeline; // current time
+    posesList = this.poses; // gets the poses
+    loopPose(posesList, currentTime, properties);
+};
+
+scene.prototype.getAnimation = function(index) {
+    return index < 0 || this.poses[index];
+};
+
+scene.prototype.addAnimation = function(newProp, span) {
+    var l = this.poses.length,
+        old = 0,
+        newSpan = newProp instanceof this.constructor ? newProp.span : span;
 
 	if (l > 0 && this.isSequence) {
 		old = this.poses[l-1].span;
@@ -206,13 +265,14 @@ scene.prototype.action = function(ts, pose) {
 	var tm, i, poses,
 		dur = this.span;
 
-	if (this.isActive()) {
-		tm = rolePlay(ts, this);
-		if (isNaN(tm) || tm < 0) return pose;
-		else if (tm <= dur) {
-			poses = posesAtTime(this.poses, tm);
-			for (i = 0, pose; (pose = poses[i]); i++) {
-				if (pose instanceof this.constructor) {
+    if (this.isActive()) {
+        tm = rolePlay(ts, this);
+        if (isNaN(tm) || tm < 0) return pose;
+        else if (tm <= dur) {
+            poses = posesAtTime(this.poses, tm);
+            for (i = 0, pose;
+                (pose = poses[i]); i++) {
+                if (pose instanceof this.constructor) {
                     this.toScene(pose).action(ts);
                 } else {
 					update(pose, this.actor, (tm - pose.begin), (pose.span - pose.begin));
@@ -256,9 +316,10 @@ scene.prototype.toScene = function (scene) {
 };
 
 
-scene.prototype.addScene = function (sc) {
-	var l = this.poses.length, old = 0,
-		newSpan = sc instanceof this.constructor ? sc.span : 0;
+scene.prototype.addScene = function(sc) {
+    var l = this.poses.length,
+        old = 0,
+        newSpan = sc instanceof this.constructor ? sc.span : 0;
 
 	if (l > 0 && this.isSequence) {
 		old = this.poses[l-1].span;
