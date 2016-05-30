@@ -29,8 +29,7 @@ module.exports = {
         utils.mixin(pose, getAnimatedProperty(node, pose.animate, initial));
         actor.currentState = pose.currentState;
         for (k in pose.initalState) {
-            if (k !== "delay" && k !== "duration")
-                actor.initalState[k] = actor.initalState[k] || pose.initalState[k];
+            actor.initalState[k] = actor.initalState[k] || pose.initalState[k];
         }
         return pose;
     },
@@ -492,7 +491,7 @@ function getAnimatedProperty(node, props, initial) {
         m = getStyleValue(s || dom.getComputedStyle(node), dom.getCssTransformProp());
         m = formatTransformValues(m, 'matrix');
         transform.Matrix.decompose(m, dP);
-        iP.transform = "matrix3d("+m.toString()+")";
+        iP.transform = transform.Matrix.toString(m);
     }
 
     for (k in dP) {

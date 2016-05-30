@@ -168,15 +168,14 @@ var scene = module.exports = function (actor, props, opts) {
 	utils.mixin(this, AnimationSupport);
 	if (opts) utils.mixin(this, opts);
 
-    if (props) {
-        var anims = utils.isArray(props) ? props : [props];
-        for (var i = 0, anim;
-            (anim = anims[i]); i++) {
-            if (anim.delay)
-                this.addAnimation({ duration: anim.delay }, anim.delay);
-            this.addAnimation(anim, anim.duration || 0);
-        }
-    }
+	if (props) {
+		var anims = utils.isArray(props) ? props : [props];
+		for (var i = 0, anim;
+			(anim = anims[i]); i++) {
+			if (anim.delay) this.addAnimation({}, anim.delay);
+			this.addAnimation(anim, anim.duration || 0);
+		}
+	}
 };
 
 scene.prototype.isActive = function () {
@@ -188,70 +187,70 @@ scene.prototype.isActive = function () {
 };
 
 function modify(pose, currentTm) {
-    pose.span = currentTm;
-    delete pose._endAnim;
-    pose._endAnim = pose.currentState;
-    return pose;
+	pose.span = currentTm;
+	delete pose._endAnim;
+	pose._endAnim = pose.currentState;
+	return pose;
 };
 
 function currPose(poseArr, tm, properties) {
-    var currentTime = tm;
-    for (var i = 0; i < poseArr.length; i++) {
+	var currentTime = tm;
+	for (var i = 0; i < poseArr.length; i++) {
 
-        if (poseArr[i].begin <= currentTime && poseArr[i].span >= currentTime) { // check the current Pose
-            modify(poseArr[i], currentTime);
-            poseArr.splice((i + 1), poseArr.length - (i + 1));
-            poseArr[(i + 1)] = {
-                animate: properties,
-                begin: currentTime,
-                span: currentTime + properties.duration
-            };
-            break;
-        }
-    }
+		if (poseArr[i].begin <= currentTime && poseArr[i].span >= currentTime) { // check the current Pose
+			modify(poseArr[i], currentTime);
+			poseArr.splice((i + 1), poseArr.length - (i + 1));
+			poseArr[(i + 1)] = {
+				animate: properties,
+				begin: currentTime,
+				span: currentTime + properties.duration
+			};
+			break;
+		}
+	}
 };
 
 function hasPosesCheck(poseArr) {
-    var bool;
-    for (var i = 0; i < poseArr.length; i++) {
-        bool = poseArr[i].poses ? true : false;
-        if (bool === true) {
-            break;
-        }
-    }
-    return bool;
+	var bool;
+	for (var i = 0; i < poseArr.length; i++) {
+		bool = poseArr[i].poses ? true : false;
+		if (bool === true) {
+			break;
+		}
+	}
+	return bool;
 };
 
 function loopPose(poseArr, tm, properties) {
-    var isArrayCheck, hasPoses;
-    isArrayCheck = utils.isArray(poseArr);
-    hasPoses = hasPosesCheck(poseArr);
+	var isArrayCheck, hasPoses;
+	isArrayCheck = utils.isArray(poseArr);
+	hasPoses = hasPosesCheck(poseArr);
 
-    if (isArrayCheck === true && hasPoses === true) {
-        for (var i = 0; i < poseArr.length; i++) {
-            loopPose(poseArr[i].poses, tm, properties);
-        }
-    } else if (isArrayCheck === true && hasPoses === false) {
-        currPose(poseArr, tm, properties);
-    }
+	if (isArrayCheck === true && hasPoses === true) {
+		for (var i = 0; i < poseArr.length; i++) {
+			loopPose(poseArr[i].poses, tm, properties);
+		}
+	} else if (isArrayCheck === true && hasPoses === false) {
+		currPose(poseArr, tm, properties);
+	}
 };
 
 
 scene.prototype.setAnimation = function(properties) {
-    var currentTime, currentPose;
-    currentTime = this.timeline; // current time
-    posesList = this.poses; // gets the poses
-    loopPose(posesList, currentTime, properties);
+	var currentTime, currentPose;
+	currentTime = this.timeline; // current time
+	posesList = this.poses; // gets the poses
+	loopPose(posesList, currentTime, properties);
 };
 
 scene.prototype.getAnimation = function(index) {
-    return index < 0 || this.poses[index];
+	return index < 0 || this.poses[index];
 };
 
 scene.prototype.addAnimation = function(newProp, span) {
-    var l = this.poses.length,
-        old = 0,
-        newSpan = newProp instanceof this.constructor ? newProp.span : span;
+	var l = this.poses.length,
+		old = 0,
+		newSpan = newProp instanceof this.constructor ? newProp.span : span;
 
 	if (l > 0 && this.isSequence) {
 		old = this.poses[l-1].span;
@@ -265,28 +264,27 @@ scene.prototype.action = function(ts, pose) {
 	var tm, i, poses,
 		dur = this.span;
 
-    if (this.isActive()) {
-        tm = rolePlay(ts, this);
-        if (isNaN(tm) || tm < 0) return pose;
-        else if (tm <= dur) {
-            poses = posesAtTime(this.poses, tm);
-            for (i = 0, pose;
-                (pose = poses[i]); i++) {
-                if (pose instanceof this.constructor) {
-                    this.toScene(pose).action(ts);
-                } else {
+	if (this.isActive()) {
+		tm = rolePlay(ts, this);
+		if (isNaN(tm) || tm < 0) return pose;
+		else if (tm <= dur) {
+			poses = posesAtTime(this.poses, tm);
+			for (i = 0, pose;
+				(pose = poses[i]); i++) {
+				if (pose instanceof this.constructor) {
+					this.toScene(pose).action(ts);
+				} else {
 					update(pose, this.actor, (tm - pose.begin), (pose.span - pose.begin));
 				}
 			}
 			this.step && this.step(this.actor);
 		} else {
-			if (typeof this.repeat === "boolean")
-				this.repeat = this.repeat ? Infinity : 1;
+			this.repeat = REPEAT[this.repeat] || this.repeat;
 			this.timeline = --this.repeat ? 0 : this.span;
 			if (this.repeat) {
 				this.actor.addStyles(this.actor.initalState);
 			} else {
-				if (this.fillmode === "backwards") {
+				if (FILLMODE[this.fillmode]) {
 					this.actor.addStyles(this.actor.initalState);
 				}
 				this.cut();
@@ -317,9 +315,9 @@ scene.prototype.toScene = function (scene) {
 
 
 scene.prototype.addScene = function(sc) {
-    var l = this.poses.length,
-        old = 0,
-        newSpan = sc instanceof this.constructor ? sc.span : 0;
+	var l = this.poses.length,
+		old = 0,
+		newSpan = sc instanceof this.constructor ? sc.span : 0;
 
 	if (l > 0 && this.isSequence) {
 		old = this.poses[l-1].span;
@@ -395,3 +393,15 @@ function posesAtTime(anims, span) {
 	}
 	return anims.filter(doFilter);
 }
+
+var
+	REPEAT = {
+		'true': Infinity,
+		'false': 1
+	},
+	FILLMODE = {
+		'backwards': true,
+		'forwards': false,
+		'default': false,
+		'none': false
+	};
