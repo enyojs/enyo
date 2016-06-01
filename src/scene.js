@@ -172,8 +172,8 @@ var scene = module.exports = function (actor, props, opts) {
 		var anims = utils.isArray(props) ? props : [props];
 		for (var i = 0, anim;
 			(anim = anims[i]); i++) {
-			if (anim.delay) this.addAnimation({}, anim.delay);
-			this.addAnimation(anim, anim.duration || 0);
+			if (anim.delay) this.addAnimation({}, anim.delay, actor.duration);
+			this.addAnimation(anim, anim.duration || 0, actor.duration);
 		}
 	}
 };
@@ -247,9 +247,10 @@ scene.prototype.getAnimation = function(index) {
 	return index < 0 || this.poses[index];
 };
 
-scene.prototype.addAnimation = function(newProp, span) {
+scene.prototype.addAnimation = function(newProp, span, dur) {
 	var l = this.poses.length,
 		old = 0,
+		span = span.toString().match(/%$/) ? (span.replace(/%$/,'') * dur / 100) : span,
 		newSpan = newProp instanceof this.constructor ? newProp.span : span;
 
 	if (l > 0 && this.isSequence) {
