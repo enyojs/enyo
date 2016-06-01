@@ -517,7 +517,18 @@ exports.createFromKind = function (nom, param) {
  * @return {Object}            A scene object
  */
 exports.animate = function(proto, properties, opts) {
-	var i, ctor, ps, s;
+    var scene = scenePrepare(proto, properties, opts);
+    scene.play();
+    return scene;
+};
+
+exports.prepareAnimate = function(proto, properties, opts) {
+    var scene = scenePrepare(proto, properties, opts);
+    return scene;
+};
+
+function scenePrepare(proto, properties, opts) {
+    var i, ctor, ps, s;
 
     if (!utils.isArray(proto)) {
         return new scene(proto, properties, opts);
