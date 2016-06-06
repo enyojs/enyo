@@ -425,8 +425,7 @@ kind.statics = {
 exports.concatHandler = function(ctor, props, instance) {
 
     var proto = ctor.prototype || ctor,
-        base = proto.ctor,
-        sctor;
+        base = proto.ctor;
 
     while (base) {
         if (base.concat) base.concat(ctor, props, instance);
