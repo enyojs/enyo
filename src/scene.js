@@ -256,10 +256,10 @@ function loopPose(poseArr, tm, properties) {
  * @public
  */
 scene.prototype.setAnimation = function(properties) {
-	var currentTime, currentPose;
-	currentTime = this.timeline; // current time
-	posesList = this.poses; // gets the poses
-	loopPose(posesList, currentTime, properties);
+    var currentTime, posesList;
+    currentTime = this.timeline; // current time
+    posesList = this.poses; // gets the poses
+    loopPose(posesList, currentTime, properties);
 };
 /**
  * Gets the current animation pose.
@@ -280,10 +280,10 @@ scene.prototype.getAnimation = function(index) {
  * @public
  */
 scene.prototype.addAnimation = function(newProp, span, dur) {
-	var l = this.poses.length,
-		old = 0,
-		span = span.toString().match(/%$/) ? (span.replace(/%$/,'') * dur / 100) : span,
-		newSpan = newProp instanceof this.constructor ? newProp.span : span;
+    var l = this.poses.length,
+        old = 0,
+        spanCache = span.toString().match(/%$/) ? (span.replace(/%$/, '') * dur / 100) : span,
+        newSpan = newProp instanceof this.constructor ? newProp.span : spanCache;
 
 	if (l > 0 && this.isSequence) {
 		old = this.poses[l-1].span;
@@ -442,13 +442,41 @@ function posesAtTime(anims, span) {
 }
 
 var
-	REPEAT = {
-		'true': Infinity,
-		'false': 1
-	},
-	FILLMODE = {
-		'backwards': true,
-		'forwards': false,
-		'default': false,
-		'none': false
-	};
+    REPEAT = {
+        'true': Infinity,
+        'false': 1
+    },
+    FILLMODE = {
+        'backwards': true,
+        'forwards': false,
+        'default': false,
+        'none': false
+    };
+/**
+ * Interface which accepts the animation details and returns a scene object
+ * @param  {Array} proto      Actors 
+ * @param  {Object} properties Animation Properties
+ * @param  {number} duration   Animation duration
+ * @param  {String} completed  Callback function on completion
+ * @return {Object}            A scene object
+ */
+function animate(proto, properties, opts) {
+    var i, ctor, ps, s;
+
+    if (!utils.isArray(proto)) {
+        return new scene(proto, properties, opts);
+    }
+
+    ps = new scene();
+    if (opts) utils.mixin(ps, opts);
+    for (i = 0;
+        (ctor = proto[i]); i++) {
+        s = new scene(ctor, properties);
+        ps.addScene(s);
+    }
+    if (opts.autoPlay) {
+        ps.play();
+    }
+    return ps;
+}
+module.exports = animate;

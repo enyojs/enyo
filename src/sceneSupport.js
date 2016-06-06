@@ -5,7 +5,7 @@ var
 var SceneSupport = {
 
     create: kind.inherit(function(sup) {
-        var ctor, proto, sctor;
+        var sctor;
         return function() {
             sup.apply(this, arguments);
 

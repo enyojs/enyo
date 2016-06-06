@@ -508,38 +508,3 @@ exports.createFromKind = function (nom, param) {
 		return new Ctor(param);
 	}
 };
-/**
- * Interface which accepts the animation details and returns a scene object
- * @param  {Array} proto      Actors 
- * @param  {Object} properties Animation Properties
- * @param  {number} duration   Animation duration
- * @param  {String} completed  Callback function on completion
- * @return {Object}            A scene object
- */
-exports.animate = function(proto, properties, opts) {
-    var scene = scenePrepare(proto, properties, opts);
-    scene.play();
-    return scene;
-};
-
-exports.prepareAnimate = function(proto, properties, opts) {
-    var scene = scenePrepare(proto, properties, opts);
-    return scene;
-};
-
-function scenePrepare(proto, properties, opts) {
-    var i, ctor, ps, s;
-
-    if (!utils.isArray(proto)) {
-        return new scene(proto, properties, opts);
-    }
-
-    ps = new scene();
-    if (opts) utils.mixin(ps, opts);
-    for (i = 0;
-        (ctor = proto[i]); i++) {
-        s = new scene(ctor, properties);
-        ps.addScene(s);
-    }
-    return ps;
-};
