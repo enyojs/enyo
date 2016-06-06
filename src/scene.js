@@ -2,6 +2,10 @@ var
 	tween = require('./tween'),
 	utils = require('./utils'),
 	animation = require('./animation');
+/**
+* Contains the declaration for the {@link module:enyo/scene~scene} kind.
+* @module enyo/scene
+*/
 
 var _ts, _framerate = 16.6;
 
@@ -44,10 +48,9 @@ var AnimationSupport = {
 	isSequence: true,
 
 	/**
-	 * Starts the animation of the <code>actor</code> given in argument.
-	 * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be started.
-	 * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+	 * Starts the animation of scene.
 	 * @public
+	 * @memberOf module:enyo/scene
 	 */
 	play: function () {
 		this.direction = this.speed = 1;
@@ -59,9 +62,8 @@ var AnimationSupport = {
 	},
 
 	/**
-	 * Resumes the paused animation of the <code>actor</code> given in argument.
-	 * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be resumed.
-	 * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+	 * Resumes the paused animation of scene.
+	 * @memberOf module:enyo/scene
 	 * @public
 	 */
 	resume: function() {
@@ -70,9 +72,8 @@ var AnimationSupport = {
 	},
 
 	/**
-	 * Pauses the animation of the <code>actor</code> given in argument.
-	 * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be paused.
-	 * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+	 * Pauses the animation of scene.
+	 * @memberOf module:enyo/scene
 	 * @public
 	 */
 	pause: function () {
@@ -81,9 +82,8 @@ var AnimationSupport = {
 	},
 
 	/**
-	 * Reverses the animation of the <code>actor</code> given in argument.
-	 * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be reversed.
-	 * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+	 * Reverses the animation of scene.
+	 * @memberOf module:enyo/scene
 	 * @public
 	 */
 	reverse: function () {
@@ -91,9 +91,8 @@ var AnimationSupport = {
 	},
 
 	/**
-	 * Stops the animation of the actor given in argument.
-	 * If actor is not provided, animation of all the components linked to the {@link module:enyo/AnimationSupport/Scene} will be stopped.
-	 * @param  [Component]{@link module:enyo/Component~Component} actor    The component to be animated
+	 * Stops the animation of scene.
+	 * @memberOf module:enyo/scene
 	 * @public
 	 */
 	stop: function () {
@@ -102,10 +101,10 @@ var AnimationSupport = {
 	},
 
 	/**
-	 * Seeks the animation of the <code>actor</code> to the position provided in <code>seek</code>
+	 * Seeks the animation to the position provided in <code>seek</code>
 	 * The value of <code>seek</code> should be between <b>0</b> to <code>duration</code> of the animation.
-	 * @param  {Number}                                             seek    Value in seek where the animation has to be seeked
-	 * @param  [Component]{@link module:enyo/Component~Component}   actor       The component to be animated
+	 * @param  {Number} seek      where the animation has to be seeked
+	 * @memberOf module:enyo/scene
 	 * @public
 	 */
 	seek: function(seek) {
@@ -113,10 +112,10 @@ var AnimationSupport = {
 	},
 
 	/**
-	 * Seeks <code>actor</code> with animation to the position provided in <code>seek</code>
+	 * Seeks the animation to the position provided in <code>seek</code> with animation
 	 * The value of <code>seek</code> should be between <b>0</b> to <code>duration</code> of the animation.
-	 * @param  {Number}                                             seek    Value in seek where the animation has to be seeked
-	 * @param  [Component]{@link module:enyo/Component~Component}   actor       The component to be animated
+	 * @param  {Number} seek      where the animation has to be seeked
+	 * @memberOf module:enyo/scene
 	 * @public
 	 */
 	seekAnimate: function(seek) {
@@ -137,26 +136,28 @@ var AnimationSupport = {
 	//TODO: Move these events to Event Delegator
 	/**
 	 * Event to identify when the scene has done animating.
-	 * @memberOf module:enyo/AnimationSupport/Actor
+	 * @memberOf module:enyo/scene
 	 * @public
 	 */
 	completed: function() {},
 
 	/**
 	 * Event to identify when the scene has done a step(rAF updatation of time) in the animation.
-	 * @memberOf module:enyo/AnimationSupport/Actor
+	 * @memberOf module:enyo/scene
 	 * @public
 	 */
 	step: function() {}
 };
 
 /**
-* {@link module:enyo/Scene~Scene} is a work-in-progress module
+* {@link module:enyo/Scene~Scene}
 *
 * @class Scene
 * @extends module:enyo/Scene~Scene
-* @wip
-* @private
+* @param  {Object} actor      component which has to be animated
+* @param  {Object} props      properties of the component
+* @param  {Object} opts       additional options
+* @public
 */
 var scene = module.exports = function (actor, props, opts) {
 	this.id = utils.uid("@");
@@ -177,7 +178,12 @@ var scene = module.exports = function (actor, props, opts) {
 		}
 	}
 };
-
+/**
+ * Checks whether the scene is in a active state, which then can be animated
+ * @return {Boolean} generated value in true or false. true in case of the parent scene
+ * @memberOf module:enyo/scene
+ * @public
+ */
 scene.prototype.isActive = function () {
 	if (this.actor)
 		return this.actor.generated;
@@ -185,14 +191,18 @@ scene.prototype.isActive = function () {
 	// making sure parent scenes are always active.
 	return true;
 };
-
+/**
+ * @private
+ */
 function modify(pose, currentTm) {
 	pose.span = currentTm;
 	delete pose._endAnim;
 	pose._endAnim = pose.currentState;
 	return pose;
-};
-
+}
+/**
+ * @private
+ */
 function currPose(poseArr, tm, properties) {
 	var currentTime = tm;
 	for (var i = 0; i < poseArr.length; i++) {
@@ -208,8 +218,10 @@ function currPose(poseArr, tm, properties) {
 			break;
 		}
 	}
-};
-
+}
+/**
+ * @private
+ */
 function hasPosesCheck(poseArr) {
 	var bool;
 	for (var i = 0; i < poseArr.length; i++) {
@@ -219,8 +231,10 @@ function hasPosesCheck(poseArr) {
 		}
 	}
 	return bool;
-};
-
+}
+/**
+ * @private
+ */
 function loopPose(poseArr, tm, properties) {
 	var isArrayCheck, hasPoses;
 	isArrayCheck = utils.isArray(poseArr);
@@ -233,20 +247,38 @@ function loopPose(poseArr, tm, properties) {
 	} else if (isArrayCheck === true && hasPoses === false) {
 		currPose(poseArr, tm, properties);
 	}
-};
+}
 
-
+/**
+ * Sets the new animations with the properties passed.
+ * @param {Object} properties       Animation properties
+ * @memberOf module:enyo/scene
+ * @public
+ */
 scene.prototype.setAnimation = function(properties) {
 	var currentTime, currentPose;
 	currentTime = this.timeline; // current time
 	posesList = this.poses; // gets the poses
 	loopPose(posesList, currentTime, properties);
 };
-
+/**
+ * Gets the current animation pose.
+ * @param {Number} index       animation index
+ * @return {Object} pose       pose with the passed index
+ * @memberOf module:enyo/scene
+ * @public
+ */
 scene.prototype.getAnimation = function(index) {
 	return index < 0 || this.poses[index];
 };
-
+/**
+ * addAnimation is used for adding new animation with the passed properties at run time.
+ * @param {Object} newProp  animation properties for new animation
+ * @param {Number} span     span between the animation
+ * @param {Number} dur      duration for the new animation
+ * @memberOf module:enyo/scene
+ * @public
+ */
 scene.prototype.addAnimation = function(newProp, span, dur) {
 	var l = this.poses.length,
 		old = 0,
@@ -260,7 +292,9 @@ scene.prototype.addAnimation = function(newProp, span, dur) {
 	this.poses.push({animate: newProp, span: newSpan, begin: old });
 	this.span = newSpan;
 };
-
+/**
+ * @private
+ */
 scene.prototype.action = function(ts, pose) {
 	var tm, i, poses,
 		dur = this.span;
@@ -294,7 +328,9 @@ scene.prototype.action = function(ts, pose) {
 	}
 	return pose;
 };
-
+/**
+ * @private
+ */
 scene.prototype.cut = function () {
 	if (this.handleLayers) {
 		this.speed = 0;
@@ -306,7 +342,9 @@ scene.prototype.cut = function () {
 	this.animating = false;
 	this.completed && this.completed(this.actor);
 };
-
+/**
+ * @private
+ */
 scene.prototype.toScene = function (scene) {
 	scene.speed = this.speed;
 	scene.direction = this.direction;
@@ -314,7 +352,12 @@ scene.prototype.toScene = function (scene) {
 	return scene;
 };
 
-
+/**
+ * Add a new animation scene for the animation.
+ * @param {Object} sc scene which has to be added
+ * @memberOf module:enyo/scene
+ * @public
+ */
 scene.prototype.addScene = function(sc) {
 	var l = this.poses.length,
 		old = 0,
@@ -331,18 +374,21 @@ scene.prototype.addScene = function(sc) {
 	this.span = newSpan;
 };
 
-
-
+/**
+ * @private
+ */
 function loop (was, is) {
 	if (this.animating) {
 		_ts = is - (was || 0);
 		_ts = (_ts > _framerate) ? _framerate : _ts;
 		this.action(_ts);
 	} else if (this.actor && this.actor.destroyed) {
-		animation.unsubscribe(this.rAFId);  
+		animation.unsubscribe(this.rAFId);
 	}
 }
-
+/**
+ * @private
+ */
 function update (pose, actor, since, dur) {
 	var t;
 	if (!pose._startAnim) tween.init(actor, pose);
@@ -374,15 +420,15 @@ function rolePlay (t, actor) {
 			actor.speed = 0;
 		}
 	}
-	
+
 	if (actor.timeline === undefined || actor.timeline < 0)
 		actor.timeline = 0;
 	return actor.timeline;
 }
 
 /**
- * Returns animation pose index for a particular 
- * instance of time from the list of 
+ * Returns animation pose index for a particular
+ * instance of time from the list of
  * animations added to the scene.
  * @param  {number} span - Time span from the animation timeline
  * @return {number}      - index of the animation
