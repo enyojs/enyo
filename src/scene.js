@@ -229,7 +229,6 @@ function hasPropCheck(poseArr, propCheck) {
     } else {
         for (var i = 0; i < poseArr.length; i++) {
             bool = poseArr[i][propCheck] ? true : false;
-            console.log(bool);
             if (bool === true) {
                 break;
             }
@@ -265,10 +264,9 @@ function loopPose(poseArr, propCheck) {
  */
 scene.prototype.setAnimation = function(properties) {
     var currentPose, currentTime, posesList;
-    currentTime = this.timeline; // current time
-    posesList = this.poses; // gets the poses
-    currentPose = loopPose(posesList, "poses");
-   
+    currentTime = this.timeline;
+    posesList = this.poses;
+    currentPose = loopPose(posesList, "poses");   
     currPose(currentPose, currentTime, properties);
 };
 /**
