@@ -222,31 +222,39 @@ function currPose(poseArr, tm, properties) {
 /**
  * @private
  */
-function hasPosesCheck(poseArr) {
-	var bool;
-	for (var i = 0; i < poseArr.length; i++) {
-		bool = poseArr[i].poses ? true : false;
-		if (bool === true) {
-			break;
-		}
-	}
-	return bool;
+function hasPropCheck(poseArr, propCheck) {
+    var bool;
+    if (!utils.isArray(poseArr)) {
+        bool = poseArr[propCheck] ? true : false;
+    } else {
+        for (var i = 0; i < poseArr.length; i++) {
+            bool = poseArr[i][propCheck] ? true : false;
+            console.log(bool);
+            if (bool === true) {
+                break;
+            }
+        }
+    }
+    return bool;
 }
 /**
  * @private
  */
-function loopPose(poseArr, tm, properties) {
-	var isArrayCheck, hasPoses;
-	isArrayCheck = utils.isArray(poseArr);
-	hasPoses = hasPosesCheck(poseArr);
-
-	if (isArrayCheck === true && hasPoses === true) {
-		for (var i = 0; i < poseArr.length; i++) {
-			loopPose(poseArr[i].poses, tm, properties);
-		}
-	} else if (isArrayCheck === true && hasPoses === false) {
-		currPose(poseArr, tm, properties);
-	}
+function loopPose(poseArr, propCheck) {
+    var isArrayCheck, hasProp, currNode;
+    isArrayCheck = utils.isArray(poseArr);
+    currNode = poseArr;
+    hasProp = hasPropCheck(poseArr, propCheck);
+    if (hasProp === true) {
+        if (isArrayCheck === true) {
+            for (var i = 0; i < poseArr.length; i++) {
+                currNode = loopPose(currNode[i].poses, propCheck);
+            }
+        } else {
+            currNode = loopPose(currNode.poses, propCheck);
+        }
+    }
+    return currNode;
 }
 
 /**
@@ -256,10 +264,12 @@ function loopPose(poseArr, tm, properties) {
  * @public
  */
 scene.prototype.setAnimation = function(properties) {
-    var currentTime, posesList;
+    var currentPose, currentTime, posesList;
     currentTime = this.timeline; // current time
     posesList = this.poses; // gets the poses
-    loopPose(posesList, currentTime, properties);
+    currentPose = loopPose(posesList, "poses");
+   
+    currPose(currentPose, currentTime, properties);
 };
 /**
  * Gets the current animation pose.
