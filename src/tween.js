@@ -23,13 +23,13 @@ module.exports = {
      */
     init: function(actor, pose, initial) {
         var k;
-        actor.initalState = actor.initalState || {};
+        actor.initialState = actor.initialState || {};
         if (!(actor && pose && pose.animate)) return;
         node = actor.hasNode();
         utils.mixin(pose, getAnimatedProperty(node, pose.animate, initial));
         actor.currentState = pose.currentState;
-        for (k in pose.initalState) {
-            actor.initalState[k] = actor.initalState[k] || pose.initalState[k];
+        for (k in pose.initialState) {
+            actor.initialState[k] = actor.initialState[k] || pose.initialState[k];
         }
         return pose;
     },
@@ -503,7 +503,7 @@ function getAnimatedProperty(node, props, initial) {
         _endAnim: eP,
         _transform: dP,
         currentState: dP,
-        initalState: iP,
+        initialState: iP,
         matrix: m,
         props: props
     };

@@ -229,9 +229,7 @@ function hasPropCheck(poseArr, propCheck) {
     } else {
         for (var i = 0; i < poseArr.length; i++) {
             bool = poseArr[i][propCheck] ? true : false;
-            if (bool === true) {
-                break;
-            }
+            if (bool) break;
         }
     }
     return bool;
@@ -240,21 +238,29 @@ function hasPropCheck(poseArr, propCheck) {
  * @private
  */
 function loopPose(poseArr, propCheck) {
-    var isArrayCheck, hasProp, currNode;
-    isArrayCheck = utils.isArray(poseArr);
-    currNode = poseArr;
-    hasProp = hasPropCheck(poseArr, propCheck);
-    if (hasProp === true) {
-        if (isArrayCheck === true) {
+    var parentNode, currNode = poseArr;
+    if (hasPropCheck(poseArr, propCheck)) {
+        if (utils.isArray(poseArr)) {
             for (var i = 0; i < poseArr.length; i++) {
+            	parentNode = currNode[i];
                 currNode = loopPose(currNode[i].poses, propCheck);
             }
         } else {
+        	parentNode = currNode;
             currNode = loopPose(currNode.poses, propCheck);
         }
     }
-    return currNode;
+    return parentNode ? parentNode[propCheck] : parentNode;
 }
+
+/**
+ * @private
+ */
+function addInitialStyle(node) {
+	node = node.actor ? node : loopPose(node.poses, "actor");
+	node = node.actor || node;
+	node.addStyles(node.initialState);
+};
 
 /**
  * Sets the new animations with the properties passed.
@@ -266,7 +272,7 @@ scene.prototype.setAnimation = function(properties) {
     var currentPose, currentTime, posesList;
     currentTime = this.timeline;
     posesList = this.poses;
-    currentPose = loopPose(posesList, "poses");   
+    currentPose = loopPose(posesList, "poses");
     currPose(currentPose, currentTime, properties);
 };
 /**
@@ -324,11 +330,11 @@ scene.prototype.action = function(ts, pose) {
 		} else {
 			this.repeat = REPEAT[this.repeat] || this.repeat;
 			this.timeline = --this.repeat ? 0 : this.span;
-			if (this.repeat) {
-				this.actor.addStyles(this.actor.initalState);
+			if (this.repeat > 0) {
+				addInitialStyle(this);
 			} else {
 				if (FILLMODE[this.fillmode]) {
-					this.actor.addStyles(this.actor.initalState);
+					addInitialStyle(this);
 				}
 				this.cut();
 			}
@@ -452,7 +458,7 @@ function posesAtTime(anims, span) {
 var
     REPEAT = {
         'true': Infinity,
-        'false': 1
+        'false': 0
     },
     FILLMODE = {
         'backwards': true,
