@@ -1,3 +1,7 @@
+/**
+* Contains the declaration for the {@link module:enyo/transform~transform} kind.
+* @module enyo/transform
+*/
 require('enyo');
 
 /**
@@ -292,7 +296,7 @@ exports.Matrix = {
 	 * To multiply 2 Martix3d (n*n order)
 	 * @param  {Number[]} m1 1st Matrix3d
 	 * @param  {Number[]} m2 2nd Matrix3d
-	 * @return {[type]}    Resultant Matrix3d
+	 * @return {Number[]}    Resultant Matrix3d
 	 */
 	multiplyN: function(m1, m2) {
 		var i, j, sum,
