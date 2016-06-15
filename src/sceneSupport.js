@@ -8,9 +8,9 @@ var SceneSupport = {
         var sctor;
         return function() {
             sup.apply(this, arguments);
-
-            if (this.scene) {
-                sctor = new scene(this, this.scene);
+            sctor = this.scene;
+            if (sctor) {
+                sctor = scene(this, sctor);
                 this.scene = sctor;
             }
         };

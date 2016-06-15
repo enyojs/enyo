@@ -109,7 +109,7 @@ exports.cancelAnimationFrame = function(id) {
 */
 exports.subscribe = function(ctx,callback) {
 	var id = utils.uid("rAF");
-	core.obs[id]=utils.bindSafely(ctx, callback);
+	core.obs[id] = utils.bindSafely(ctx, callback);
 	return id;
 };
 /**
