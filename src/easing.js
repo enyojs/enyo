@@ -174,7 +174,7 @@ var easing = module.exports = {
 	* @public
 	*/
 	bounceIn: function(t) {
-		return 1 - easing.easeOutBounce(1 - t);
+		return 1 - easing.bounceOut(1 - t);
 	},
 	/**
 	* Deaccelerating with a bouncing effect
@@ -196,8 +196,8 @@ var easing = module.exports = {
 	* @public
 	*/
 	bounceInOut: function(t) {
-		if (t < 0.5) return easing.easeInBounce(t * 2) * 0.5;
-		return easing.easeOutBounce(t * 2 - 1) * 0.5 + 0.5;
+		if (t < 0.5) return easing.bounceIn(t * 2) * 0.5;
+		return easing.bounceOut(t * 2 - 1) * 0.5 + 0.5;
 	},
 	/**
 	* Accelerating as a spring oscillating back and forth until it comes to rest
