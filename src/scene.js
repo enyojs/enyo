@@ -306,6 +306,7 @@ scene.prototype.getAnimation = function(index) {
  * @public
  */
 scene.prototype.addAnimation = function(newProp, span, dur) {
+	dur = dur || this.span;
 	var l = this.poses.length,
 		old = 0,
 		spanCache = span.toString().match(/%$/) ? (span.replace(/%$/, '') * dur / 100) : span,
@@ -535,7 +536,7 @@ function loopPose(poseArr, propCheck) {
 /**
  * @private
  */
-function addInitialStyle(node) {
+function applyInitialStyle(node) {
 	node = node.actor ? node : loopPose(node.poses, "actor");
 	node = node.actor || node;
 	node.addStyles(node.initialState);
