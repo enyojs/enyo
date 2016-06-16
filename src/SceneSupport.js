@@ -1,5 +1,6 @@
 var
     kind = require('./kind'),
+    utils = require('./utils'),
     scene = require('./scene');
 
 var SceneSupport = {
@@ -11,6 +12,7 @@ var SceneSupport = {
             sctor = this.scene;
             if (sctor) {
                 sctor = scene(this, sctor);
+                utils.mixin(sctor, this.sceneOptions);
                 this.scene = sctor;
             }
         };

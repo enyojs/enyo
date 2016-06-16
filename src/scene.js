@@ -269,7 +269,7 @@ function scene(actor, props, opts) {
  */
 scene.prototype.isActive = function() {
 	if (this.actor)
-		return this.actor.generated;
+		return this.actor.generated && !this.actor.destroyed;
 
 	// making sure parent scenes are always active.
 	return true;
@@ -483,7 +483,7 @@ function modify(pose, currentTm) {
 /**
  * @private
  */
-function currPose(poseArr, tm, properties) {
+function setScene(poseArr, tm, properties) {
 	var currentTime = tm;
 	for (var i = 0; i < poseArr.length; i++) {
 
@@ -502,42 +502,42 @@ function currPose(poseArr, tm, properties) {
 /**
  * @private
  */
-function hasPropCheck(poseArr, propCheck) {
-    var bool;
-    if (!utils.isArray(poseArr)) {
-        bool = poseArr[propCheck] ? true : false;
-    } else {
-        for (var i = 0; i < poseArr.length; i++) {
-            bool = poseArr[i][propCheck] ? true : false;
-            if (bool) break;
-        }
-    }
-    return bool;
+function hasScene(poseArr, propCheck) {
+	var bool;
+	if (!utils.isArray(poseArr)) {
+		bool = poseArr[propCheck] ? true : false;
+	} else {
+		for (var i = 0; i < poseArr.length; i++) {
+			bool = poseArr[i][propCheck] ? true : false;
+			if (bool) break;
+		}
+	}
+	return bool;
 }
 /**
  * @private
  */
-function loopPose(poseArr, propCheck) {
-    var parentNode, currNode = poseArr;
-    if (hasPropCheck(poseArr, propCheck)) {
-        if (utils.isArray(poseArr)) {
-            for (var i = 0; i < poseArr.length; i++) {
-            	parentNode = currNode[i];
-                currNode = loopPose(currNode[i].poses, propCheck);
-            }
-        } else {
-        	parentNode = currNode;
-            currNode = loopPose(currNode.poses, propCheck);
-        }
-    }
-    return parentNode ? parentNode[propCheck] : parentNode;
+function findScene(poseArr, propCheck) {
+	var parentNode, currNode = poseArr;
+	if (hasScene(poseArr, propCheck)) {
+		if (utils.isArray(poseArr)) {
+			for (var i = 0; i < poseArr.length; i++) {
+				parentNode = currNode[i];
+				currNode = findScene(currNode[i].poses, propCheck);
+			}
+		} else {
+			parentNode = currNode;
+			currNode = findScene(currNode.poses, propCheck);
+		}
+	}
+	return parentNode ? parentNode[propCheck] : parentNode;
 }
 
 /**
  * @private
  */
 function applyInitialStyle(node) {
-	node = node.actor ? node : loopPose(node.poses, "actor");
+	node = node.actor ? node : findScene(node.poses, "actor");
 	node = node.actor || node;
 	node.addStyles(node.initialState);
 }
