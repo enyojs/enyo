@@ -76,7 +76,7 @@ var easing = module.exports = {
 	* Halfway accelerating and then deaccelerating with fourth-degree polynomial
 	* @public
 	*/
-	easeInOutQuart: function(t) {
+	quartInOut: function(t) {
 		if ((t *= 2) < 1) return 0.5 * t * t * t * t;
 		return -0.5 * ((t -= 2) * t * t * t - 2);
 	},
