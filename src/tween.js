@@ -578,32 +578,13 @@ function formatCSSValues(val, prop) {
 * @private
 */
 function formatTransformValues(val, prop) {
-    var res;
-    switch (prop) {
-    case 'translateX':
-    case 'rotateX':
-    case 'skewX':
-        res = [parseFloat(val, 10), 0, 0];
-        break;
-    case 'translateY':
-    case 'rotateY':
-    case 'skewY':
-        res = [0, parseFloat(val, 10), 0];
-        break;
-    case 'translateZ':
-    case 'rotateZ':
-        res = [0, 0, parseFloat(val, 10)];
-        break;
-    case 'scaleX':
-        res = [parseFloat(val, 10), 1, 1];
-        break;
-    case 'scaleY':
-        res = [1, parseFloat(val, 10), 1];
-        break;
-    case 'scaleZ':
-        res = [1, 1, parseFloat(val, 10)];
-        break;
-    case 'matrix':
+    var 
+        res,
+        X, Y, Z,
+        last = prop.match(/[XYZ]$/),
+        defalt = prop.match(/scale/) ? 1 : 0;
+
+    if (prop === 'matrix') {
         res = transform.Matrix.identity();
         val = stringToMatrix(val.replace(/^\w*\(/, '').replace(')', ''));
         if (val.length <= 6) {
@@ -617,8 +598,13 @@ function formatTransformValues(val, prop) {
         if (val.length == 16) {
             res = val;
         }
-        break;
-    default:
+    } else if (last) {
+        val = parseFloat(val, 10);
+        X = (last[0] === 'X') ? val : defalt;
+        Y = (last[0] === 'Y') ? val : defalt;
+        Z = (last[0] === 'Z') ? val : defalt;
+        res = [X, Y, Z];
+    } else {
         res = stringToMatrix(val);
     }
     return res;
