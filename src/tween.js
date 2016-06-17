@@ -467,7 +467,9 @@ function getCoeff (n, k) {
 function getAnimatedProperty(node, props, initial) {
     if (!node) return;
 
-    var eP = {},
+    var 
+        diff,
+        eP = {},
         sP = initial ? utils.mixin({}, initial) : {},
         tP = {},
         dP = {},
@@ -481,7 +483,15 @@ function getAnimatedProperty(node, props, initial) {
             v = v || getStyleValue(s || dom.getComputedStyle(node), k);
             iP[k] = v;
             sP[k] = formatCSSValues(v, k);
-            eP[k] = formatCSSValues(props[k], k, sP[k] ? sP[k].length : sP[k]);
+            eP[k] = formatCSSValues(props[k], k);
+            if (sP[k].length) {
+                diff = sP[k].length - eP[k].length;
+                if(diff > 0) {
+                    eP[k] = eP[k].concat(Array(diff).fill(0));
+                } else {
+                    sP[k] = sP[k].concat(Array(-1 * diff).fill(0));
+                }
+            }
         } else {
             v = formatTransformValues(props[k], k);
             if (k.match(/rotate/)) {
@@ -541,13 +551,11 @@ function merge (ar1, ar2) {
 /**
  * Converts comma separated values to array.
  * @private
- * @param  {String} val Value of required animation in any property.
- * @param  {Number} length [description]
- * @param  {[type]} prop [description]
+ * @param  {String} val  Value of required animation in any property.
+ * @param  {String} prop Property name of which value has been provided.
  * @return {Number[]}     Create array from val.
  */
-function formatCSSValues(val, prop, length) {
-    var res;
+function formatCSSValues(val, prop) {
     if (typeof val === 'function') {
         return val;
     }
@@ -563,8 +571,7 @@ function formatCSSValues(val, prop, length) {
             val = val.split('rgb(')[1].replace(')',',').concat(val.split('rgb(')[0]).replace(/, $/,'');
         }
     }
-    res = stringToMatrix(val);
-    return length ? res.concat(Array(length - res.length).fill(0)): res;
+    return stringToMatrix(val);
 }
 
 /**
@@ -653,7 +660,9 @@ function toPropertyValue(prop, val, ret) {
     } else if (INT_UNIT[prop]) {
         val = parseInt(val[0], 10);
     } else if (BORDER[prop]) {
-        val = val[0] + '%';
+        val = val.map(function(v) {
+            return v + '%';
+        }).join(' ');
     } else if (OPACITY[prop]) {
         val = val[0].toFixed(6);
         val = (val <= 0) ? '0.000001' : val;
