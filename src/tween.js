@@ -19,7 +19,12 @@ var fn, state, ease, points, path, oldState, newState, node, matrix, cState = []
 module.exports = {
 
     /**
-     * @private
+     * Indentifies initial pose of an element.
+     * @param  {Object} actor - Element to be animated
+     * @param  {Object} pose - Current behavior in the animation (at a given time)
+     * @param  {Object} pose - Current behavior in the animation (at a given time)
+     * @memberOf module:enyo/tween
+     * @public
      */
     init: function(actor, pose, initial) {
         var k;
@@ -41,7 +46,7 @@ module.exports = {
      * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
      * @param  {Number} d - Duration of the current pose
      * @memberOf module:enyo/tween
-     * @private
+     * @public
      */
     step: function(actor, pose, t, d) {
         if (!(actor && pose && pose.animate)) return;
@@ -110,6 +115,13 @@ module.exports = {
         actor.addStyles(domCSS);
     },
 
+    /**
+     * This causes the stopped animation to be removed from GPU layer.
+     * @param  {Object} actor - Element to be animated
+     * @param  {Object} pose - Current behavior in the animation (at a given time)
+     * @memberOf module:enyo/tween
+     * @public
+     */
     halt: function(actor, pose) {
         var matrix = pose.currentState && pose.currentState.matrix;
         
@@ -122,8 +134,8 @@ module.exports = {
      * Overridden function for applying the default ease.
      * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
      * @return {Number} t
-     * @memberOf module:enyo/AnimationSupport/Tween
-     * @private
+     * @memberOf module:enyo/tween
+     * @public
      * @override
      */
     ease: function(t) {
@@ -137,8 +149,8 @@ module.exports = {
      * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
      * @param  {Number[]} vR - Resultant vector
      * @return {Number[]} vR
-     * @memberOf module:enyo/AnimationSupport/Tween
-     * @private
+     * @memberOf module:enyo/tween
+     * @public
      */
     lerp: function(vA, vB, t, vR) {
         if (!vA) return;
@@ -158,8 +170,8 @@ module.exports = {
      * @param  {Number} t - Fraction which represents the animation (between 0 to 1)
      * @param  {Number[]} qR - Resultant quaternion
      * @return {Number[]} qR
-     * @memberOf module:enyo/AnimationSupport/Tween
-     * @private
+     * @memberOf module:enyo/tween
+     * @public
      */
     slerp: function(qA, qB, t, qR) {
         if (!qA) return;
@@ -190,7 +202,8 @@ module.exports = {
      * @param  {Number[]} points - knot and control points
      * @param  {Number[]} vR - Resulting points
      * @return {Number[]} vR
-     * @memberOf module:enyo/AnimationSupport/Tween
+     * @memberOf module:enyo/tween
+     * @public
      */
     bezier: function(t, points, vR) {
         if (!points) return;
@@ -224,7 +237,8 @@ module.exports = {
      * @param  {Number[]} endPoint - End point of the curve
      * @param  {Number[]} points - control points
      * @return {Number[]} points
-     * @memberOf module:enyo/AnimationSupport/Tween
+     * @memberOf module:enyo/tween
+     * @public
      */
     bezierPoints: function(easeObj, startPoint, endPoint, points) {
         if (!easeObj) return;
@@ -268,7 +282,8 @@ module.exports = {
      * @param  {Number[]} path - Array of  points
      * @param  {Number[]} vR Resulatant Array
      * @return {Number[]} vR
-     * @memberOf module:enyo/AnimationSupport/Tween
+     * @memberOf module:enyo/tween
+     * @public
      */
     traversePath: function(t, path, vR) {
         if (!path) return;
@@ -297,7 +312,8 @@ module.exports = {
      * @param  {Number[]} endPoint - Final Destination point
      * @param  {Number[]} splinePoints - spline control points
      * @return {Number[]} splinePoints
-     * @memberOf module:enyo/AnimationSupport/Tween
+     * @memberOf module:enyo/tween
+     * @public
      */
     bezierSPoints: function(ease, startQuat, endQuat, endPoint, splinePoints) {
         if (!ease) return;
@@ -348,7 +364,8 @@ module.exports = {
      * @param  {Number[]} points - knot and control points
      * @param  {Number[]} vR - Resulting points
      * @return {Number[]} vR
-     * @memberOf module:enyo/AnimationSupport/Tween
+     * @memberOf module:enyo/tween
+     * @public
      */
     bezierSpline: function(t, points, vR) {
         if (!points) return;
@@ -376,39 +393,12 @@ module.exports = {
     },
 
     /**
-     * This function returns the coefficents based on the order and the current position
-     * @private
-     * @param  {number} n - order
-     * @param  {number} k - current position
-     * @return {object}   - coefficients
-     */
-    getCoeff: function(n, k) {
-        n = parseInt(n, 10);
-        k = parseInt(k, 10);
-        // Credits
-        // https://math.stackexchange.com/questions/202554/how-do-i-compute-binomial-coefficients-efficiently#answer-927064
-        if (isNaN(n) || isNaN(k))
-            return void 0;
-        if ((n < 0) || (k < 0))
-            return void 0;
-        if (k > n)
-            return void 0;
-        if (k === 0)
-            return 1;
-        if (k === n)
-            return 1;
-        if (k > n / 2)
-            return this.getCoeff(n, n - k);
-
-        return n * this.getCoeff(n - 1, k - 1) / k;
-    },
-
-    /**
      * Function to get the bezier coeffients based on the time and order
-     * @public
      * @param  {number} t - time
      * @param  {number} n - order
      * @return {object}   - bezier coefficients
+     * @memberOf module:enyo/tween
+     * @public
      */
     getBezierValues: function(t, n) {
         t = parseFloat(t, 10),
@@ -430,7 +420,7 @@ module.exports = {
         // Binomial theorem to expand (x+y)^n
         //
         for (var k = 0; k <= n; k++) {
-            c = this.getCoeff(n, k) * Math.pow(x, (n - k)) * Math.pow(y, k);
+            c = getCoeff(n, k) * Math.pow(x, (n - k)) * Math.pow(y, k);
             values.push(c);
         }
 
@@ -439,12 +429,40 @@ module.exports = {
 };
 
 /**
+ * This function returns the coefficents based on the order and the current position
+ * @param  {number} n - order
+ * @param  {number} k - current position
+ * @return {object}   - coefficients
+ * @private
+ */
+function getCoeff (n, k) {
+    n = parseInt(n, 10);
+    k = parseInt(k, 10);
+    // Credits
+    // https://math.stackexchange.com/questions/202554/how-do-i-compute-binomial-coefficients-efficiently#answer-927064
+    if (isNaN(n) || isNaN(k))
+        return void 0;
+    if ((n < 0) || (k < 0))
+        return void 0;
+    if (k > n)
+        return void 0;
+    if (k === 0)
+        return 1;
+    if (k === n)
+        return 1;
+    if (k > n / 2)
+        return getCoeff(n, n - k);
+
+    return n * getCoeff(n - 1, k - 1) / k;
+}
+
+/**
  * Get DOM node animation properties.
- * @public
  * @param  {HTMLElement} node    DOM node
  * @param  {Object}      props   Properties to fetch from DOM.
  * @param  {Object}      initial Default properties to be applied.
  * @return {Object}              Object with various animation properties.
+ * @private
  */
 function getAnimatedProperty(node, props, initial) {
     if (!node) return;
@@ -509,6 +527,9 @@ function getAnimatedProperty(node, props, initial) {
     };
 }
 
+/**
+* @private
+*/
 function merge (ar1, ar2) {
     ar1.map(function(num, id) {
         return num + ar2[id];
@@ -519,7 +540,7 @@ function merge (ar1, ar2) {
 
 /**
  * Converts comma separated values to array.
- * @public
+ * @private
  * @param  {String} val Value of required animation in any property.
  * @param  {Number} length [description]
  * @param  {[type]} prop [description]
@@ -546,49 +567,52 @@ function formatCSSValues(val, prop, length) {
     return length ? res.concat(Array(length - res.length).fill(0)): res;
 }
 
+/**
+* @private
+*/
 function formatTransformValues(val, prop) {
     var res;
     switch (prop) {
-        case 'translateX':
-        case 'rotateX':
-        case 'skewX':
-            res = [parseFloat(val, 10), 0, 0];
-            break;
-        case 'translateY':
-        case 'rotateY':
-        case 'skewY':
-            res = [0, parseFloat(val, 10), 0];
-            break;
-        case 'translateZ':
-        case 'rotateZ':
-            res = [0, 0, parseFloat(val, 10)];
-            break;
-        case 'scaleX':
-            res = [parseFloat(val, 10), 1, 1];
-            break;
-        case 'scaleY':
-            res = [1, parseFloat(val, 10), 1];
-            break;
-        case 'scaleZ':
-            res = [1, 1, parseFloat(val, 10)];
-            break;
-        case 'matrix':
-            res = transform.Matrix.identity();
-            val = stringToMatrix(val.replace(/^\w*\(/, '').replace(')', ''));
-            if (val.length <= 6) {
-                res[0] = val[0];
-                res[1] = val[1];
-                res[4] = val[2];
-                res[5] = val[3];
-                res[12] = val[4];
-                res[13] = val[5];
-            }
-            if (val.length == 16) {
-                res = val;
-            }
-            break;
-        default:
-            res = stringToMatrix(val);
+    case 'translateX':
+    case 'rotateX':
+    case 'skewX':
+        res = [parseFloat(val, 10), 0, 0];
+        break;
+    case 'translateY':
+    case 'rotateY':
+    case 'skewY':
+        res = [0, parseFloat(val, 10), 0];
+        break;
+    case 'translateZ':
+    case 'rotateZ':
+        res = [0, 0, parseFloat(val, 10)];
+        break;
+    case 'scaleX':
+        res = [parseFloat(val, 10), 1, 1];
+        break;
+    case 'scaleY':
+        res = [1, parseFloat(val, 10), 1];
+        break;
+    case 'scaleZ':
+        res = [1, 1, parseFloat(val, 10)];
+        break;
+    case 'matrix':
+        res = transform.Matrix.identity();
+        val = stringToMatrix(val.replace(/^\w*\(/, '').replace(')', ''));
+        if (val.length <= 6) {
+            res[0] = val[0];
+            res[1] = val[1];
+            res[4] = val[2];
+            res[5] = val[3];
+            res[12] = val[4];
+            res[13] = val[5];
+        }
+        if (val.length == 16) {
+            res = val;
+        }
+        break;
+    default:
+        res = stringToMatrix(val);
     }
     return res;
 }
@@ -603,6 +627,9 @@ function isTransform(transform) {
     return TRANSFORM[transform];
 }
 
+/**
+* @private
+*/
 function stringToMatrix(val) {
     if (!val || val === "auto" || val === 'none') {
         return 0;
@@ -612,6 +639,9 @@ function stringToMatrix(val) {
     });
 }
 
+/**
+* @private
+*/
 function toPropertyValue(prop, val, ret) {
     if (!val) return;
     ret = ret || {};
@@ -657,7 +687,7 @@ function toTransformValue (matrix, ret) {
 
 /**
  * Gets a style property applied from the DOM element.
- * @public
+ * @private
  * @param  {HTMLElement}  style Computed style of a DOM.
  * @param  {String}       key   Property name for which style has to be fetched.
  * @return {Number|HTMLElement} 
