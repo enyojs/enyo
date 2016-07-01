@@ -75,6 +75,26 @@ var ShowingTransitionSupport = {
 	hidingDuration: undefined,
 
 	/**
+	* The method to fire at the start of the "showing" transition. This may be name of a method on the
+	* component, or a function.
+	*
+	* @type {String|Function}
+	* @default undefined
+	* @public
+	*/
+	showingMethod: undefined,
+
+	/**
+	* The method to fire at the start of the "hiding" transition. This may be name of a method on the
+	* component, or a function.
+	*
+	* @type {String|Function}
+	* @default undefined
+	* @public
+	*/
+	hidingMethod: undefined,
+
+	/**
 	* The method to fire at the end of the "showing" transition. This may be name of a method on the
 	* component, or a function.
 	*
@@ -145,6 +165,8 @@ var ShowingTransitionSupport = {
 
 			this.showingDuration = (this.showingDuration === undefined) ? null      : this.showingDuration;
 			this.hidingDuration  = (this.hidingDuration  === undefined) ? null      : this.hidingDuration;
+			this.showingMethod   = (this.showingMethod   === undefined) ? null      : this.showingMethod;
+			this.hidingMethod    = (this.hidingMethod    === undefined) ? null      : this.hidingMethod;
 			this.shownMethod     = (this.shownMethod     === undefined) ? null      : this.shownMethod;
 			this.hiddenMethod    = (this.hiddenMethod    === undefined) ? null      : this.hiddenMethod;
 			this.shownClass      = (this.shownClass      === undefined) ? 'shown'   : this.shownClass;
@@ -176,6 +198,7 @@ var ShowingTransitionSupport = {
 				this.removeClass(this.hidingClass);
 				this.removeClass(this.hiddenClass);
 				sup.apply(this, args);
+				utils.call(this, this.showingMethod);	// Run the supplied method.
 				if (this.showingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					// Start transition: Apply a class and start a timer.
@@ -199,6 +222,7 @@ var ShowingTransitionSupport = {
 				// Reset our state classes, in case we switched mid-stream
 				this.removeClass(this.showingClass);
 				this.removeClass(this.shownClass);
+				utils.call(this, this.hidingMethod);	// Run the supplied method.
 				if (this.hidingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
