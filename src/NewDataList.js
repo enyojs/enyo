@@ -197,6 +197,7 @@ module.exports = kind({
 			}
 
 			this.first = f;
+			this._last = Math.min(f + this.numItems, this.collection.length) - 1;
 		}
 	},
 
