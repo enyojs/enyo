@@ -6,8 +6,7 @@
 */
 
 var kind = require('enyo/kind'),
-	utils = require('enyo/utils'),
-	Jobs = require('enyo/jobs');
+	utils = require('enyo/utils');
 
 /**
 * The {@link module:enyo/ShowingTransitionSupport~ShowingTransitionSupport} [mixin]{@glossary mixin}
