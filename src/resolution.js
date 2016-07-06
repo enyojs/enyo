@@ -80,7 +80,7 @@ var ri = module.exports = {
 
 		if (rez.height > rez.width) {
 			portrait = true;
-			const swap = rez.width;
+			var swap = rez.width;
 			rez.width = rez.height;
 			rez.height = swap;
 		}
