@@ -6,7 +6,8 @@
 */
 
 var kind = require('enyo/kind'),
-	utils = require('enyo/utils');
+	utils = require('enyo/utils'),
+	Jobs = require('enyo/jobs');
 
 /**
 * The {@link module:enyo/ShowingTransitionSupport~ShowingTransitionSupport} [mixin]{@glossary mixin}
@@ -190,10 +191,18 @@ var ShowingTransitionSupport = {
 		return function (sender, ev) {
 			var args = arguments;
 
-			// Prepare our visual state
-			this.applyStyle('display', null);
-			this.applyStyle('visibility', null);
 			if (this.showing) {
+				if (this.showingTransitioning && this._showingTransitionJobFn) {
+					// When show is called before hide animation is not finished,
+					// ensure that super call with showing false condition called before show.
+					this.showing = false;
+					this._showingTransitionJobFn();
+					this.showing = true;
+					this._showingTransitionJobFn = null;
+				}
+				// Prepare our visual state
+				this.applyStyle('display', null);
+				this.applyStyle('visibility', null);
 				// Reset our state classes, in case we switched mid-stream
 				this.removeClass(this.hidingClass);
 				this.removeClass(this.hiddenClass);
@@ -206,12 +215,13 @@ var ShowingTransitionSupport = {
 					// remove the transitioning class
 					// and add the final-state class
 					this.addClass(this.showingClass);
-					this.startJob('showingTransition', function () {
+					this._showingTransitionJobFn = function () {
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
 						utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
-					}, this.showingDuration);
+					};
+					this.startJob('showingTransition', this._showingTransitionJobFn, this.showingDuration);
 				} else {
 					// No transition, just a shown class.
 					this.stopJob('showingTransition');
@@ -219,6 +229,17 @@ var ShowingTransitionSupport = {
 					utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 				}
 			} else {
+				if (this.showingTransitioning && this._showingTransitionJobFn) {
+					// When hide is called before show animation is not finished,
+					// ensure that super call with showing true condition called before hide.
+					this.showing = true;
+					this._showingTransitionJobFn();
+					this.showing = false;
+					this._showingTransitionJobFn = null;
+				}
+				// Prepare our visual state
+				this.applyStyle('display', null);
+				this.applyStyle('visibility', null);
 				// Reset our state classes, in case we switched mid-stream
 				this.removeClass(this.showingClass);
 				this.removeClass(this.shownClass);
@@ -226,7 +247,7 @@ var ShowingTransitionSupport = {
 				if (this.hidingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
-					this.startJob('showingTransition', function () {
+					this._showingTransitionJobFn = function () { // Cache job function
 						this.removeClass(this.hidingClass);
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
@@ -234,7 +255,8 @@ var ShowingTransitionSupport = {
 						utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.applyStyle('visibility', 'hidden');
 						this.applyStyle('display', null);
-					}, this.hidingDuration);
+					};
+					this.startJob('showingTransition', this._showingTransitionJobFn, this.hidingDuration);
 				} else {
 					// No transition, just a hidden class.
 					this.stopJob('showingTransition');
