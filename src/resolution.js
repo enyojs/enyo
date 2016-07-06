@@ -1,14 +1,21 @@
 require('enyo');
 
 var
+	util = require('./utils'),
 	Dom = require('./dom');
 
-var _baseScreenType = 'standard',
+var _baseScreen,
+	_orientation,
 	_riRatio,
 	_screenType,
-	_screenTypes = [ {name: 'standard', pxPerRem: 16, width: global.innerWidth,  height: global.innerHeight, aspectRatioName: 'standard'} ],	// Assign one sane value in case defineScreenTypes is never run.
+	_screenTypes = [ {name: 'standard', pxPerRem: 16, width: global.innerWidth,  height: global.innerHeight, aspectRatioName: 'standard', base: true} ],	// Assign one sane value in case defineScreenTypes is never run.
 	_screenTypeObject,
-	_oldScreenType;
+	_oldOrientation,
+	_oldScreenTypeObject,
+	configDefaults = {
+		orientationHandling: 'normal'
+	};
+
 
 var getScreenTypeObject = function (type) {
 	type = type || _screenType;
@@ -25,6 +32,8 @@ var getScreenTypeObject = function (type) {
 * @module enyo/resolution
 */
 var ri = module.exports = {
+	config: {},
+
 	/**
 	* Sets up screen resolution scaling capabilities by defining an array of all the screens
 	* being used. These should be listed in order from smallest to largest, according to
@@ -54,7 +63,7 @@ var ri = module.exports = {
 	defineScreenTypes: function (types) {
 		_screenTypes = types;
 		for (var i = 0; i < _screenTypes.length; i++) {
-			if (_screenTypes[i]['base']) _baseScreenType = _screenTypes[i].name;
+			if (_screenTypes[i]['base']) _baseScreen = _screenTypes[i];
 		}
 		ri.init();
 	},
@@ -74,13 +83,14 @@ var ri = module.exports = {
 			width: global.innerWidth
 		};
 		var i,
-			portrait = false,
 			types = _screenTypes,
 			bestMatch = types[types.length - 1].name,
 			swap;
 
+		_orientation = 'landscape';
+
 		if (rez.height > rez.width) {
-			portrait = true;
+			_orientation = 'portrait';
 			swap = rez.width;
 			rez.width = rez.height;
 			rez.height = swap;
@@ -88,7 +98,6 @@ var ri = module.exports = {
 
 		// loop thorugh resolutions
 		for (i = types.length - 1; i >= 0; i--) {
-			types[i].orientation = portrait ? 'portrait' : 'landscape';
 			// find the one that matches our current size or is smaller. default to the first.
 			if (rez.width <= types[i].width) {
 				bestMatch = types[i].name;
@@ -103,21 +112,23 @@ var ri = module.exports = {
 	*/
 	updateScreenBodyClasses: function (type) {
 		type = type || _screenType;
-		if (_oldScreenType) {
-			Dom.removeClass(document.body, 'enyo-res-' + _oldScreenType.toLowerCase());
-			var oldScrObj = getScreenTypeObject(_oldScreenType);
-			if (oldScrObj && oldScrObj.aspectRatioName) {
-				Dom.removeClass(document.body, 'enyo-aspect-ratio-' + oldScrObj.aspectRatioName.toLowerCase());
+		if (_oldOrientation) {
+			Dom.removeBodyClass('enyo-orientation-' + _oldOrientation);
+		}
+		if (_oldScreenTypeObject) {
+			Dom.removeBodyClass('enyo-res-' + _oldScreenTypeObject.name.toLowerCase());
+			if (_oldScreenTypeObject.aspectRatioName) {
+				Dom.removeBodyClass('enyo-aspect-ratio-' + _oldScreenTypeObject.aspectRatioName.toLowerCase());
 			}
+		}
+		if (_orientation) {
+			Dom.addBodyClass('enyo-orientation-' + _orientation);
 		}
 		if (type) {
 			Dom.addBodyClass('enyo-res-' + type.toLowerCase());
 			var scrObj = getScreenTypeObject(type);
 			if (scrObj.aspectRatioName) {
 				Dom.addBodyClass('enyo-aspect-ratio-' + scrObj.aspectRatioName.toLowerCase());
-			}
-			if (scrObj.orientation) {
-				Dom.addBodyClass('enyo-orientation-' + scrObj.orientation);
 			}
 			return type;
 		}
@@ -126,10 +137,17 @@ var ri = module.exports = {
 	/**
 	* @private
 	*/
+	updateBaseFontSize: function (size) {
+		document.documentElement.style.fontSize = size;
+	},
+
+	/**
+	* @private
+	*/
 	getRiRatio: function (type) {
 		type = type || _screenType;
-		if (type) {
-			var ratio = this.getUnitToPixelFactors(type) / this.getUnitToPixelFactors(_baseScreenType);
+		if (type && _baseScreen) {
+			var ratio = this.getUnitToPixelFactors(type) / this.getUnitToPixelFactors(_baseScreen.name);
 			if (type == _screenType) {
 				// cache this if it's for our current screen type.
 				_riRatio = ratio;
@@ -255,6 +273,40 @@ var ri = module.exports = {
 	},
 
 	/**
+	* Calculate the base rem font size. This is how the magic happens. This accepts an
+	* optional screenType name. If one isn't provided, the currently detected screen type is used.
+	* This uses the config option "orientationHandling", which when set to "scale" and the screen is
+	* in portrait orientation, will dynamically calculate what the base font size should be, if the
+	* width were proportionally scaled down to fit in the portrait space.
+	*
+	* To use, put the following in your application code:
+	* ```
+	* 	var RI = require('moonstone/resolution');
+	*
+	* 	RI.config.orientationHandling = 'scale';
+	* 	RI.init();
+	* ```
+	*
+	* This has no effect if the screen is in landscape, or if orientationHandling is unset.
+	*
+	* @param {String} type - Screen type to base size the calculation on. If no
+	*     screen type is provided, the current screen type will be used.
+	* @returns {String} The calculated pixel size (with unit suffix. Ex: "24px").
+	* @public
+	*/
+	calculateFontSize: function (type) {
+		var size,
+			scrObj = getScreenTypeObject(type);
+
+		if (_orientation == 'portrait' && this.config.orientationHandling == 'scale') {
+			size = scrObj.height / scrObj.width * scrObj.pxPerRem;
+		} else {
+			size = scrObj.pxPerRem;
+		}
+		return size + 'px';
+	},
+
+	/**
 	* This will need to be re-run any time the screen size changes, so all the values can be
 	* re-cached.
 	*
@@ -262,13 +314,17 @@ var ri = module.exports = {
 	*/
 	// Later we can wire this up to a screen resize event so it doesn't need to be called manually.
 	init: function () {
-		_oldScreenType = _screenType;
+		_oldScreenTypeObject = _screenTypeObject;
+		_oldOrientation = _orientation;
 		_screenType = this.getScreenType();
 		_screenTypeObject = getScreenTypeObject();
 		this.updateScreenBodyClasses();
 		Dom.unitToPixelFactors.rem = this.getUnitToPixelFactors();
 		_riRatio = this.getRiRatio();
+		this.updateBaseFontSize(this.calculateFontSize());
 	}
 };
 
+ri.config = util.clone(configDefaults);
 ri.init();
+global.addEventListener('resize', ri.init.bind(ri));
