@@ -74,11 +74,21 @@ var ri = module.exports = {
 			width: global.innerWidth
 		};
 		var i,
+			portrait = false,
 			types = _screenTypes,
-			bestMatch = types[types.length - 1].name;
+			bestMatch = types[types.length - 1].name,
+			swap;
+
+		if (rez.height > rez.width) {
+			portrait = true;
+			swap = rez.width;
+			rez.width = rez.height;
+			rez.height = swap;
+		}
 
 		// loop thorugh resolutions
 		for (i = types.length - 1; i >= 0; i--) {
+			types[i].orientation = portrait ? 'portrait' : 'landscape';
 			// find the one that matches our current size or is smaller. default to the first.
 			if (rez.width <= types[i].width) {
 				bestMatch = types[i].name;
@@ -105,6 +115,9 @@ var ri = module.exports = {
 			var scrObj = getScreenTypeObject(type);
 			if (scrObj.aspectRatioName) {
 				Dom.addBodyClass('enyo-aspect-ratio-' + scrObj.aspectRatioName.toLowerCase());
+			}
+			if (scrObj.orientation) {
+				Dom.addBodyClass('enyo-orientation-' + scrObj.orientation);
 			}
 			return type;
 		}
