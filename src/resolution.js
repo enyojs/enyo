@@ -76,11 +76,12 @@ var ri = module.exports = {
 		var i,
 			portrait = false,
 			types = _screenTypes,
-			bestMatch = types[types.length - 1].name;
+			bestMatch = types[types.length - 1].name,
+			swap;
 
 		if (rez.height > rez.width) {
 			portrait = true;
-			var swap = rez.width;
+			swap = rez.width;
 			rez.width = rez.height;
 			rez.height = swap;
 		}
