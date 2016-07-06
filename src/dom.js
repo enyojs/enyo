@@ -495,6 +495,26 @@ var dom = module.exports = {
 	},
 
 	/**
+	* Removes a class from `document.body`. This defers the actual class change if nothing has been
+	* rendered into `body` yet.
+	*
+	* @param {String} s - The class name to remove from the document's `body`.
+	* @public
+	*/
+	removeBodyClass: function(s) {
+		if (!utils.exists(roots.roots) || roots.roots.length === 0) {
+			if (dom._bodyClasses) {
+				dom._bodyClasses = dom._bodyClasses.filter(function (cl) {
+					return (cl !== s);
+				});
+			}
+		}
+		else {
+			dom.removeClass(document.body, s);
+		}
+	},
+
+	/**
 	* Returns an object describing the absolute position on the screen, relative to the top left
 	* corner of the screen. This function takes into account account absolute/relative
 	* `offsetParent` positioning, `scroll` position, and CSS transforms (currently
