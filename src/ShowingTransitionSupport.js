@@ -180,6 +180,19 @@ var ShowingTransitionSupport = {
 	}),
 
 	/**
+	* @private
+	*/
+	set: kind.inherit(function (sup) {
+		return function (path, value, opts) {
+			if (path === 'showing' && this.showingTransitioning && this._showingTransitionJobFn) {
+				this._showingTransitionJobFn();
+				this._showingTransitionJobFn = null;
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
+
+	/**
 	* Overrides the showingChanged handler to add support for transitions at the right times and
 	* places.
 	*
@@ -191,14 +204,6 @@ var ShowingTransitionSupport = {
 			var args = arguments;
 
 			if (this.showing) {
-				if (this.showingTransitioning && this._showingTransitionJobFn) {
-					// When show is called before hide animation is not finished,
-					// ensure that super call with showing false condition called before show.
-					this.showing = false;
-					this._showingTransitionJobFn();
-					this.showing = true;
-					this._showingTransitionJobFn = null;
-				}
 				// Prepare our visual state
 				this.applyStyle('display', null);
 				this.applyStyle('visibility', null);
@@ -228,14 +233,6 @@ var ShowingTransitionSupport = {
 					utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 				}
 			} else {
-				if (this.showingTransitioning && this._showingTransitionJobFn) {
-					// When hide is called before show animation is not finished,
-					// ensure that super call with showing true condition called before hide.
-					this.showing = true;
-					this._showingTransitionJobFn();
-					this.showing = false;
-					this._showingTransitionJobFn = null;
-				}
 				// Prepare our visual state
 				this.applyStyle('display', null);
 				this.applyStyle('visibility', null);
