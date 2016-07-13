@@ -75,6 +75,26 @@ var ShowingTransitionSupport = {
 	hidingDuration: undefined,
 
 	/**
+	* The method to fire at the start of the "showing" transition. This may be name of a method on the
+	* component, or a function.
+	*
+	* @type {String|Function}
+	* @default undefined
+	* @public
+	*/
+	showingMethod: undefined,
+
+	/**
+	* The method to fire at the start of the "hiding" transition. This may be name of a method on the
+	* component, or a function.
+	*
+	* @type {String|Function}
+	* @default undefined
+	* @public
+	*/
+	hidingMethod: undefined,
+
+	/**
 	* The method to fire at the end of the "showing" transition. This may be name of a method on the
 	* component, or a function.
 	*
@@ -145,6 +165,8 @@ var ShowingTransitionSupport = {
 
 			this.showingDuration = (this.showingDuration === undefined) ? null      : this.showingDuration;
 			this.hidingDuration  = (this.hidingDuration  === undefined) ? null      : this.hidingDuration;
+			this.showingMethod   = (this.showingMethod   === undefined) ? null      : this.showingMethod;
+			this.hidingMethod    = (this.hidingMethod    === undefined) ? null      : this.hidingMethod;
 			this.shownMethod     = (this.shownMethod     === undefined) ? null      : this.shownMethod;
 			this.hiddenMethod    = (this.hiddenMethod    === undefined) ? null      : this.hiddenMethod;
 			this.shownClass      = (this.shownClass      === undefined) ? 'shown'   : this.shownClass;
@@ -154,6 +176,20 @@ var ShowingTransitionSupport = {
 			if (this.shownMethod) this.shownMethodChanged();
 			if (this.hiddenMethod) this.hiddenMethodChanged();
 			this.showingChanged();
+		};
+	}),
+
+	/**
+	* Clean-up the existing operation.
+	* @private
+	*/
+	set: kind.inherit(function (sup) {
+		return function (path, value, opts) {
+			if (path === 'showing' && this.showingTransitioning && this._showingTransitionJobFn) {
+				this._showingTransitionJobFn();
+				this._showingTransitionJobFn = null;
+			}
+			return sup.apply(this, arguments);
 		};
 	}),
 
@@ -176,6 +212,7 @@ var ShowingTransitionSupport = {
 				this.removeClass(this.hidingClass);
 				this.removeClass(this.hiddenClass);
 				sup.apply(this, args);
+				utils.call(this, this.showingMethod);	// Run the supplied method.
 				if (this.showingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					// Start transition: Apply a class and start a timer.
@@ -183,12 +220,13 @@ var ShowingTransitionSupport = {
 					// remove the transitioning class
 					// and add the final-state class
 					this.addClass(this.showingClass);
-					this.startJob('showingTransition', function () {
+					this._showingTransitionJobFn = function () {
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
 						utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
-					}, this.showingDuration);
+					};
+					this.startJob('showingTransition', this._showingTransitionJobFn, this.showingDuration);
 				} else {
 					// No transition, just a shown class.
 					this.stopJob('showingTransition');
@@ -199,10 +237,11 @@ var ShowingTransitionSupport = {
 				// Reset our state classes, in case we switched mid-stream
 				this.removeClass(this.showingClass);
 				this.removeClass(this.shownClass);
+				utils.call(this, this.hidingMethod);	// Run the supplied method.
 				if (this.hidingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
-					this.startJob('showingTransition', function () {
+					this._showingTransitionJobFn = function () { // Cache job function
 						this.removeClass(this.hidingClass);
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
@@ -210,7 +249,8 @@ var ShowingTransitionSupport = {
 						utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.applyStyle('visibility', 'hidden');
 						this.applyStyle('display', null);
-					}, this.hidingDuration);
+					};
+					this.startJob('showingTransition', this._showingTransitionJobFn, this.hidingDuration);
 				} else {
 					// No transition, just a hidden class.
 					this.stopJob('showingTransition');
