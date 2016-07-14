@@ -178,7 +178,7 @@ var ShowingTransitionSupport = {
 			this.showingChanged();
 		};
 	}),
-	
+
 	/**
 	* Clean-up the existing operation.
 	* @priavate
