@@ -178,16 +178,35 @@ var ShowingTransitionSupport = {
 			this.showingChanged();
 		};
 	}),
-
+	
 	/**
 	* Clean-up the existing operation.
+	* @priavate
+	*/
+	clearJobFn: function () {
+		if (this.showingTransitioning && this._showingTransitionJobFn) {
+			this._showingTransitionJobFn();
+			this._showingTransitionJobFn = null;
+		}
+	},
+
+	/**
+	* @private
+	*/
+	destroy: kind.inherit(function (sup) {
+		return function () {
+			this.clearJobFn();
+			return sup.apply(this, arguments);
+		};
+	}),
+
+	/**
 	* @private
 	*/
 	set: kind.inherit(function (sup) {
 		return function (path, value, opts) {
-			if (path === 'showing' && this.showingTransitioning && this._showingTransitionJobFn) {
-				this._showingTransitionJobFn();
-				this._showingTransitionJobFn = null;
+			if (path === 'showing') {
+				this.clearJobFn();
 			}
 			return sup.apply(this, arguments);
 		};
