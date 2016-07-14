@@ -180,6 +180,20 @@ var ShowingTransitionSupport = {
 	}),
 
 	/**
+	* Clean-up the existing operation when it's destroyed.
+	* @private
+	*/
+	destroy: kind.inherit(function (sup) {
+		return function () {
+			if (this.showingTransitioning && this._showingTransitionJobFn) {
+				this._showingTransitionJobFn();
+				this._showingTransitionJobFn = null;
+			}
+			return sup.apply(this, arguments);
+		};
+	}),
+
+	/**
 	* Clean-up the existing operation.
 	* @private
 	*/
