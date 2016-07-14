@@ -181,7 +181,7 @@ var ShowingTransitionSupport = {
 
 	/**
 	* Clean-up the existing operation.
-	* @priavate
+	* @private
 	*/
 	clearJobFn: function () {
 		if (this.showingTransitioning && this._showingTransitionJobFn) {
