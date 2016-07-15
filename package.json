@@ -9,7 +9,7 @@
   "main": "index.js",
   "moduleDir": "src",
   "filename": "enyo.js",
-  "version": "2.6.4-rc.5",
+  "version": "2.6.4-rc.5.1",
   "description": "Enyo is an open source object-oriented JavaScript framework emphasizing encapsulation and modularity. Enyo contains everything you need to create a fast, scalable mobile or web application.",
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
