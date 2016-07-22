@@ -651,15 +651,14 @@ module.exports = kind(
 			prevPanel = this._previousPanel;
 			currPanel = this._currentPanel;
 
-			if (prevPanel) {
-				prevPanel.removeClass('shifted');
-				prevPanel.addClass('offscreen');
-			}
+			prevPanel && prevPanel.addClass('offscreen');
 
 			this.removeClass('transitioning');
 			this.transitioning = false;
 
 			utils.asyncMethod(this, function () {
+				prevPanel && prevPanel.removeClass('shifted');
+
 				this.cleanUpPanel(prevPanel);
 				this.cleanUpPanel(currPanel);
 
