@@ -325,6 +325,7 @@ var Popup = module.exports = kind(
 	*/
 	destroy: kind.inherit(function (sup) {
 		return function() {
+			this.showHideScrim(false);
 			this.release();
 			sup.apply(this, arguments);
 		};
