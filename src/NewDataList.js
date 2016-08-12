@@ -161,6 +161,7 @@ module.exports = kind({
 			val = v ? this.scrollTop : this.scrollLeft;
 
 		if (val > tt.max || val < tt.min) {
+			this.calcBoundaries();
 			this.refreshThresholds();
 			this.doIt();
 		}
