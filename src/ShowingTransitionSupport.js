@@ -185,6 +185,7 @@ var ShowingTransitionSupport = {
 	*/
 	clearJobFn: function () {
 		if (this.showingTransitioning && this._showingTransitionJobFn) {
+			this.stopJob('showingTransition');
 			this._showingTransitionJobFn();
 			this._showingTransitionJobFn = null;
 		}
@@ -195,6 +196,7 @@ var ShowingTransitionSupport = {
 	*/
 	destroy: kind.inherit(function (sup) {
 		return function () {
+			this.set('showing', false);
 			this.clearJobFn();
 			return sup.apply(this, arguments);
 		};
@@ -231,7 +233,7 @@ var ShowingTransitionSupport = {
 				this.removeClass(this.hidingClass);
 				this.removeClass(this.hiddenClass);
 				sup.apply(this, args);
-				utils.call(this, this.showingMethod);	// Run the supplied method.
+				this.callMethod(this, this.showingMethod);	// Run the supplied method.
 				if (this.showingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					// Start transition: Apply a class and start a timer.
@@ -243,20 +245,20 @@ var ShowingTransitionSupport = {
 						this.removeClass(this.showingClass);
 						this.addClass(this.shownClass);
 						this.set('showingTransitioning', false);
-						utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
+						this.callMethod(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 					};
 					this.startJob('showingTransition', this._showingTransitionJobFn, this.showingDuration);
 				} else {
 					// No transition, just a shown class.
 					this.stopJob('showingTransition');
 					this.addClass(this.shownClass);
-					utils.call(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
+					this.callMethod(this._shownMethodScope, this.shownMethod);	// Run the supplied method.
 				}
 			} else {
 				// Reset our state classes, in case we switched mid-stream
 				this.removeClass(this.showingClass);
 				this.removeClass(this.shownClass);
-				utils.call(this, this.hidingMethod);	// Run the supplied method.
+				this.callMethod(this, this.hidingMethod);	// Run the supplied method.
 				if (this.hidingDuration && this.hasNode()) {
 					this.set('showingTransitioning', true);
 					this.addClass(this.hidingClass);
@@ -265,7 +267,7 @@ var ShowingTransitionSupport = {
 						this.addClass(this.hiddenClass);
 						this.set('showingTransitioning', false);
 						sup.apply(this, args);
-						utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
+						this.callMethod(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 						this.applyStyle('visibility', 'hidden');
 						this.applyStyle('display', null);
 					};
@@ -275,24 +277,38 @@ var ShowingTransitionSupport = {
 					this.stopJob('showingTransition');
 					this.addClass(this.hiddenClass);
 					sup.apply(this, args);
-					utils.call(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
+					this.callMethod(this._hiddenMethodScope, this.hiddenMethod);	// Run the supplied method.
 					this.applyStyle('visibility', 'hidden');
 					this.applyStyle('display', null);
 				}
 			}
 		};
 	}),
-	showingDurationChanged: function () {
-		if (!this.showingDuration) this.stopJob('showingTransition');
+	/**
+	* @private
+	*/
+	callMethod: function (scope, method) {
+		if (this.hasNode()) {
+			utils.call(scope, method);
+		}
 	},
+	/**
+	* @private
+	*/
 	hidingDurationChanged: function () {
 		if (!this.hidingDuration) this.stopJob('showingTransition');
 	},
+	/**
+	* @private
+	*/
 	shownMethodChanged: function () {
 		// checking if the actual method exists to workaround hasOwnProperty issues due to the
 		// mechanism we use for assigning mixin defaults
 		this._shownMethodScope = this[this.shownMethod] ? this : this.getInstanceOwner();
 	},
+	/**
+	* @private
+	*/
 	hiddenMethodChanged: function () {
 		// checking if the actual method exists to workaround hasOwnProperty issues due to the
 		// mechanism we use for assigning mixin defaults
