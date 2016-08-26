@@ -1,6 +1,7 @@
 require('enyo');
 
 var
+	dispatcher = require('./dispatcher'),
 	util = require('./utils'),
 	Dom = require('./dom');
 
@@ -327,4 +328,12 @@ var ri = module.exports = {
 
 ri.config = util.clone(configDefaults);
 ri.init();
-global.addEventListener('resize', ri.init.bind(ri));
+
+// We need to re-initialize the resolution config before any components receive their resize event
+// and calculate any resolution-dependent values. There's currently no means in dispatcher to jump
+// the line before enyo/master other than features.
+dispatcher.features.push(function (ev) {
+	if (ev.type === 'resize') {
+		ri.init();
+	}
+});
