@@ -161,6 +161,17 @@ module.exports = kind(
 		};
 	}),
 
+	handleResize: kind.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+
+			if (this.getAbsoluteShowing()) {
+				this.calculateMetrics();
+				this.update();
+			}
+		};
+	}),
+
 	calculateMetrics: function () {
 		this.extent = this.parent.getBounds()[this.dimension];
 		this.minSizeRatio = this.minSize / this.extent;
