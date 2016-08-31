@@ -57,6 +57,7 @@ module.exports = {
 			var g = this.makeGesture('gesturestart', e, {vector: this.gesture, scale: 1, rotation: 0});
 			dispatcher.dispatch(g);
 		}
+		e.preventDefault();
 	},
 
 	/**
