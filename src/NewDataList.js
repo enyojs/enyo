@@ -519,5 +519,12 @@ module.exports = kind(
 
 			sup.apply(this, arguments);
 		};
+	}),
+
+	handleResize: kind.inherit(function (sup) {
+		return function () {
+			sup.apply(this, arguments);
+			this.startJob('reset on resize', this.reset, 32);
+		};
 	})
 });
