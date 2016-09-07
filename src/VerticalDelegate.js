@@ -35,6 +35,7 @@ module.exports = {
 	* @private
 	*/
 	initList: function (list) {
+		list._updateBounds = true;
 		list.posProp   = 'top';
 		list.upperProp = 'top';
 		list.lowerProp = 'bottom';
