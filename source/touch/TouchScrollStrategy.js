@@ -204,7 +204,7 @@ enyo.kind({
 	},
 	stop: function() {
 		if (this.isScrolling()) {
-			this.$.scrollMath.stop(true);
+			this.$.scrollMath.stop();
 		}
 	},
 	stabilize: function() {

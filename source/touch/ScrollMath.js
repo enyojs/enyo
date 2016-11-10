@@ -212,7 +212,7 @@ enyo.kind({
 		this.y = this.y0 = y;
 		this.x = this.x0 = x;
 		this.scroll();
-		this.stop(true);
+		this.stop();
 	},
 	startDrag: function(e) {
 		this.dragging = true;
@@ -267,7 +267,7 @@ enyo.kind({
 	mousewheel: function(e) {
 		var dy = this.vertical ? e.wheelDeltaY || e.wheelDelta: 0;
 		if ((dy > 0 && this.y < this.topBoundary) || (dy < 0 && this.y > this.bottomBoundary)) {
-			this.stop(true);
+			this.stop();
 			this.y = this.y0 = this.y0 + dy;
 			this.start();
 			return true;
