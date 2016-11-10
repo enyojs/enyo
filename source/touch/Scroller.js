@@ -210,8 +210,6 @@ enyo.kind({
 		return function() {
 			if (!this.showing) {
 				this.cacheScrollPosition();
-				this.setScrollLeft(0);
-				this.setScrollTop(0);
 			}
 			sup.apply(this, arguments);
 			if (this.showing) {
@@ -229,9 +227,9 @@ enyo.kind({
 		if (this.cachedPosition) {
 			var cp = this.cachedPosition;
 			if (cp.top || cp.left) {
+				this.cachedPosition = null;
 				this.setScrollLeft(cp.left);
 				this.setScrollTop(cp.top);
-				this.cachedPosition = null;
 			}
 		}
 	},
@@ -246,11 +244,17 @@ enyo.kind({
 	//* Sets scroll position along horizontal axis.
 	setScrollLeft: function(inLeft) {
 		this.scrollLeft = inLeft;
+		if (this.cachedPosition) {
+			this.cachedPosition.left = inLeft;
+		}
 		this.$.strategy.setScrollLeft(this.scrollLeft);
 	},
 	//* Sets scroll position along vertical axis.
 	setScrollTop: function(inTop) {
 		this.scrollTop = inTop;
+		if (this.cachedPosition) {
+			this.cachedPosition.top = inTop;
+		}
 		this.$.strategy.setScrollTop(inTop);
 	},
 	//* Gets scroll position along horizontal axis.
