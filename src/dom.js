@@ -7,7 +7,8 @@ require('enyo');
 var
 	roots = require('./roots'),
 	utils = require('./utils'),
-	platform = require('./platform');
+	platform = require('./platform'),
+	transform = require('./transform');
 
 var dom = module.exports = {
 
@@ -459,6 +460,68 @@ var dom = module.exports = {
 	},
 
 	/**
+	 * Get DOM node animation properties.
+	 * @public
+	 * @param  {HTMLElement} node    DOM node
+	 * @param  {Object}      props   Properties to fetch from DOM.
+	 * @param  {Object}      initial Default properties to be applied.
+	 * @return {Object}              Object with various animation properties.
+	 */     
+	getAnimatedProperty: function (node, props, initial) {
+		if(!node) return;
+
+		var eP = {},
+			sP = initial ? utils.mixin({}, initial) : {},
+			tP = {},
+			dP = {},
+			m, k, v,
+			s = initial ? undefined : this.getComputedStyle(node);
+
+		for (k in props) {
+			v = sP[k];
+			if (!utils.isTransform(k)) {
+				v = v || utils.getStyleValue(s || this.getComputedStyle(node), k);
+				sP[k] = utils.formatCSSValues(v, k);
+				eP[k] = utils.formatCSSValues(props[k], k, sP[k] ? sP[k].length : sP[k]);
+			} else {
+				v = utils.formatTransformValues(props[k], k);
+				if (k.match(/rotate/)) {
+					v = transform.Quaternion.toQuant(v);
+					tP.rotate = tP.rotate ? transform.Quaternion.multiplication(tP.rotate, v) : v;
+				} else {
+					t = k.replace(/[XYZ]$/,'');
+					tP[t] = tP[t] ? tP[t].map(function (num, id) {
+						return num + v[id];
+					}) : v;
+				}
+				if (k.match(/[XYZ]$/)) {
+					t = k.replace(/[XYZ]$/,'');
+					props[t] = tP[t].join();
+					delete props[k];
+				}
+			}
+		}
+
+		if (initial) {
+			dP.translate = initial.translate;
+			dP.rotate = initial.rotate.length < 4 ? transform.Quaternion.toQuant(initial.rotate) : initial.rotate;
+			dP.scale = initial.scale;
+			dP.skew = initial.skew;
+			dP.perspective = initial.perspective;
+		} else {
+			m = utils.getStyleValue(s || this.getComputedStyle(node), this.getCssTransformProp());
+			m = utils.formatTransformValues(m, 'matrix');
+			transform.Matrix.decompose(m, dP);
+		}
+
+		for(k in dP) {
+			sP[k] = dP[k];
+			eP[k] = tP[k] || dP[k];
+		}
+		return {_startAnim: sP, _endAnim: eP, _transform: dP, currentState: dP, matrix: m, props: props};
+	},
+
+	/**
 	* @private
 	*/
 	_bodyClasses: null,
@@ -563,6 +626,7 @@ dom.calcCanAccelerate = function() {
 	}
 	return false;
 };
+
 /**
 * @private
 */
@@ -588,6 +652,19 @@ dom.getStyleTransformProp = function() {
 			return this._styleTransformProp;
 		}
 	}
+};
+
+/**
+* @private
+*/
+dom.toTransformValue = function(matrix, ret) {
+	var mat = transform.Matrix.toString(matrix);
+
+	ret = ret || {};
+	for (var i = 0, p; (p = styleTransformProps[i]); i++) {
+		ret[p] = mat;
+	}
+	return ret;
 };
 
 /**

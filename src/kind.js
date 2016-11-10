@@ -1,8 +1,9 @@
 require('enyo');
 
 var
-	logger = require('./logger'),
-	utils = require('./utils');
+    logger = require('./logger'),
+    Scene = require('./Scene'),
+    utils = require('./utils');
 
 var defaultCtor = null;
 
@@ -330,6 +331,16 @@ kind.features.push(function(ctor, props) {
 	}
 });
 
+
+kind.features.push(function(ctor, props) {
+    // install common statics
+    if (props.scene) {
+		var proto = ctor.prototype || ctor,
+			sctor = new scene(proto, props.scene);
+		proto.scene = sctor;
+	}
+});
+
 /**
 * @private
 */
@@ -503,4 +514,22 @@ exports.createFromKind = function (nom, param) {
 	if (Ctor) {
 		return new Ctor(param);
 	}
+};
+/**
+ * Interface which accepts the animation details and returns a scene object
+ * @param  {Array} proto      Actors 
+ * @param  {Object} properties Animation Properties
+ * @param  {number} duration   Animation duration
+ * @param  {String} completed  Callback function on completion
+ * @return {Object}            A scene object
+ */
+exports.animate = function(proto, properties, duration, completed) {
+	var i, ctor, scene,
+		ctors = utils.isArray(proto) ? proto : [proto];
+	
+	for (i = 0; (ctor = ctors[i]); i++) {
+		scene = new Scene(ctor, properties);
+		scene.completed = completed;
+	}
+	return scene;
 };
