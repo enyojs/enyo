@@ -6,9 +6,11 @@ require('enyo');
 */
 
 var
-	kind = require('../kind');
+	kind = require('../kind'),
+	options = require('../options');
 var
-	Control = require('../Control');
+	Control = require('../Control'),
+	Button = require('../Button');
 
 /**
 * The extended {@glossary event} [object]{@glossary Object} that is provided when the
@@ -123,6 +125,10 @@ module.exports = kind(
 			return;
 		}
 		if (this.highlander) {
+			// Accessibility
+			if (e.originator instanceof Button) {
+				e.originator.setAttribute('aria-pressed', options.accessibility ? String(false) : null);
+			}
 			// we can optionally accept an `allowHighlanderDeactivate` property in e without directly 
 			// specifying it when instatiating the group - used mainly for custom kinds requiring deactivation  
 			if (e.allowHighlanderDeactivate !== undefined && e.allowHighlanderDeactivate !== this.allowHighlanderDeactivate) {
@@ -137,12 +143,16 @@ module.exports = kind(
 				if (e.originator == this.active) {
 					if (!this.allowHighlanderDeactivate) {
 						this.active.setActive(true);
+						// Accessibility
+						this.active.set('accessibilityPressed', options.accessibility ? true : null);
 					} else {
 						this.setActive(null);
 					}
 				}
 			} else {
 				this.setActive(e.originator);
+				// Accessibility
+				e.originator.set('accessibilityPressed', options.accessibility ? true : null);
 			}
 		}
 	},
