@@ -220,9 +220,9 @@
 		// Workaround for lack of compareDocumentPosition support in IE8
 		// Code MIT Licensed, John Resig; source: http://ejohn.org/blog/comparing-document-position/
 		compareDocumentPosition: function(a, b) {
-			return a.compareDocumentPosition ?
+			return a && a.compareDocumentPosition && b ?
 			a.compareDocumentPosition(b) :
-			a.contains ?
+			a.contains && b ?
 				(a != b && a.contains(b) && 16) +
 				(a != b && b.contains(a) && 8) +
 				(a.sourceIndex >= 0 && b.sourceIndex >= 0 ?
