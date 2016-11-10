@@ -11,8 +11,8 @@ var
 	utils = require('../utils');
 
 var defaultObservers = [
-	{from: 'accessibilityDisabled', method: function () {
-		this.setAriaAttribute('aria-hidden', this.accessibilityDisabled ? 'true' : null);
+	{from: ['accessibilityDisabled', 'disabled'], method: function () {
+		this.setAriaAttribute('aria-hidden', (this.disabled || this.accessibilityDisabled) ? 'true' : null);
 	}},
 	{from: 'accessibilityLive', method: function () {
 		var live = this.accessibilityLive === true && 'assertive' || this.accessibilityLive || null;
