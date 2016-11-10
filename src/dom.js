@@ -50,6 +50,7 @@ var dom = module.exports = {
 	* @public
 	*/
 	escape: function(text) {
+		if (typeof text == 'array') text = text.toLocaleString();
 		return text !== null ? String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
 	},
 
