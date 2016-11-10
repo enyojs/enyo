@@ -24,3 +24,15 @@
 	position: absolute;
 	z-index: 10;
 }
+
+.enyo-image.sized {
+	display: inline-block;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.enyo-image.contain {
+	background-size: contain;
+}
+.enyo-image.cover {
+	background-size: cover;
+}

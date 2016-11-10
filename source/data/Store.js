@@ -17,8 +17,7 @@
 		noDefer: true,
 		/**
 			The hash of named sources that are available for use on this store. The
-			default source is _ajax_, but others may be added by providing
-			_enyo.defaultStoreProperties_ with a _sources_ hash of sources to add.
+			default source is _ajax_, but others may be added by using the _addSource()_ api.
 		*/
 		sources: {ajax: "enyo.AjaxSource", jsonp: "enyo.JsonpSource"},
 		/**

@@ -64,7 +64,7 @@ function finish(loader, objs, doneCB) {
 			if (sheet.slice(-5) == ".less") {
 				w("Compiling: " + sheet);
 				code = fs.readFileSync(sheet, "utf8");
-				parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)]});
+				parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)], relativeUrls:true});
 				cssFile = sheet.slice(0,sheet.length-5) + ".css";
 				parser.parse(code, report(cssFile));
 				return;

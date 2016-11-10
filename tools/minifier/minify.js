@@ -91,7 +91,7 @@
 				}
 				var code = fs.readFileSync(sheet, "utf8");
 				if (isLess) {
-					var parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)]});
+					var parser = new(less.Parser)({filename:sheet, paths:[path.dirname(sheet)], relativeUrls:true});
 					parser.parse(code, function (err, tree) {
 						if (err) {
 							console.error(err);
