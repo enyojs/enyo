@@ -107,9 +107,6 @@ module.exports = kind(
 	rendered: kind.inherit(function (sup) {
 		return function() {
 			sup.apply(this, arguments);
-			if (this.active) {
-				this.activeChanged();
-			}
 			this.checkedChanged();
 		};
 	}),
