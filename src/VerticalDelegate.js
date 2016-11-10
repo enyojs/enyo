@@ -360,6 +360,8 @@ module.exports = {
 				callback();
 			}
 		} else {
+			// Reset metrics before jump position
+			list.metrics.pages = {};
 			// we do this to ensure we trigger the paging event when necessary
 			this.resetToPosition(list, this.pagePosition(list, p));
 			// now retry the original logic until we have this right
