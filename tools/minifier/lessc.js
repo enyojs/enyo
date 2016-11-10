@@ -20,7 +20,7 @@ function printUsage() {
 	w("<package-file>\t", "Path to package file to walk; all LESS files encountered will be compiled");
 	w("-enyo <path>\t", "Path to enyo loader (enyo/enyo.js)");
 	w("-w\t", "Watch the file and any dependencies, and re-compile on changes");
-	w("-ri\t", "Perform resolution-independence conversion of measurements i.e. px -> rem");
+	w("-d\t", "Perform standard LESS compilation, otherwise will perform resolution-independent conversion of measurements i.e. px -> rem");
 	w("-h, -?, -help\t", "Show this message");
 }
 
@@ -39,12 +39,11 @@ function finish(loader, objs, doneCB) {
 			} else {
 				try {
 					var generatedCss, ri;
-					if (opt.ri) {
-						ri = new RezInd();
-						// console.log("ri:", RezInd, ri);
-						generatedCss = tree.toCSS({plugins: [ri]});
-					} else {
+					if (opt.rd) {
 						generatedCss = tree.toCSS();
+					} else {
+						ri = new RezInd();
+						generatedCss = tree.toCSS({plugins: [ri]});
 					}
 
 					var css =
@@ -154,7 +153,7 @@ var knownOpts = {
 	"output": String,
 	"watch": Boolean,
 	"help": Boolean,
-	"ri": Boolean
+	"rd": Boolean
 };
 
 var shortHands = {
@@ -164,7 +163,7 @@ var shortHands = {
 	"h": ['--help'],
 	"?": ['--help'],
 	"help": ['--help'],
-	"ri": ['--ri']
+	"d": ['--rd']
 };
 
 var opt = nopt(knownOpts, shortHands, process.argv, 2);

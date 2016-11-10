@@ -26,7 +26,7 @@
 		w("Usage: " + __filename + " [Flags] [path/to/package.js]");
 		w("Flags:");
 		w("-no-less:", "Don't compile less; instead substitute css for less");
-		w("-ri", "Perform LESS resolution-independence conversion of measurements i.e. px to rem");
+		w("-d, -rd:", "Perform standard LESS compilation, instead of resolution-independence conversion of measurements i.e. px to rem");
 		w("-no-alias:", "Don't use path macros");
 		w("-alias:", "Give paths a macroized alias");
 		w("-enyo ENYOPATH:", "Relative path to enyo folder (enyo)");
@@ -109,10 +109,10 @@
 							console.error(err);
 						} else {
 							var generatedCss;
-							if (opt.ri) {
-								generatedCss = tree.toCSS({plugins: [ri]});
-							} else {
+							if (opt.rd) {
 								generatedCss = tree.toCSS();
+							} else {
+								generatedCss = tree.toCSS({plugins: [ri]});
 							}
 							addToBlob(sheet, generatedCss);
 						}
@@ -238,7 +238,7 @@
 		"mapfrom": [String, Array],
 		"mapto": [String, Array],
 		"gathering": Boolean,
-		"ri": Boolean
+		"rd": Boolean
 	};
 
 	var shortHands = {
@@ -254,7 +254,8 @@
 		"beautify": ['--beautify'],
 		"f": ['--mapfrom'],
 		"t": ['--mapto'],
-		"ri": ['--ri']
+		"d": ['--rd'],
+		"rd": ['--rd']
 	};
 
 	opt = nopt(knownOpts, shortHands, process.argv, 2);
