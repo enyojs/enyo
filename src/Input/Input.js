@@ -131,14 +131,34 @@ module.exports = kind(
 		* @default false
 		* @public
 		*/
-		selectOnFocus: false
+		selectOnFocus: false,
+
+		/**
+		* The min attribute specifies the minimum value for an [input]{@link module:enyo/Input~Input}.
+		*
+		* @type {Number}
+		* @default null
+		* public
+		*/
+		min: null,
+
+		/**
+		* The max attribute specifies the maximum value for an [input]{@link module:enyo/Input~Input}.
+		*
+		* @type {Number}
+		* @default null
+		* public
+		*/
+		max: null
 	},
 
 	/**
 	* @private
 	*/
 	events: {
-		onDisabledChange: ''
+		onDisabledChange: '',
+		onenabledValidity: '',
+		ondisabledValidity: ''
 	},
 
 	/**
@@ -149,6 +169,11 @@ module.exports = kind(
 	* @public
 	*/
 	defaultFocus: false,
+
+	/**
+	* @private
+	*/
+	_enabledValidity: false,
 
 	/**
 	* @private
@@ -212,6 +237,26 @@ module.exports = kind(
 			}
 		};
 	}),
+
+	/**
+	* @private
+	*/
+	minChanged: function () {
+		this.setAttribute('min', this.min);
+		if(this.type == 'number') {
+			this.set('_enabledValidity', true);
+		}
+	},
+
+	/**
+	* @private
+	*/
+	maxChanged: function () {
+		this.setAttribute('max', this.max);
+		if(this.type == 'number') {
+			this.set('_enabledValidity', true);
+		}
+	},
 
 	/**
 	* @private
@@ -323,9 +368,16 @@ module.exports = kind(
 	/**
 	* @private
 	*/
-	input: function () {
+	input: function (sender, e) {
 		var val = this.getNodeProperty('value');
 		this.setValue(val);
+		if(this._enabledValidity) {
+			if(!e.target.validity.valid) {
+				this.bubble('onenabledValidity');
+			}else {
+				this.bubble('ondisabledValidity');
+			}
+		}
 	},
 
 	// Accessibility
