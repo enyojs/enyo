@@ -36,16 +36,16 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "enyo-dev": "^0.5.2",
-    "gulp": "^3.9.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-jshint": "^2.0.0",
-    "gulp-mocha-phantomjs": "^0.10.1",
-    "jshint": "^2.9.1",
-    "jshint-stylish": "^2.1.0",
-    "mocha": "^2.4.4",
-    "sinon": "^1.17.3",
+    "enyo-dev": "^1.0.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-mocha-phantomjs": "^0.12.0",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
-    "through2": "^2.0.0"
+    "through2": "^2.0.3"
   }
 }
