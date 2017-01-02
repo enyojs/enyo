@@ -30,7 +30,7 @@ module.exports = kind({
 	/**
 	* Returns an array of list items that are currently visible (whether partially
 	* or fully).
-	* 
+	*
 	* Experimental API -- subject to change.
 	*
 	* @public
@@ -41,7 +41,7 @@ module.exports = kind({
 
 	/**
 	* Returns an array of list items that are currently fully visible.
-	* 
+	*
 	* Experimental API -- subject to change.
 	*
 	* @public
@@ -52,7 +52,7 @@ module.exports = kind({
 
 	/**
 	* Scrolls to a list item (specified by index).
-	* 
+	*
 	* @param {number} index - The (zero-based) index of the item to scroll to
 	* @param {Object} opts - Scrolling options (see enyo/Scrollable#scrollTo)
 	* @public
@@ -126,7 +126,7 @@ module.exports = kind({
 		else if (d2x === 'auto') {
 			d2x = 1;
 		}
-		
+
 		d1 = sp + is1;
 		d2 = sp + is2;
 
@@ -338,7 +338,7 @@ module.exports = kind({
 			sup.apply(this, arguments);
 		};
 	}),
-	
+
 	/**
 	* @private
 	*/
@@ -354,6 +354,7 @@ module.exports = kind({
 	* @private
 	*/
 	collectionResetHandler: function () {
+		this.calculateMetrics();
 		this.calcBoundaries();
 	},
 
