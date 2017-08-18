@@ -167,7 +167,8 @@ module.exports = kind(
 		onfocus: 'focused',
 		oninput: 'input',
 		onclear: 'clear',
-		ondragstart: 'dragstart'
+		ondragstart: 'dragstart',
+		onkeypress: 'testNumber'
 	},
 
 	/**
@@ -257,6 +258,15 @@ module.exports = kind(
 			this.setAttribute('value', this.value);
 		}
 		this.detectTextDirectionality((this.value || this.value === 0) ? this.value : this.get('placeholder'));
+	},
+
+	/**
+	* @private
+	*/
+	testNumber: function(sender, e) {
+		if(this.type == 'number' && !/[eE.0-9+-]/.test(e.key)){ //&& !/[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?/.test(e.key)) {
+			e.preventDefault();
+		}
 	},
 
 	/**
