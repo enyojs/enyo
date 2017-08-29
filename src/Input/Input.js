@@ -265,7 +265,7 @@ module.exports = kind(
 	* Fix to safari input type number allowing other characters
 	*/
 	testNumber: function(sender, e) {
-		if (platform.safari && this.type == 'number' && !/[eE.0-9+-]/.test(e.key)) {
+		if (platform.safari && this.type === 'number' && !/[eE.0-9+-]/.test(e.key)) {
 			e.preventDefault();
 		}
 	},
