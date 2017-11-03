@@ -9,7 +9,18 @@ var _baseScreen,
 	_orientation,
 	_riRatio,
 	_screenType,
-	_screenTypes = [ {name: 'standard', pxPerRem: 16, width: global.innerWidth,  height: global.innerHeight, aspectRatioName: 'standard', base: true} ],	// Assign one sane value in case defineScreenTypes is never run.
+	_workspaceBounds = {
+		width: (typeof global === 'object') ? global.innerWidth : 1920,
+		height: (typeof global === 'object') ? global.innerHeight : 1080
+	},
+	_screenTypes = [{
+		name: 'standard',
+		pxPerRem: 16,
+		width: _workspaceBounds.width,
+		height: _workspaceBounds.height,
+		aspectRatioName: 'standard',
+		base: true
+	}],	// Assign one sane type in case defineScreenTypes is never run.
 	_screenTypeObject,
 	_oldOrientation,
 	_oldScreenTypeObject,
@@ -70,6 +81,25 @@ var ri = module.exports = {
 	},
 
 	/**
+	* Update the common measured boundary object. This object is used as "what size screen are we
+	* looking at". Providing no arguments has no effect and updates nothing.
+	*
+	* @memberOf ui/resolution
+	* @param {Node} measurementNode A standard DOM node or the `window` node.
+	*
+	* @returns {undefined}
+	* @private
+	*/
+	updateWorkspaceBounds: function (measurementNode) {
+		if (measurementNode && (measurementNode.clientHeight || measurementNode.clientWidth)) {
+			_workspaceBounds = {height: measurementNode.clientHeight, width: measurementNode.clientWidth};
+		} else if (measurementNode && (measurementNode.innerHeight || measurementNode.innerWidth)) {
+			// A backup for if measurementNode is actually `window` and not a normal node
+			_workspaceBounds = {height: measurementNode.innerHeight, width: measurementNode.innerWidth};
+		}
+	},
+
+	/**
 	* Fetches the name of the screen type that best matches the current screen size. The best
 	* match is defined as the screen type that is the closest to the screen resolution without
 	* going over. ("The Price is Right" style.)
@@ -79,32 +109,31 @@ var ri = module.exports = {
 	* @public
 	*/
 	getScreenType: function (rez) {
-		rez = rez || {
-			height: global.innerHeight,
-			width: global.innerWidth
+		rez = rez || _workspaceBounds || {
+			height: 1080,
+			width: 1920
 		};
-		var i,
-			types = _screenTypes,
-			bestMatch = types[types.length - 1].name,
-			swap;
+
+		var types = _screenTypes,
+			bestMatch = types[types.length - 1].name; // Blindly set the first screen type, in case no matches are found later.
 
 		_orientation = 'landscape';
 
 		if (rez.height > rez.width) {
 			_orientation = 'portrait';
-			swap = rez.width;
+			var swap = rez.width;
 			rez.width = rez.height;
 			rez.height = swap;
 		}
 
-		// loop thorugh resolutions
-		for (i = types.length - 1; i >= 0; i--) {
-			// find the one that matches our current size or is smaller. default to the first.
-			if (rez.width <= types[i].width) {
+		// Loop thorugh resolutions, last->first, largest->smallest
+		for (var i = types.length - 1; i >= 0; i--) {
+			// Find the screenType that matches our current size or is smaller. Default to the first.
+			if (rez.height <= types[i].height && rez.width <= types[i].width) {
 				bestMatch = types[i].name;
 			}
 		}
-		// return the name of the resolution if we find one.
+		// Return the name of the closest fitting set of demensions.
 		return bestMatch;
 	},
 
@@ -314,7 +343,8 @@ var ri = module.exports = {
 	* @public
 	*/
 	// Later we can wire this up to a screen resize event so it doesn't need to be called manually.
-	init: function () {
+	init: function (args) {
+		this.updateWorkspaceBounds(args && args.measurementNode);
 		_oldScreenTypeObject = _screenTypeObject;
 		_oldOrientation = _orientation;
 		_screenType = this.getScreenType();
@@ -327,13 +357,13 @@ var ri = module.exports = {
 };
 
 ri.config = util.clone(configDefaults);
-ri.init();
+ri.init(document.body);
 
 // We need to re-initialize the resolution config before any components receive their resize event
 // and calculate any resolution-dependent values. There's currently no means in dispatcher to jump
 // the line before enyo/master other than features.
 dispatcher.features.push(function (ev) {
 	if (ev.type === 'resize') {
-		ri.init();
+		ri.init({measurementNode: document.body});
 	}
 });
