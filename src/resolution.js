@@ -123,7 +123,7 @@ var ri = module.exports = {
 
 		// Loop thorugh resolutions, last->first, largest->smallest
 		for (var i = types.length - 1; i >= 0; i--) {
-			// Find the screenType that matches our current size or is smaller.
+			// Does the current resolution fit inside this screenType definition? If so, save it as the current best match.
 			if (rez.height <= types[i].height && rez.width <= types[i].width) {
 				bestMatch = types[i].name;
 			}
