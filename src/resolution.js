@@ -84,9 +84,7 @@ var ri = module.exports = {
 	* Update the common measured boundary object. This object is used as "what size screen are we
 	* looking at". Providing no arguments has no effect and updates nothing.
 	*
-	* @memberOf ui/resolution
 	* @param {Node} measurementNode A standard DOM node or the `window` node.
-	*
 	* @returns {undefined}
 	* @private
 	*/
@@ -109,10 +107,7 @@ var ri = module.exports = {
 	* @public
 	*/
 	getScreenType: function (rez) {
-		rez = rez || _workspaceBounds || {
-			height: 1080,
-			width: 1920
-		};
+		rez = rez || _workspaceBounds;
 
 		var types = _screenTypes,
 			bestMatch = types[types.length - 1].name; // Blindly set the first screen type, in case no matches are found later.
@@ -128,7 +123,7 @@ var ri = module.exports = {
 
 		// Loop thorugh resolutions, last->first, largest->smallest
 		for (var i = types.length - 1; i >= 0; i--) {
-			// Find the screenType that matches our current size or is smaller. Default to the first.
+			// Find the screenType that matches our current size or is smaller.
 			if (rez.height <= types[i].height && rez.width <= types[i].width) {
 				bestMatch = types[i].name;
 			}
