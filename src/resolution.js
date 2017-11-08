@@ -354,7 +354,6 @@ var ri = module.exports = {
 ri.config = util.clone(configDefaults);
 // Directly attaching to DOMContentLoaded gets this function executed much sooner than waiting for 'load' from dispacher.
 document.addEventListener('DOMContentLoaded', function () {
-	console.log('document.body:', document.body);
 	ri.init({measurementNode: document.body});
 });
 
