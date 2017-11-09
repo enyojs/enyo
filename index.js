@@ -1,4 +1,4 @@
 'use strict';
 
 exports = module.exports = require('./src/options');
-exports.version = '2.6.3-rc.13.s';
+exports.version = '2.6.3-rc.15.s';
