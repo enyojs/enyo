@@ -70,7 +70,7 @@ describe('Collection', function () {
 				collection.commit();
 				expect(collection.status & States.COMMITTING).to.equal(States.COMMITTING);
 				expect(collection.status & States.BUSY).to.be.ok;
-				expect(collection.statys & States.READY).to.not.be.ok;
+				expect(collection.status & States.READY).to.not.be.ok;
 				
 				// call committed to clear its state
 				collection.committed();
@@ -135,7 +135,7 @@ describe('Collection', function () {
 				
 				expect(spy.called).to.be.false;
 				expect(collection.status & States.ERROR).to.be.ok;
-				expect(collection.statys & States.READY).to.not.be.ok;
+				expect(collection.status & States.READY).to.not.be.ok;
 				
 				collection.clearError();
 				src1.commit.restore();
