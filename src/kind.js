@@ -1,8 +1,9 @@
 require('enyo');
 
 var
-	logger = require('./logger'),
-	utils = require('./utils');
+    logger = require('./logger'),
+    scene = require('./scene'),
+    utils = require('./utils');
 
 var defaultCtor = null;
 
@@ -240,30 +241,31 @@ kind.inherited = function (originals, replacements) {
 	var target = originals.callee;
 	var fn = target._inherited;
 
-	// regardless of how we got here, just ensure we actually
-	// have a function to call or else we throw a console
-	// warning to notify developers they are calling a
-	// super method that doesn't exist
-	if ('function' === typeof fn) {
-		var args = originals;
-		if (replacements) {
-			// combine the two arrays, with the replacements taking the first
-			// set of arguments, and originals filling up the rest.
-			args = [];
-			var i = 0, l = replacements.length;
-			for (; i < l; ++i) {
-				args[i] = replacements[i];
-			}
-			l = originals.length;
-			for (; i < l; ++i) {
-				args[i] = originals[i];
-			}
-		}
-		return fn.apply(this, args);
-	} else {
-		logger.warn('enyo.kind.inherited: unable to find requested ' +
-			'super-method from -> ' + originals.callee.displayName + ' in ' + this.kindName);
-	}
+    // regardless of how we got here, just ensure we actually
+    // have a function to call or else we throw a console
+    // warning to notify developers they are calling a
+    // super method that doesn't exist
+    if ('function' === typeof fn) {
+        var args = originals;
+        if (replacements) {
+            // combine the two arrays, with the replacements taking the first
+            // set of arguments, and originals filling up the rest.
+            args = [];
+            var i = 0,
+                l = replacements.length;
+            for (; i < l; ++i) {
+                args[i] = replacements[i];
+            }
+            l = originals.length;
+            for (; i < l; ++i) {
+                args[i] = originals[i];
+            }
+        }
+        return fn.apply(this, args);
+    } else {
+        logger.warn('enyo.kind.inherited: unable to find requested ' +
+            'super-method from -> ' + originals.callee.displayName + ' in ' + this.kindName);
+    }
 };
 
 // dcl inspired super-inheritance
@@ -350,47 +352,48 @@ kind.statics = {
 	*/
 	subclass: function (ctor, props) {},
 
-	/**
-	* Allows for extension of the current [kind]{@glossary kind} without
-	* creating a new kind. This method is available on all
-	* [constructors]{@glossary constructor}, although calling it on a
-	* [deferred]{@glossary deferred} constructor will force it to be
-	* resolved at that time. This method does not re-run the
-	* {@link module:enyo/kind.features} against the constructor or instance.
-	*
-	* @name module:enyo/kind.extend
-	* @method
-	* @param {Object|Object[]} props A [hash]{@glossary Object} or [array]{@glossary Array}
-	*	of [hashes]{@glossary Object}. Properties will override
-	*	[prototype]{@glossary Object.prototype} properties. If a
-	*	method that is being added already exists, the new method will
-	*	supersede the existing one. The method may call
-	*	`this.inherited()` or be wrapped with `kind.inherit()` to call
-	*	the original method (this chains multiple methods tied to a
-	*	single [kind]{@glossary kind}).
-	* @param {Object} [target] - The instance to be extended. If this is not specified, then the
-	*	[constructor]{@glossary constructor} of the
-	*	[object]{@glossary Object} this method is being called on will
-	*	be extended.
-	* @returns {Object} The constructor of the class, or specific
-	*	instance, that has been extended.
-	* @public
-	*/
-	extend: function (props, target) {
-		var ctor = this
-			, exts = utils.isArray(props)? props: [props]
-			, proto, fn;
+    /**
+     * Allows for extension of the current [kind]{@glossary kind} without
+     * creating a new kind. This method is available on all
+     * [constructors]{@glossary constructor}, although calling it on a
+     * [deferred]{@glossary deferred} constructor will force it to be
+     * resolved at that time. This method does not re-run the
+     * {@link module:enyo/kind.features} against the constructor or instance.
+     *
+     * @name module:enyo/kind.extend
+     * @method
+     * @param {Object|Object[]} props A [hash]{@glossary Object} or [array]{@glossary Array}
+     *  of [hashes]{@glossary Object}. Properties will override
+     *  [prototype]{@glossary Object.prototype} properties. If a
+     *  method that is being added already exists, the new method will
+     *  supersede the existing one. The method may call
+     *  `this.inherited()` or be wrapped with `kind.inherit()` to call
+     *  the original method (this chains multiple methods tied to a
+     *  single [kind]{@glossary kind}).
+     * @param {Object} [target] - The instance to be extended. If this is not specified, then the
+     *  [constructor]{@glossary constructor} of the
+     *  [object]{@glossary Object} this method is being called on will
+     *  be extended.
+     * @returns {Object} The constructor of the class, or specific
+     *  instance, that has been extended.
+     * @public
+     */
+    extend: function(props, target) {
+        var ctor = this,
+            exts = utils.isArray(props) ? props : [props],
+            proto, fn;
 
 		fn = function (key, value) {
 			return !(typeof value == 'function' || isInherited(value)) && concatenated.indexOf(key) === -1;
 		};
 
-		proto = target || ctor.prototype;
-		for (var i=0, ext; (ext=exts[i]); ++i) {
-			kind.concatHandler(proto, ext, true);
-			kind.extendMethods(proto, ext, true);
-			utils.mixin(proto, ext, {filter: fn});
-		}
+        proto = target || ctor.prototype;
+        for (var i = 0, ext;
+            (ext = exts[i]); ++i) {
+            kind.concatHandler(proto, ext, true);
+            kind.extendMethods(proto, ext, true);
+            utils.mixin(proto, ext, { filter: fn });
+        }
 
 		return target || ctor;
 	},
@@ -416,17 +419,18 @@ kind.statics = {
 };
 
 /**
-* @method
-* @private
-*/
-exports.concatHandler = function (ctor, props, instance) {
-	var proto = ctor.prototype || ctor
-		, base = proto.ctor;
+ * @method
+ * @private
+ */
+exports.concatHandler = function(ctor, props, instance) {
 
-	while (base) {
-		if (base.concat) base.concat(ctor, props, instance);
-		base = base.prototype.base;
-	}
+    var proto = ctor.prototype || ctor,
+        base = proto.ctor;
+
+    while (base) {
+        if (base.concat) base.concat(ctor, props, instance);
+        base = base.prototype.base;
+    }
 };
 
 var kindCtors =
@@ -440,33 +444,32 @@ var kindCtors =
 	exports._kindCtors = {};
 
 /**
-* @method
-* @private
-*/
-var constructorForKind = exports.constructorForKind = function (kind) {
-	if (kind === null) {
-		return kind;
-	} else if (kind === undefined) {
-		return getDefaultCtor();
-	}
-	else if (utils.isFunction(kind)) {
-		return kind;
-	}
-	logger.warn('Creating instances by name is deprecated. Name used:', kind);
-	// use memoized constructor if available...
-	var ctor = kindCtors[kind];
-	if (ctor) {
-		return ctor;
-	}
-	// otherwise look it up and memoize what we find
-	//
-	// if kind is an object in enyo, say "Control", then ctor = enyo["Control"]
-	// if kind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
-	// if kind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
-	//
-	// Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
-	// This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
-	ctor = Theme[kind] || (global.enyo && global.enyo[kind]) || utils.getPath.call(global, 'enyo.' + kind) || global[kind] || utils.getPath.call(global, kind);
+ * @method
+ * @private
+ */
+var constructorForKind = exports.constructorForKind = function(kind) {
+    if (kind === null) {
+        return kind;
+    } else if (kind === undefined) {
+        return getDefaultCtor();
+    } else if (utils.isFunction(kind)) {
+        return kind;
+    }
+    logger.warn('Creating instances by name is deprecated. Name used:', kind);
+    // use memoized constructor if available...
+    var ctor = kindCtors[kind];
+    if (ctor) {
+        return ctor;
+    }
+    // otherwise look it up and memoize what we find
+    //
+    // if kind is an object in enyo, say "Control", then ctor = enyo["Control"]
+    // if kind is a path under enyo, say "Heritage.Button", then ctor = enyo["Heritage.Button"] || enyo.Heritage.Button
+    // if kind is a fully qualified path, say "enyo.Heritage.Button", then ctor = enyo["enyo.Heritage.Button"] || enyo.enyo.Heritage.Button || enyo.Heritage.Button
+    //
+    // Note that kind "Foo" will resolve to enyo.Foo before resolving to global "Foo".
+    // This is important so "Image" will map to built-in Image object, instead of enyo.Image control.
+    ctor = Theme[kind] || (global.enyo && global.enyo[kind]) || utils.getPath.call(global, 'enyo.' + kind) || global[kind] || utils.getPath.call(global, kind);
 
 	// If what we found at this namespace isn't a function, it's definitely not a kind constructor
 	if (!utils.isFunction(ctor)) {

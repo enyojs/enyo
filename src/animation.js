@@ -15,7 +15,9 @@ var ms = Math.round(1000/60),
 	cRAF = 'cancelRequestAnimationFrame',
 	cAF = 'cancelAnimationFrame',
 	i, pl, p, wcRAF, wrAF, wcAF,
-	_requestFrame, _cancelFrame, cancelFrame;
+	_requestFrame, _cancelFrame, cancelFrame,
+	core = { ts: 0, obs: {}};
+
 
 /*
 * Fallback on setTimeout
@@ -98,63 +100,36 @@ exports.cancelRequestAnimationFrame = function(id) {
 exports.cancelAnimationFrame = function(id) {
 	return _cancelFrame(id);
 };
-
 /**
-* A set of interpolation functions for animations, similar in function to CSS3
-* transitions.
+* Subcribes for animation frame ticks.
 *
-* These are intended for use with {@link module:enyo/animation#easedLerp}. Each easing function
-* accepts one (1) [Number]{@glossary Number} parameter and returns one (1)
-* [Number]{@glossary Number} value.
-*
+* @param {Object} ctx - The context on which callback is registered.
+* @param {Function} callback - A [callback]{@glossary callback} to be executed on tick.
 * @public
 */
-exports.easing = /** @lends module:enyo/animation~easing.prototype */ {
-	/**
-	* cubicIn
-	*
-	* @public
-	*/
-	cubicIn: function(n) {
-		return Math.pow(n, 3);
-	},
-	/**
-	* cubicOut
-	*
-	* @public
-	*/
-	cubicOut: function(n) {
-		return Math.pow(n - 1, 3) + 1;
-	},
-	/**
-	* expoOut
-	*
-	* @public
-	*/
-	expoOut: function(n) {
-		return (n == 1) ? 1 : (-1 * Math.pow(2, -10 * n) + 1);
-	},
-	/**
-	* quadInOut
-	*
-	* @public
-	*/
-	quadInOut: function(n) {
-		n = n * 2;
-		if (n < 1) {
-			return Math.pow(n, 2) / 2;
-		}
-		return -1 * ((--n) * (n - 2) - 1) / 2;
-	},
-	/**
-	* linear
-	*
-	* @public
-	*/
-	linear: function(n) {
-		return n;
-	}
+exports.subscribe = function(ctx,callback) {
+	var id = utils.uid("rAF");
+	core.obs[id] = utils.bindSafely(ctx, callback);
+	return id;
 };
+/**
+* Unsubcribes for animation frame ticks.
+*
+* @param {Object} node - The context on which callback is registered.
+* @param {Function} callback - A [callback]{@glossary callback} to be executed on tick.
+* @public
+*/
+exports.unsubscribe = function(id) {
+	delete core.obs[id];
+};
+
+var startrAF = function(){
+	_requestFrame(function (time) {
+		startrAF();
+		core.ts = time;
+	}.bind(this));
+};
+startrAF();
 
 /**
 * Gives an interpolation of an animated transition's distance from 0 to 1.
@@ -206,3 +181,19 @@ exports.easedComplexLerp = function(t0, duration, easing, reverse, time, startVa
 		return easing(lerp, time, startValue, valueChange, duration);
 	}
 };
+
+
+//TODO: A temporary implementation for rAF with observers.
+Object.defineProperty(core, 'ts', {
+
+	get: function() { 
+		return this.value; 
+	},
+
+	set: function(newValue) {
+		for(var i in this.obs){
+			this.obs[i](this.value, newValue);
+		}
+		this.value = newValue;
+	}
+});
